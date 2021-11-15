@@ -4,6 +4,19 @@ ehthumbs.db
 
 # Folder config file
 Desktop.ini
+.vscode
+
+# Numerous always-ignore extensions
+.diff
+.err
+.orig
+.log
+.rej
+.swo
+.swp
+.vi
+~
+.sass-cache
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
@@ -25,9 +38,17 @@ $RECYCLE.BIN/
 /build
 tmp/
 tests/clover.xml
+.cache
 
 # Grunt
 node_modules
 
 # Vendor
 vendor
+
+# PHPCS
+.phpcs.xml
+phpcs.xml
+
+# POT File
+languages/intercessor.pot

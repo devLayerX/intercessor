@@ -85,62 +85,44 @@ if ( ! function_exists( 'intercessor_get_prayer_requester_id' ) ) {
  *
  * @access  public
  *
- * @param int   $user_id       User ID:
- * @param array $old_user_data Old user data array.
+ * @param int     $user_id       User ID.
+ * @param WP_User $old_user_data Object containing user's data prior to update.
  *
- * @return false
+ * @return void
  * @since   0.9.5
  */
-function update_requester_email_on_user_update( $user_id, $old_user_data ) {
-	// Bail if no user ID provided.
-	if ( $user_id < 1 ) {
-		return false;
-	}
-
-	$requester = new Requester( $user_id, true );
-
-	// Bail if user is not a requester.
-	if ( ! $requester ) {
-		return false;
-	}
-
+function intercessor_update_requester_email_on_user_update( $user_id, $old_user_data ) {
 	$user = get_userdata( $user_id );
 
-	if ( ! empty( $user ) && $user->user_email !== $requester->email ) {
-
-		if ( ! intercessor_get_requester_by( 'email', $user->user_email ) ) {
-
-			$success = intercessor_process_item(
-				'requester',
-			    'update',
-			    $requester->id,
-                [
-	                'email' => $user->user_email,
-                ]
-			);
-
-			if ( $success ) {
-				// Update some prayer meta if we need to.
-				$prayers_array = explode( ',', $requester->prayer_ids );
-
-				if ( ! empty( $prayers_array ) ) {
-
-					foreach ( $prayers_array as $prayer_id ) {
-
-						intercessor_update_item_meta( 'prayer', $prayer_id, 'email', $user->user_email );
-
-					}
-
-				}
-
-				do_action( 'intercessor_update_requester_email_on_user_update', $user, $requester );
-
-			}
-
-		}
-
+	// Bail if the email address didn't actually change just now.
+	if ( empty( $user ) || $user->user_email === $old_user_data->user_email ) {
+		return;
 	}
 
+	$requester = intercessor_get_requester_by( 'user_id', $user_id );
+
+	if ( empty( $requester ) || $user->user_email === $requester->email ) {
+		return;
+	}
+
+	// Bail if we have another requester with this email address already.
+	if ( intercessor_get_requester_by( 'email', $user->user_email ) ) {
+		return;
+	}
+
+	$success = intercessor_process_item( 'requester', 'update', $requester->id, [ 'email' => $user->user_email ] );
+
+	if ( ! $success ) {
+		return;
+	}
+
+	/**
+	 * Fires after the requester has been successfully updated.
+	 *
+	 * @param WP_User               $user
+	 * @param Intercessor/Requester $requester
+	 */
+	do_action( 'intercessor_update_requester_email_on_user_update', $user, $requester );
 }
 
 if ( ! function_exists( 'intercessor_get_requester_counts' ) ) {
@@ -204,5 +186,27 @@ if ( ! function_exists( 'intercessor_get_requester_prayers' ) ) {
 		
 		// Return array or number of prayers.
 		return apply_filters( 'intercessor_get_requester_prayers', $found );
+	}
+}
+
+if ( ! function_exists( 'intercessor_get_requester_from_prayer' ) ) {
+	/**
+	 * Get a requester attached to a prayer ID.
+	 *
+	 * @param int $prayer_id The prayer ID.
+	 *
+	 * @since 1.1.0
+	 * @return object /Intercessor/Requester 
+	 */
+	function intercessor_get_requester_from_prayer( int $prayer_id ) {
+		// Retrieve prayer.
+		$prayer = intercessor_process_item( 'prayer', 'get', $prayer_id, false );
+
+		// Get requester ID and requester.
+		$requester_id = $prayer->requester_id;
+		$requester    = new Intercessor\Requester( $requester_id, false );
+
+		// Return requester object.
+		return apply_filters( 'intercessor_get_requester_from_prayer', $requester );
 	}
 }

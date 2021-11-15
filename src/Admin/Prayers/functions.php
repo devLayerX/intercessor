@@ -203,7 +203,7 @@ function intercessor_get_view_request_sidebar_bottom( $prayer, $requester ) {
 function intercessor_request_view_details( $prayer ) {
 
 	$personal_text = esc_html__( 'This prayer request is marked personal by the requester. It will not be displayed on the prayer list page of your site.', 'intercessor' );
-	$notify_text   = esc_html__( 'The requester wish to be notified anytime this request is prayed for.', 'intercessor' );
+	$notify_text   = esc_html__( 'The requester wants to be notified anytime this request is prayed for.', 'intercessor' );
 	$prayed_args   = [
 		'date_created_query' => false,
 		'prayer_id'          => $prayer->id,
@@ -211,9 +211,9 @@ function intercessor_request_view_details( $prayer ) {
 	$prayed_text   = intercessor_count_prayed( $prayed_args );
 
 	if ( $prayer->anon ) {
-		$anonymous = __( 'Yes', 'intercessor' );
+		$anonymous = esc_html__( 'Yes', 'intercessor' );
 	} else {
-		$anonymous = __( 'No', 'intercessor' );
+		$anonymous = esc_html__( 'No', 'intercessor' );
 	}
 	?>
 	<div id="intercessor-request-details" class="postbox intercessor-request-data">
@@ -245,7 +245,7 @@ function intercessor_request_view_details( $prayer ) {
 				<?php if ( 'personal' === $prayer->share ) : ?>
 				<div class="intercessor-request-anon intercessor-admin-box-inside">
 					<p>
-						<span class="label private-prayer intercessor-icon-warning1"><?php esc_html_e( '<strong> Private Prayer:</strong>', 'intercessor' ); ?></span>&nbsp;
+						<span class="label private-prayer intercessor-icon-warning1"><strong><?php esc_html_e( ' Private Prayer:', 'intercessor' ); ?></strong></span>&nbsp;
 						<span><?php echo esc_attr( $personal_text ); ?></span>
 					</p>
 				</div>

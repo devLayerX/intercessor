@@ -61,9 +61,9 @@ if ( ! function_exists( 'intercessor_count_prayed' ) ) {
         $defaults = wp_parse_args(
             $args,
             [
-                'count' => true,
+                'count'              => true,
                 'date_created_query' => [
-                    'after' => 'last month', // week, day, month.
+                    'after'          => 'last month', // week, day, month.
                 ],
             ]
         );
@@ -142,5 +142,34 @@ if ( ! function_exists( 'intercessor_count_prayed_for' ) ) {
                 }
             }
         }
+    }
+}
+
+if ( ! function_exists( 'intercessor_get_prayed_for_counts' ) ) {
+    /**
+     * Get prayed for counts for a prayer ID.
+     *
+     * @param int $prayer_id Prayer ID.
+     *
+     * @since 1.0.0 
+     */
+    function intercessor_get_prayed_for_counts( int $prayer_id ) {
+        // Bail if no prayer ID supplied.
+        if ( empty( $prayer_id ) ) {
+            return false;
+        }
+
+        // Setup prayed for args.
+        $args = [
+            'prayer_id' => $prayer_id,
+        ];
+     
+        // Get prayed for counts.
+        $prayed     = intercessor_get_items( 'prayed', $args );
+        $key        = esc_attr( 'prayed_for' );
+        $prayed_for = array_sum( array_column( $prayed, $key ) );
+
+        // Return values of prayed counts.
+        return apply_filters( 'intercesssor_get_prayed_for_counts', $prayed_for );
     }
 }

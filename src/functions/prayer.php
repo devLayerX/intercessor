@@ -439,7 +439,7 @@ function intercessor_insert_prayer( $prayer_data = [] ) {
 
 	// New requester.
 	if ( empty( $requester->id ) ) {
-		$requester = new Requester( $prayer_args['email'] );
+		$requester = new Requester( $prayer_args['email'], false );
 
 		if ( empty( $prayer_data['first_name'] ) && empty( $prayer_data['last_name'] ) ) {
 			$name = $prayer_args['email'];
@@ -475,6 +475,7 @@ function intercessor_insert_prayer( $prayer_data = [] ) {
 
 	// Attach the prayer to the requester and update prayer counts.
 	$requester->attach_prayer( $prayer_id, true );
+	$requester->recalculate_stats();
 
 	// Set up terms agreement date if agreed to during prayer submission.
 	if ( ! empty( $prayer_data['terms'] ) ) {
@@ -528,6 +529,8 @@ function intercessor_insert_prayer( $prayer_data = [] ) {
 /**
  * Process praying for request.
  *
+ * @param array $data Array of prayer data.
+ *
  * @since 1.0.0
  * @return void
  */
@@ -542,6 +545,10 @@ function intercessor_process_praying_for_request() {
 
 	// Process praying for request.
 	$prayer_id = isset( $_POST['prayer_id'] ) ? absint( $_POST['prayer_id'] ) : 0;
+	if ( empty( $prayer_id ) ) {
+		$message = esc_html__( 'Praying for request failed', 'intercessor' );
+		intercessor_display_frontend_notice( $message, true, 'error', false );
+	}
 	$prayer    = intercessor_process_item( 'prayer', 'get', $prayer_id, false );
 	$counts    = intercessor_date_i18n( time(), 'mysql' );
 
@@ -552,15 +559,15 @@ function intercessor_process_praying_for_request() {
 	 */
 	do_action( 'intercessor_pre_uplift_prayer', $counts, $prayer_id );
 
-	if ( $prayer ) {
-		$args = [
-			'prayer_id'    => $prayer_id,
-			'prayed_for'   => 1,
-			'date_created' => $counts,
-		];
 
-		intercessor_add_item( 'prayed', $args );
-	}
+	$args = [
+		'prayer_id'    => $prayer_id,
+		'prayed_for'   => 1,
+		'date_created' => $counts,
+	];
+
+	intercessor_add_item( 'prayed', $args );
+	
 
 	/**
 	 * Fires after the prayer request is prayed for.

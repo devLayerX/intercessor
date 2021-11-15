@@ -298,12 +298,7 @@ class Requester extends \Intercessor\Database\Rows\Requester {
 
 			$created = $this->id;
 		}
-		/*else {
-
-			$message = esc_html_e( 'Requester Not Created', 'intercessor' );
-			\intercessor_set_error( 'failed_request_creation', $message );
-		}
-*/
+		
 		/**
 		 * Fires after a requester is created
 		 *
@@ -658,9 +653,9 @@ class Requester extends \Intercessor\Database\Rows\Requester {
         $updated = (bool) intercessor_process_item( 'prayer', 'update', $prayer_id, $update_args );
 
         // Maybe update stats.
-        if ( ! empty( $updated ) && ! empty( $update_stats ) ) {
+    //    if ( ! empty( $updated ) && ! empty( $update_stats ) ) {
             $this->recalculate_stats();
-        }
+    //    }
 
 		/**
 		 * Fires after a prayer is attached to a requester.
@@ -707,11 +702,7 @@ class Requester extends \Intercessor\Database\Rows\Requester {
             return true;
         }
 
-        // Update stats TODO check if this should be removed.
-	/*	if ( ! in_array( $prayer->status, array( 'active', 'personal' ), true ) ) {
-			$update_stats = false;
-		}
-		*/
+		
 		/**
 		 * Fires before a prayer is removed from a requester.
 		 *

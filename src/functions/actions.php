@@ -54,4 +54,4 @@ add_action( 'template_redirect', 'intercessor_enforced_ssl_asset_handler' );
 add_action( 'template_redirect', 'intercessor_enforced_ssl_redirect_handler' );
 
 // Function documented in src/functions/requester.php.
-add_action( 'profile_update', 'update_requester_email_on_user_update', 10, 2 );
+add_action( 'profile_update', 'intercessor_update_requester_email_on_user_update', 10, 2 );

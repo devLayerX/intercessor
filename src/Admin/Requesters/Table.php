@@ -12,7 +12,6 @@
 namespace Intercessor\Admin\Requesters;
 
 use Intercessor\Admin\List_Table;
-use Intercessor\Requester;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -105,7 +104,7 @@ class Table extends List_Table {
 	}
 
 	/**
-	 * Return the contents of the "Name" column
+	 * Get the contents of the "Name" column
 	 *
 	 * @since 1.0.0
 	 *
@@ -127,7 +126,7 @@ class Table extends List_Table {
 			? $item['status']
 			: 'active';
 
-		// State.
+		// Status.
 		if ( ( ! empty( $status ) && ( $status !== $item_status ) ) || ( $item_status !== 'active' ) ) {
 			switch ( $status ) {
 				case 'pending':
@@ -146,7 +145,7 @@ class Table extends List_Table {
 		// Get the requester's avatar.
 		$avatar = \get_avatar( $item['email'], 32 );
 
-		// Concatenate and return
+		// Concatenate and return.
 		return $avatar . '<strong><a class="row-title" href="' . esc_url( $view_url ) . '">' . esc_html( $name ) . '</a>' . esc_html( $state ) . '</strong>' . $this->row_actions( $actions );
 	}
 
@@ -189,13 +188,17 @@ class Table extends List_Table {
 	 * @return array $columns Array of all the list table columns
 	 */
 	public function get_columns() {
-		return apply_filters( 'intercessor_report_requester_columns', array(
+		// Setup column arguments array.
+		$column_args = [
 			'cb'           => '<input type="checkbox" />',
+			'id'           => esc_html__( 'ID','intercessor' ),
 			'name'         => esc_html__( 'Name','intercessor' ),
 			'email'        => esc_html__( 'Email','intercessor' ),
 			'prayer_count' => esc_html__( 'Prayers','intercessor' ),
 			'date_created' => esc_html__( 'Date','intercessor' ),
-		) );
+		];
+
+		return apply_filters( 'intercessor_report_requester_columns', $column_args );
 	}
 
 	/**
@@ -205,12 +208,13 @@ class Table extends List_Table {
 	 * @return array Array of all the sortable columns
 	 */
 	public function get_sortable_columns() {
-		return array(
+		return [
+			'id'            => [ 'id', true ],
 			'date_created'  => [ 'date_created', true ],
 			'name'          => [ 'name', true ],
 			'email'         => [ 'email', true ],
 			'prayer_count'  => [ 'prayer_count', false ],
-		);
+		];
 	}
 
 	/**
@@ -220,9 +224,9 @@ class Table extends List_Table {
 	 * @return array Array of the bulk actions
 	 */
 	public function get_bulk_actions() {
-		return array(
+		return [
 			'delete' => esc_html__( 'Delete', 'intercessor' )
-		);
+		];
 	}
 
 	/**
@@ -244,14 +248,13 @@ class Table extends List_Table {
 			: false;
 
 		if ( ! is_array( $ids ) ) {
-			$ids = array( $ids );
+			$ids = [ $ids ];
 		}
 
 		foreach ( $ids as $id ) {
 			switch ( $this->current_action() ) {
 				case 'delete' :
-					$requester = new Requester( $id, true );
-					$requester->delete();
+					\intercessor_process_item( 'requester', 'delete', $id, false );
 					break;
 			}
 		}
@@ -265,7 +268,7 @@ class Table extends List_Table {
 	 * @return array $data All the row data.
 	 */
 	public function get_data() {
-		$data   = array();
+		$data   = [];
 		$search = $this->get_search();
 		$args   = array( 'status' => $this->get_status() );
 
@@ -322,7 +325,7 @@ class Table extends List_Table {
 	public function prepare_items() {
 		$this->_column_headers = array(
 			$this->get_columns(),
-			array(),
+			[],
 			$this->get_sortable_columns()
 		);
 

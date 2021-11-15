@@ -283,21 +283,35 @@ function intercessor_delete_prayer( $data = [] ) {
 		);
 	}
 
-	$prayer_id = absint( $data['prayer'] );
+	// Retrieve prayer and requester.
+	$prayer_id = absint( $data['prayer_id'] );
+	$requester = intercessor_get_requester_from_prayer( $prayer_id );
 	$prayer    = intercessor_process_item( 'prayer', 'get', $prayer_id, false );
+	
+	// Try to delete prayer.
 	$deleted   = intercessor_process_item( 'prayer', 'delete', $prayer->id, false );
+	
+	// Recalculate stats for the requester.
+	if ( $deleted ) {
+		$requester->recalculate_stats();
+	}
+
+	// Setup array of arguments to display delete message.
 	$arg       = ! empty( $deleted )
 		? 'prayer_deleted'
 		: 'prayer_delete_failed';
 
 	// Redirect.
-	wp_safe_redirect( remove_query_arg( 'intercessor-action',
-		add_query_arg(
-			'intercessor-message',
-			$arg,
-			wp_unslash( esc_url( $_SERVER['REQUEST_URI'] ) )
+	wp_safe_redirect(
+		remove_query_arg(
+			'intercessor-action',
+			add_query_arg(
+				'intercessor-message',
+				$arg,
+				wp_unslash( esc_url( $_SERVER['REQUEST_URI'] ) )
+			)
 		)
-	) );
+	);
 
 	intercessor_die();
 }

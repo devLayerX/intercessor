@@ -272,6 +272,7 @@ class Table extends List_Table {
 	protected function get_primary_column_name() {
 		return 'id';
 	}
+	
 	/**
 	 * This function renders most of the columns in the list table.
 	 *
@@ -290,7 +291,8 @@ class Table extends List_Table {
 					'date_created_query' => false,
 					'prayer_id'          => $prayer->id,
 				];
-				$value   = \intercessor_count_prayed( $prayed_args );
+			//	$value   = \intercessor_count_prayed( $prayed_args );
+				$value = intercessor_get_prayed_for_counts( $prayer->id );
 				break;
 
 			case 'start_date':
