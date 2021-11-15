@@ -1,0 +1,56 @@
+{
+    "name": "victoraigbeghian/wordpress-plugin",
+    "type": "project",
+    "description": "Intercessor",
+    "version": "1.1.0",
+    "authors": [
+        {
+             "name": "Victor Aigbeghian",
+             "homepage": "https://github.com/victoraigbeghian",
+             "role": "Developer"
+        }
+    ],
+    "license": "GPL-2.0-or-later",
+    "minimum-stability": "dev",
+    "keywords": [ "wordpress", "plugin", "boilerplate" ],
+    "autoload": {
+        "psr-4": {
+            "Intercessor\\": "src/"
+        },
+        "files": [
+            "src/functions/items.php",
+            "src/functions/misc.php",
+            "src/functions/email.php",
+            "src/functions/notices.php",
+            "src/functions/form.php",
+            "src/functions/prayer.php",
+            "src/functions/requester.php",
+            "src/functions/note.php",
+            "src/functions/privacy.php",
+            "src/functions/actions.php",
+            "src/functions/scripts.php",
+            "src/functions/template.php",
+            "src/functions/user.php",
+            "src/functions/prayed.php",
+            "src/Admin/admin-settings.php",
+            "src/Admin/help.php",
+            "src/Admin/functions.php",
+            "src/Admin/dashboard-widget.php",
+            "src/Admin/Prayers/actions.php",
+            "src/Admin/Prayers/functions.php",
+            "src/Admin/Prayers/page.php",
+            "src/Admin/Requesters/functions.php",
+            "src/Admin/Requesters/requesters.php",
+            "src/Admin/Tools/tools.php",
+            "src/Admin/Tools/Export/functions.php",
+            "src/Admin/Tools/Import/functions.php",
+            "src/Admin/Reports/reports.php"
+        ]
+    },
+    "config": {
+        "vendor-dir": "vendor/"
+    },
+    "require": {
+        "php": "^7.0"
+    }
+}

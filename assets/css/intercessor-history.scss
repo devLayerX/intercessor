@@ -1,0 +1,221 @@
+
+.intercessor-row {
+	-ms-flex-wrap: wrap;
+	display: -ms-flexbox;
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0px -15px 20px -15px;
+}
+
+.form-col3,
+.form-col4,
+.form-col5,
+.form-col6,
+.form-column {
+	min-height: 1px;
+	padding-left: 15px;
+	padding-right: 15px;
+	position: relative;
+	width: 100%;
+}
+
+.col {
+	flex-basis: 0;
+	flex-grow: 1;
+	max-width: 100%;
+	padding: 10px;
+}
+
+.form-col3 {
+	-ms-flex: 0 0 25%;
+	flex: 0 0 25%;
+	max-width: 25%;
+}
+
+.form-col4 {
+	-ms-flex: 0 0 33.333333%;
+	flex: 0 0 33.333333%;
+	width: 33.333333%;
+}
+
+.form-col5 {
+	-ms-flex: 0 0 41.666667%;
+	flex: 0 0 41.666667%;
+	max-width: 41.666667%;
+}
+
+
+.form-col6 {
+	-ms-flex: 0 0 50%;
+	flex: 0 0 50%;
+	max-width: 50%;
+}
+
+.form-column {
+	-ms-flex: 0 0 100%;
+	flex: 0 0 100%;
+	max-width: 100%;
+}
+
+#intercessor_user_history_main {
+	display: block;
+	width: 100%;
+
+	.intercessor-prayer-details {
+		text-align: left;
+		width: 48%;
+
+
+		.prayer-title {
+			color: #43a2a2;
+			font-size: 16px;
+			font-weight: 600;
+		}
+	}
+
+
+	.prayer-history-actions {
+		font-size: .92em;
+		list-style: none !important;
+		margin: 0;
+		padding: 0;
+
+		li {
+			float: left;
+			display: inline-block;
+			list-style: none !important;
+
+			a {
+				#intercessor_user_history_main {
+					display: block;
+					width: 100%;
+
+					.intercessor-prayer-details {
+						text-align: left;
+						width: 48%;
+
+
+						.prayer-title {
+							color: #43a2a2;
+							font-size: 16px;
+							font-weight: 600;
+						}
+					}
+
+
+					.prayer-history-actions {
+						font-size: .92em;
+						list-style: none !important;
+						margin: 0;
+						padding: 0;
+
+						li {
+							float: left;
+							display: inline-block;
+							list-style: none !important;
+
+							a {
+								float: left;
+								display: inline-block;
+								margin: 0 0.5em 0 0;
+								font-weight: normal;
+								list-style: none !important;
+								text-decoration: none;
+
+								.prayer-history-action-delete {
+									background-color: #8b0000;
+									color: #ffffff;
+								}
+							}
+						}
+					}
+
+					.intercessor-prayer-id {
+						width: 9%;
+					}
+
+
+					.intercessor-prayer-counts {
+						width: 10%;
+					}
+
+					.intercessor-prayer-date {
+						width: 20%;
+					}
+
+					.intercessor-prayer-status {
+						vertical-align: center;
+						width: 13%;
+						float: none;
+					}
+				}
+
+				float: left;
+				display: inline-block;
+				margin: 0 0.5em 0 0;
+				font-weight: normal;
+				list-style: none !important;
+				text-decoration: none;
+
+				.prayer-history-action-delete {
+					color: red;
+				}
+			}
+		}
+	}
+
+	.intercessor-prayer-id {
+		width: 9%;
+	}
+
+
+	.intercessor-prayer-counts {
+		width: 10%;
+	}
+
+	.intercessor-prayer-date {
+		width: 20%;
+	}
+
+	.intercessor-prayer-status {
+		vertical-align: center;
+		width: 13%;
+		float: none;
+	}
+}
+
+.intercessor-submit,
+input[type="submit"].intercessor-submit {
+	display: inline-block;
+	padding: 6px 12px;
+	margin: 20px 0;
+	font-size: 14px;
+	font-weight: normal;
+	line-height: 1.428571429;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	cursor: pointer;
+	border: 1px solid #cccccc;
+	border-radius: 4px;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.left {
+	margin-right: 300px;
+}
+
+@media screen and (max-width: 767px) {
+	.form-col4,
+	.form-col6 {
+		-ms-flex: 0 0 100%;
+		flex: 0 0 100%;
+		max-width: 100% !important;
+	}
+}
