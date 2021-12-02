@@ -1066,23 +1066,23 @@ if ( ! function_exists( 'intercessor_send_prayed_email' ) ) {
 	    // Send email to requester if prayed for.
 	    if ( $prayed_for ) {
 		    foreach ( $prayed_for as $prayed ) {
-			    $ids        = $prayed->prayer_id;
-			    $count_args = [
-				    'prayer_id'                 => $ids,
-				    'count'              => true,
-				    'date_created_query' => [
-					    'after' => $date_value,
-				    ],
-			    ];
+			    $ids        = (int) $prayed->prayer_id;
 
 			    // Prepare values.
-			    $counted = intercessor_count_items( 'prayed', $count_args );
-			    $prayer  = intercessor_process_item( 'prayer', 'get', $ids, false );
-			    $email   = intercessor_get_prayer_email( $ids );
+			    $counted  = intercessor_get_prayed_for_counts( $ids );
+				$requester_id = intercessor_get_prayer_requester_id( $ids );
+				$requester    = new Requester( $requester_id );
+				$requester_email = $requester->email;
+			    $prayer   = intercessor_process_item( 'prayer', 'get', $ids, false );
+			    //$prayer   = intercessor_get_item_by( 'prayer', 'id', $ids );
+				$email    = $prayer->email;
+				//$email    = intercessor_get_prayer_email( $ids );
+				$notify   = intercessor_get_prayer_notify( $ids );
+				$answered = intercessor_is_answered_prayer( $ids );
 
 			    // Send email to requesters who wish to be notified.
-			    if ( $prayer->notify ) {
-				    intercessor_email_prayed_notification( $ids, $counted, $email );
+			    if ( $notify && ! $answered ) {
+				    intercessor_email_prayed_notification( $ids, $counted, $requester_email );
 			    }
 		    }
 	    } else {

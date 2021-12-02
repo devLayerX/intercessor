@@ -22,13 +22,16 @@ class Requesters extends Base {
 			'end'   => $end
 		);
 
-		$requesters = intercessor()->requesters->retrieve( array(
+		// Setup arguments to retrieve requesters by.
+		$requester_args = [
 			'orderby' => 'date_created',
 			'order'   => 'ASC',
 			'number'  => - 1,
-			'date'    => $date
-		) );
+			'date'    => $date,
+		];
 
+		// Retrieve requesters.
+		$requesters       = intercessor_get_items( 'requester', $requester_args );
 		$requester_data   = array();
 		$requester_data[] = array( strtotime( $start ) * 1000 );
 		$requester_data[] = array( strtotime( $end ) * 1000 );

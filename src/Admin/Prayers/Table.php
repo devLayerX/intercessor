@@ -287,11 +287,6 @@ class Table extends List_Table {
 	public function column_default( $prayer, $column_name ) {
 		switch ( $column_name ) {
 			case 'prayed_count':
-				$prayed_args   = [
-					'date_created_query' => false,
-					'prayer_id'          => $prayer->id,
-				];
-			//	$value   = \intercessor_count_prayed( $prayed_args );
 				$value = intercessor_get_prayed_for_counts( $prayer->id );
 				break;
 

@@ -37,8 +37,6 @@ add_action( 'intercessor_created_user', 'intercessor_new_created_user_notificati
 
 // Prayer actions documented in src/functions/prayer.php.
 add_action( 'init', 'intercessor_process_praying_for_request' );
-add_action( 'wp_ajax_intercessor_process_praying', 'intercessor_process_praying_for_request' );
-add_action( 'wp_ajax_nopriv_intercessor_process_praying', 'intercessor_process_praying_for_request' );
 
 
 // User related actions documented in src/functions/user.php.

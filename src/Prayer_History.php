@@ -3,7 +3,7 @@
  * Intercessor Prayer History
  *
  * @since       0.9.5
- * @subpackage  Classes/IPR\Prayer_History
+ * @subpackage  Classes/Intercessor\Prayer_History
  * @copyright   Copyright (c) 2019, Victor Aigbeghian
  * @license     http://opensource.org/licenses/GPL-3.0php GNU Public License
  * @package     Intercessor
@@ -218,7 +218,7 @@ class Prayer_History {
 				$updated = intercessor_process_item( 'prayer', 'update', $prayer_id, $history_data );
 
 				if ( ! $updated ) {
-					$new_prayer = new Prayer( $updated );
+					$new_prayer = intercessor_process_item( 'prayer', 'get', $updated, false );
 
 					if ( 'personal' === $new_prayer->status ) {
 						$message = esc_html__( 'Your prayer request is now private. It will not be displayed on the frontend of our website anymore.', 'intercessor' );

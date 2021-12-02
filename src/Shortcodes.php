@@ -236,6 +236,7 @@ class Shortcodes {
 			}
 
 			foreach ( $prayers as $prayer ) {
+				// Generate data to display prayer requests.
 				$prayer_id     = absint( $prayer->id );
 				$message       = stripslashes( $prayer->message );
 				$title         = stripslashes( $prayer->title );
@@ -244,12 +245,7 @@ class Shortcodes {
 				$date          = esc_attr( $prayer->date_created );
 				$gmt_offset    = get_option( 'gmt_offset' );
 				$prayer_date   = \intercessor_time_ago( $date, $gmt_offset );
-				$prayed_args   = [
-					'date_created_query' => false,
-					'prayer_id'          => $prayer->id,
-				];
-				$counts        = intercessor_count_prayed( $prayed_args );
-				$prayed_label  = intercessor_get_option( 'prayed_for_label' );
+				$counts        = \intercessor_get_prayed_for_counts( $prayer_id );
 				$answered      = \intercessor_is_answered_prayer( $prayer_id );
 				$praises       = intercessor_get_item_meta( 'prayer', $prayer_id, 'praise_report', false );
 
@@ -264,13 +260,8 @@ class Shortcodes {
 					__( 'Submitted by: %s', 'intercessor' ),
 					$name
 				);
-
-				if ( ! empty( $prayed_label ) ) {
-					$prayed = $prayed_label;
-				} else {
-					$prayed = esc_html__( 'I Prayed for this', 'intercessor' );
-				}
-
+				
+				// Setup praise report label.
 				if ( ! empty( $praises ) ) {
 					$answered_msg = esc_html( $praises );
 				} else {
@@ -298,10 +289,7 @@ class Shortcodes {
 				$prayers_list .= '<form id="intercessor_update_counts" action="" name="" method="post">';
 				$prayers_list .= '<div id="intercessor_praying"></div>';
 				$prayers_list .= '<input name="intercessor_prayed_count" value="' . $counts . '" type="hidden"/>';
-				$prayers_list .= '<input name="prayer_id" class="prayers-id" value="' . $prayer_id . '" type="hidden"/>';
-			//	$prayers_list .= '<button type="button" name="intercessor_prayed_updater" class="prayed-updater">' . $prayed . '</button>';
-				$prayers_list .= '<input type="submit" name="intercessor_prayed_updater" class="prayed-updater intercessor-submit" value="' . $prayed . '" />';
-				$prayers_list .= wp_nonce_field( 'praying_nonce', 'intercessor_update_prayed_nonce' );
+				$prayers_list .= \intercessor_get_prayer_button( $prayer_id );
 				$prayers_list .= '</form>';
 
 				// Add prayer counter if activated in plugin settings.

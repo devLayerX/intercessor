@@ -28,7 +28,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Prayed_Counts extends Rows\Prayed_Counts {
     /**
-     * Order ID.
+     * Prayed for ID.
      *
      * @since 1.0.0
      * @var   int
@@ -44,12 +44,12 @@ class Prayed_Counts extends Rows\Prayed_Counts {
     protected $prayed_for = 0;
 
     /**
-     * Order status.
+     * Prayer id.
      *
      * @since 1.0.0
      * @var   int
      */
-    protected $prayer_id;
+    public $prayer_id;
 
     /**
      * Date created.
