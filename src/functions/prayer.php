@@ -558,8 +558,7 @@ if ( ! function_exists( 'intercessor_get_prayer_button' ) ) {
 
 		// Setup praying button.
 		$button  = '<input name="prayer_id" class="prayers-id" value="' . $prayer_id . '" type="hidden"/>';
-		$button .= '<input name="intercessor_action" class="prayers-id" value="count_praying" type="hidden"/>';
-
+		
 		// Verify if prayer already answered.
 		if ( $answered ) {
 			$button .= '<input type="submit" name="intercessor_prayed_updater" disabled="disabled" class="prayed-updater intercessor-submit" value="' . $done . '" />';
@@ -578,101 +577,51 @@ if ( ! function_exists( 'intercessor_get_prayer_button' ) ) {
 /**
  * Process praying for request.
  *
- * @param array $data Array of prayer data.
- *
  * @since 1.0.0
- * @return void
+ * @return bool New prayed count object on success, otherwise false.
  */
 function intercessor_process_praying_for_request() {
-	// Bail if nonce fails.
-	$nonce = isset( $_POST['intercessor_update_prayed_nonce'] )
+	// Get submitted prayer ID.
+	$prayer_id = isset( $_POST['praying_id'] ) ? absint( $_POST['praying_id'] ) : 0;
+	
+	// Process form only if it is submitted.
+	if ( ! empty( $prayer_id ) ) {
+		// Bail if nonce fails.
+		$nonce = isset( $_POST['intercessor_update_prayed_nonce'] )
 		? intercessor_clean( wp_unslash( $_POST['intercessor_update_prayed_nonce'] ) )
 		: '';
-	if ( ! $nonce || ! wp_verify_nonce( $nonce, 'praying_nonce' ) ) {
-		esc_html__( 'Nonce verification failed. Please try again.', 'intercessor' );
-	}
+		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'praying_nonce' ) ) {
+			esc_html_e( 'Nonce verification failed. Please try again.', 'intercessor' );
+		}
 
-	// Process praying for request.
-	$prayer_id = isset( $_POST['prayer_id'] ) ? absint( $_POST['prayer_id'] ) : 0;
-/*	if ( empty( $prayer_id ) ) {
-		$message = esc_html__( 'Praying for request failed', 'intercessor' );
-		intercessor_display_frontend_notice( $message, true, 'error', false );
-	}
-	*/
-	$prayer    = intercessor_process_item( 'prayer', 'get', $prayer_id, false );
-	$counts    = intercessor_date_i18n( time(), 'mysql' );
-
-	/**
-	 * Fires before the prayer request is prayed for.
-	 *
-	 * @since 1.0.0
-	 */
-	do_action( 'intercessor_pre_uplift_prayer', $counts, $prayer_id );
-
-//	if ( $prayer ) {
-		$args = [
-			'prayer_id'    => $prayer_id,
-			'prayed_for'   => 1,
-			'date_created' => $counts,
-		];
-	
-		return intercessor_add_item( 'prayed', $args );
-//	}
-	
-	/**
-	 * Fires after the prayer request is prayed for.
-	 *
-	 * @since 1.0.0
-	 */
-	do_action( 'intercessor_post_uplift_prayer', $counts, $prayer_id, $prayer );
-}
-
-
-/**
- * Retrieve the prayed counts.
- *
- * @since 0.9.5
- *
- * @return int $prayed The prayed count
- */
-function intercessor_update_prayed_counts( $data = [] ) {
-	$nonce = isset( $_POST['intercessor_update_prayed_nonce'] )
-		? intercessor_clean( wp_unslash( $_POST['intercessor_update_prayed_nonce'] ) )
-		: '';
-	// Bail if nonce verification fails.
-	if ( ! isset( $nonce )
-		|| ! wp_verify_nonce( $nonce, 'pray_for_request' )
-	) {
-		$message = esc_html__( 'Nonce verification failed. Please try again.', 'intercessor' );
-		intercessor_display_frontend_notice( $message, true, 'error', false );
-			// Process prayer.
-	} else {
-
-		$prayer_id  = ! empty( $data['prayer_id'] ) ? intval( $data['prayer_id'] ) : 0;
-		$new_counts = intercessor_date_i18n( time(), 'mysql' );
+		// Process praying for request.
+		$prayer = intercessor_process_item( 'prayer', 'get', $prayer_id, false );
+		$counts = intercessor_date_i18n( time(), 'mysql' );
 
 		/**
-		 * Runs before the prayed count is increased.
+		 * Fires before the prayer request is prayed for.
 		 *
-		 * @param int $new_counts The current time, used to count prayed for.
-		 * @param int $prayer_id  The prayer request ID.
-		 *
-		 * @since 0.9.5
+		 * @since 1.0.0
 		 */
-		do_action( 'intercessor_request_pre_increase_prayed_counts', $new_counts, $prayer_id );
+		do_action( 'intercessor_pre_uplift_prayer', $counts, $prayer_id );
 
-		$prayed = intercessor_add_item( 'prayer', $prayer_id, 'prayed_counts', $new_counts, false );
+		// If prayer exists, add prayed counts.
+		if ( $prayer ) {
+			$args = [
+				'prayer_id'    => $prayer_id,
+				'prayed_for'   => 1,
+				'date_created' => $counts,
+			];
+
+			return intercessor_add_item( 'prayed', $args );
+		}
 
 		/**
-		 * Runs after the prayed count has been increased.
+		 * Fires after the prayer request is prayed for.
 		 *
-		 * @param int $prayed The prayed count.
-		 *
-		 * @since 0.9.5
+		 * @since 1.0.0
 		 */
-		do_action( 'intercessor_prayer_post_increase_prayed_counts', $prayed );
-
-		return $prayed;
+		do_action( 'intercessor_post_uplift_prayer', $counts, $prayer_id, $prayer );
 	}
 }
 
