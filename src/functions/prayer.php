@@ -657,7 +657,7 @@ if ( ! function_exists( 'intercessor_get_prayed_requests' ) ) {
 	 *
 	 * @return int Number of times prayer request has been prayed for.
 	 */
-	function intercessor_get_prayed_requests( $prayer_id = 0 ) {
+	function intercessor_get_prayed_requests(int $prayer_id = 0 ) : int {
 		$prayed       = intercessor_get_item_meta( 'prayer', $prayer_id, 'prayed_counts', false );
 		$prayed_counts = esc_html__( '0', 'intercessor' );
 		if ( $prayed ) {

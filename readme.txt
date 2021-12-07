@@ -3,39 +3,41 @@ Contributors: user
 Tags: tag, tag, tag
 Donate link: http://github.com/victoraigbeghian/
 Requires at least: 5.0
-Tested up to: 5.4
+Tested up to: 5.8.2
 Requires PHP: 7.0
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Short description of this great plugin. No more than 150 characters, no markup.
+Intercessor is a WordPress prayer request management plugin that enables you receive, review and publish prayer requests
+effectively on WordPress.
 
 == Description ==
-Long description of this great plugin. No characters limit, and you can use markdown.
+Manage prayer request submission, requesters (those who submit prayer) and prayed counts with Intercessor. Structured options panel to effectively
+configure the plugin to suit your ministry needs. When installed, the plugin creates 3 pages for prayer submission,
+history and to display the published public prayer requests. Prayers can be exported as CSV, e.g. when migrating your
+site, and can also be imported to another site. Also equipped with captcha and Google ReCaptcha for spam control on the
+submission form.
 
 For backwards compatibility, if this section is missing, the full length of the short description will be used, and
 markdown parsed.
 
-Ordered list:
+More features:
 
-1. Some feature
-1. Another feature
-1. Something else about the plugin
+1. Effective requester management section.
+2. Extensive reports section.
+3. Prayer history page which stores each requester's prayer requests. Users need to be logged in to your site to view
+the prayer list page.
 
-Unordered list:
+Prayer requests:
 
-* something
-* something else
-* third thing
+* Set initial submitted prayer status to "pending." This helps you review the request before approving it.
+* Send prayed for counts to users who want to be informed when they are prayed for. You can specify if they should be
+informed daily, weekly or monthly.
+* You can decide to archive prayer requests after a certain period of time, e.g. 3 months, 1 year, etc.
 
 Link to [WordPress](http://wordpress.org/ "Your favorite software") and one to [Markdown's Syntax Documentation][markdown syntax].
 
-Titles are optional, naturally.
-
-Asterisks for *emphasis*.
-
-Double it up  for **strong**.
 
 == Installation ==
 
@@ -53,9 +55,8 @@ In the search field type "Intercessor", then click "Search Plugins" Once you've 
 
 = Manual installation =
 
-1. Upload "test-plugin.php" to the "/wp-content/plugins/" directory.
-1. Activate the plugin through the "Plugins" menu in WordPress.
-1. Place "do_action( 'plugin_name_hook' );" in your templates.
+1. Upload "intercessor" to the "/wp-content/plugins/" directory.
+2. Activate the plugin through the "Plugins" menu in WordPress.
 
 == Frequently Asked Questions ==
 = A question that someone might have =
@@ -70,16 +71,17 @@ Answer to foo bar dilemma.
 3. The screenshot description corresponds to screenshot-3.(png|jpg|jpeg|gif).
 
 == Changelog ==
-= 0.2 =
-* A change since the previous version.
-* Another change.
+= 1.0.0 =
+* First release.
 
-= 0.1 =
-* Initial release.
+= 1.1.0 =
+* First upgrade
 
 == Upgrade Notice ==
-= 0.2 =
-Upgrade notices describe the reason a user should upgrade
+= 1.1.0 =
+Upgraded prayed counts to a new database to allow for effective management of cron Email to requesters to inform them
+of their prayed counts. Deletes prayed counts from prayer meta database. Updated Email tab on plugin settings page to
+allow for email templates.
 
 = 0.1 =
-This version fixes a security related bug. Upgrade immediately.
+This version fixes usability issues with the plugin, upgrade immediately.

@@ -12,6 +12,7 @@
 
 namespace Intercessor\Admin;
 
+use Intercessor\Requester;
 use function intercessor_get_db_version;
 
 // Exit if accessed directly.
@@ -267,7 +268,7 @@ class Upgrades {
 	public function process() {
 
 		// Bail if not admin or is doing ajax.
-		if ( ! is_admin() || \wp_doing_ajax() ) {
+		if ( ! \is_admin() || \wp_doing_ajax() ) {
 			return;
 		}
 
@@ -344,7 +345,7 @@ class Upgrades {
 			    $prayer_id = $prayer->id;
 			    $counts    = \intercessor_get_prayed_requests( $prayer_id );
 
-			    // TODO choose counts by ID grouping.
+			    // Process prayed counts.
 			    if ( $counts ) {
 				    $data   = [
 					    'prayer_id'    => $prayer_id,
@@ -353,8 +354,35 @@ class Upgrades {
 				    ];
 
 				    // Migrate prayed counts from meta table to new prayed counts table.
-				    return \intercessor_add_item( 'prayed', $data );
+				    $added = \intercessor_add_item( 'prayed', $data );
+
+                    // Delete prayed counts from prayer meta if updated.
+                    if ( $added ) {
+                        $new_counts = \intercessor_get_prayed_for_counts( $prayer_id );
+
+                        // Remove old counts from prayer meta database.
+                        if ( $new_counts === $counts ) {
+                            \intercessor_delete_item_meta( 'prayer', $prayer_id, 'prayed_counts', '', true );
+                        }
+                    }
 			    }
+
+                // Check requester prayer count tallies with database count.
+                $email        = intercessor_get_prayer_email( $prayer_id );
+                $requester    = new Requester( $email, false );
+                $data_count   = $requester->prayer_count;
+                $prayer_count = intercessor_count_prayers_of_requester( $email );
+
+                // Check if database count is the same as the real requester prayer count.
+                if ( $prayer_count !== $data_count ) {
+                    // Setup prayer count to update.
+                    $update_args = [
+                        'prayer_count' => $prayer_count,
+                    ];
+
+                    // Update database prayer count.
+                    $requester->update( $update_args );
+                }
 		    }
 	    }
 
