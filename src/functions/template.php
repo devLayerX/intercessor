@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
  * @return string
  */
 function intercessor_get_templates_dir() {
-    return INTERCESSOR_DIR . 'templates';
+    return INTERCESSOR_DIR . '/templates';
 }
 
 /**
@@ -30,7 +30,7 @@ function intercessor_get_templates_dir() {
  * @return string
  */
 function intercessor_get_templates_url() {
-    return INTERCESSOR_URL . 'templates';
+    return INTERCESSOR_URL . '/templates';
 }
 
 /**
@@ -193,12 +193,6 @@ function intercessor_locate_template( $template_names, $load = false, $require_o
 /**
  * Locate a template and return the path for inclusion.
  *
- * This is the load order:
- *
- *        yourtheme        /    $template_path    /    $template_name
- *        yourtheme        /    $template_name
- *        $default_path    /    $template_name
- *
  * @since  1.0.0
  * @access public
  *
@@ -214,7 +208,7 @@ function intercessor_get_locate_template( $template_name, $template_path = '', $
     }
 
     if ( ! $default_path ) {
-        $default_path = INTERCESSOR_DIR . 'templates/';
+        $default_path = INTERCESSOR_DIR . '/templates/';
     }
 
     // Look within passed path within the theme - this is priority.

@@ -46,6 +46,14 @@ class Upgrades {
 		add_action( 'admin_notices', [ $this, 'notices' ] );
 	}
 
+    /**
+     * Output upgrade screen
+     *
+     * @since 1.0.0
+     * @access public
+     *
+     * @return void
+     */
 	public function screen() {
 		// Setup actions and limits.
 		$action = isset( $_GET['intercessor-upgrade'] ) ? sanitize_key( $_GET['intercessor-upgrade'] ) : '';
@@ -284,7 +292,8 @@ class Upgrades {
 
 		// Sanitize the step.
 		$step = $this->current_upgrade();
-		$func = "Intercessor\\Admin\\Upgrades\\do_{$step}";
+		//$func = "Intercessor\\Admin\\Upgrades\\do_{$step}";
+        $func = $this->do_ . "$step";
 
 		// Process the step.
 		if ( function_exists( $func ) ) {
@@ -368,10 +377,10 @@ class Upgrades {
 			    }
 
                 // Check requester prayer count tallies with database count.
-                $email        = intercessor_get_prayer_email( $prayer_id );
+                $email        = \intercessor_get_prayer_email( $prayer_id );
                 $requester    = new Requester( $email, false );
                 $data_count   = $requester->prayer_count;
-                $prayer_count = intercessor_count_prayers_of_requester( $email );
+                $prayer_count = \intercessor_count_prayers_of_requester( $email );
 
                 // Check if database count is the same as the real requester prayer count.
                 if ( $prayer_count !== $data_count ) {
@@ -384,9 +393,9 @@ class Upgrades {
                     $requester->update( $update_args );
                 }
 		    }
-	    }
 
-	    // Upgrade has happened.
-	    $this->upgraded = true;
+            // Upgrade has happened.
+            $this->upgraded = true;
+	    }
     }
 }

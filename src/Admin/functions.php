@@ -123,6 +123,7 @@ function intercessor_get_admin_url( string $type = '', array $query = [] ) {
         'tools',
         'settings',
         'reports',
+        'upgrades',
 	);
 
 	if ( in_array( $type, $known, true ) ) {
@@ -202,9 +203,9 @@ if ( ! function_exists( 'intercessor_admin_get_note_html' ) ) {
 
 		// User who created the note.
 		$user_id = $note->user_id;
-		$author = !empty($user_id)
-			? get_userdata($user_id)->display_name
-			: __('Intercessor Bot', 'intercessor');
+		$author = !empty( $user_id )
+			? get_userdata( $user_id )->display_name
+			: esc_html__( 'Intercessor Bot', 'intercessor');
 
 		// URL to delete note
 		$delete_note_url = wp_nonce_url(add_query_arg(array(
@@ -421,7 +422,7 @@ add_action( 'wp_ajax_intercessor_add_note', 'intercessor_admin_ajax_add_note' );
  *
  * @param array $data Data from $_GET.
  */
-function intercessor_admin_delete_note( $data = [] ) {
+function intercessor_admin_delete_note( array $data = [] ) {
 
 	// Bail if missing any data.
 	if ( empty( $data['_wpnonce'] ) || empty( $data['note_id'] ) ) {
@@ -441,7 +442,7 @@ function intercessor_admin_delete_note( $data = [] ) {
 add_action( 'intercessor_delete_note', 'intercessor_admin_delete_note' );
 
 /**
- * Delete a discount note via AJAX.
+ * Delete a note via AJAX.
  *
  * @since 0.9.5
  */
@@ -492,5 +493,51 @@ if ( ! function_exists( 'intercessor_get_admin_base_url' ) ) {
 
         // Filter and return base url.
         return apply_filters( 'intercessor_get_admin_base_url', $base, $defaults, $admin_url );
+    }
+}
+
+if ( ! function_exists( 'intercessor_has_upgrade' ) ) {
+	/**
+	 * Checks if plugin has upgrade.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return bool
+	 */
+	function intercessor_has_upgrade(): bool {
+		$version = intercessor_get_db_version();
+		$current = intercessor_format_db_version( INTERCESSOR_VERSION );
+
+		// Bail if no new version.
+		if ( version_compare( $current, $version, '>' ) ) {
+			return true;
+		}
+
+		return false;
+	}
+}
+
+if ( ! function_exists( 'intercessor_get_view' ) ) {
+    /**
+     * Get admin page views.
+     *
+     * @param string $path File path.
+     * @param array  $args Array of arguments to parse with query.
+     *
+     * @return void
+     * @since 1.1.0
+     */
+    function intercessor_get_view( string $path = '', array $args = [] ) {
+        // Allow file view.
+        if ( substr( $path, -4 ) !== '.php' ) {
+            $path = intercessor_get_path( "src/Admin/views/{$path}.php" );
+        }
+
+        // Include the file
+        if ( file_exists( $path ) ) {
+            // Protect the path with `EXTR_SKIP`.
+            extract( $args, EXTR_SKIP );
+            include $path;
+        }
     }
 }

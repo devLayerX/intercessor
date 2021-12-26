@@ -1,58 +1,62 @@
 <?php
 /**
- * 3.0 Data Migration - Customer Addresses.
+ * Intercessor Requesters Upgrade
  *
- * @subpackage  Admin/Upgrades/v3
- * @copyright   Copyright (c) 2018, Easy Digital Downloads, LLC
- * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
- * @since       3.0
+ * @subpackage  Admin/Upgrades/Requesters
+ * @copyright   Copyright (c) 2021, Victor Aigbeghian
+ * @license     http://opensource.org/licenses/gpl-3.0.php GNU Public License
+ * @since       1.0.0
  */
-namespace EDD\Admin\Upgrades\v3;
 
-// Exit if accessed directly
+namespace Intercessor\Admin\Upgrades;
+
+// Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Customer_Addresses Class.
+ * Requesters Class.
  *
- * @since 3.0
+ * @since 1.1.0
  */
-class Customer_Addresses extends Base {
+class Requesters extends Base {
 
 	/**
 	 * Constructor.
 	 *
 	 * @param int $step Step.
+     *
+     * @since 1.1.0
+     * @access public
 	 */
 	public function __construct( $step = 1 ) {
 		parent::__construct( $step );
 
-		$this->completed_message = __( 'Customer addresses migration completed successfully.', 'easy-digital-downloads' );
-		$this->upgrade           = 'migrate_customer_addresses';
+		$this->completed_message = esc_html__( 'Requester database update completed successfully.', 'intercessor' );
+		$this->upgrade           = 'requesters';
 	}
 
 	/**
 	 * Retrieve the data pertaining to the current step and migrate as necessary.
 	 *
-	 * @since 3.0
+	 * @since 1.1.0
 	 *
 	 * @return bool True if data was migrated, false otherwise.
 	 */
-	public function get_data() {
+	public function get_data() : bool {
 		$offset = ( $this->step - 1 ) * $this->per_step;
 
 		$results = $this->get_db()->get_results( $this->get_db()->prepare(
 			"SELECT *
-			 FROM {$this->get_db()->usermeta}
-			 WHERE meta_key = %s
-			 ORDER BY umeta_id ASC
+			 FROM {$this->get_db()->ipr_requesters}
+			 WHERE status = %s
+			 ORDER BY requester_id ASC
 			 LIMIT %d, %d",
-			esc_sql( '_edd_user_address' ), $offset, $this->per_step
+			esc_sql( 'active' ), $offset, $this->per_step
 		) );
 
 		if ( ! empty( $results ) ) {
 			foreach ( $results as $result ) {
-				Data_Migrator::customer_addresses( $result );
+				Migrator::requesters( $result );
 			}
 
 			return true;
@@ -64,12 +68,12 @@ class Customer_Addresses extends Base {
 	/**
 	 * Calculate the percentage completed.
 	 *
-	 * @since 3.0
+	 * @since 1.1.0
 	 *
 	 * @return float Percentage.
 	 */
 	public function get_percentage_complete() {
-		$total = $this->get_db()->get_var( $this->get_db()->prepare( "SELECT COUNT(umeta_id) AS count FROM {$this->get_db()->usermeta} WHERE meta_key = %s", esc_sql( '_edd_user_address' ) ) );
+		$total = $this->get_db()->get_var( $this->get_db()->prepare( "SELECT COUNT(requester_id) AS count FROM {$this->get_db()->ipr_requesters} WHERE status = %s", esc_sql( 'active' ) ) );
 
 		if ( empty( $total ) ) {
 			$total = 0;
@@ -83,22 +87,6 @@ class Customer_Addresses extends Base {
 
 		if ( $percentage > 100 ) {
 			$percentage = 100;
-		}
-
-		if ( 100 === $percentage ) {
-			// Now update the most recent billing address entries for customers as the primary address.
-			$sql = "
-				UPDATE {$this->get_db()->edd_customer_addresses} ca
-				SET ca.is_primary = 1
-				WHERE ca.id IN (
-					SELECT MAX(ca2.id)
-					FROM ( SELECT * FROM {$this->get_db()->edd_customer_addresses} ) ca2
-					WHERE ca2.type = 'billing'
-					GROUP BY ca2.customer_id
-				)
-			";
-
-			@$this->get_db()->query( $sql );
 		}
 
 		return $percentage;

@@ -34,6 +34,7 @@ class ComposerStaticInit886686ade4a0cc5f41ff5737f157e7b5
         'f3454040c1f87b02425f2a1ba591fdce' => __DIR__ . '/../..' . '/src/Admin/Tools/Export/functions.php',
         '356deb61ffa7d06ca4ab775389bf40a2' => __DIR__ . '/../..' . '/src/Admin/Tools/Import/functions.php',
         '7de5e8ce67ec32d1f95eae452f36bbd0' => __DIR__ . '/../..' . '/src/Admin/Reports/reports.php',
+        '0741fb7d1759581dbec6fc3fb475ee23' => __DIR__ . '/../..' . '/src/Admin/Upgrades/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (

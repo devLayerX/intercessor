@@ -264,12 +264,15 @@ function intercessor_load_admin_scripts_styles( $hook ) {
 		)
 	);
 
-	// Register import and export scripts and styles.
-	wp_register_script( 'intercessor-export', $js_dir . 'admin/export' . $suffix . '.js', 'jquery', $version, false );
-	wp_register_script( 'intercessor-import', $js_dir . 'admin/import' . $suffix . '.js', 'jquery', $version, false );
-	wp_register_script( 'intercessor-settings', $js_dir . 'admin/settings' . $suffix . '.js', 'jquery', $version, false );
+	// Register necessary admin scripts and styles.
+	wp_register_script( 'intercessor-export', $js_dir . 'admin/export/index' . $suffix . '.js', 'jquery', $version, false );
+	wp_register_script( 'intercessor-import', $js_dir . 'admin/import/index' . $suffix . '.js', 'jquery', $version, false );
+	wp_register_script( 'intercessor-settings', $js_dir . 'admin/settings/index' . $suffix . '.js', 'jquery', $version, false );
+    wp_register_script( 'intercessor-upgrades', $js_dir . 'admin/upgrades/index' . $suffix . '.js', 'jquery', $version, false );
 
-	// Individual admin pages.
+
+
+    // Individual admin pages.
 	$admin_pages = array(
 		'requesters' => array(
 			'intercessor-admin-export',

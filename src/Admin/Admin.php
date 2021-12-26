@@ -12,6 +12,7 @@
 namespace Intercessor\Admin;
 
 use Intercessor\Admin\Settings;
+use function add_submenu_page;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -39,11 +40,12 @@ class Admin {
      */
     private function __construct() {
         $plugin_basename = plugin_basename( plugin_dir_path( realpath( dirname( dirname( __FILE__ ) ) ) ) . 'intercessor.php' );
-        add_filter( 'plugin_action_links_' . $plugin_basename, array( $this, 'add_action_links' ) );
+        add_filter( 'plugin_action_links_' . $plugin_basename, [ $this, 'add_action_links' ] );
 
-		add_filter( 'plugin_row_meta', array( $this, 'row_meta' ), 10, 4 );
+		add_filter( 'plugin_row_meta', [ $this, 'row_meta' ], 10, 4 );
 
         add_action( 'admin_menu', [ $this, 'menu' ] );
+        add_action( 'admin_menu', [ $this, 'upgrades_menu'] );
     }
 
 	/**
@@ -72,7 +74,7 @@ class Admin {
 	 */
 	public function menu() {
 		global  $intercessor_prayers_page, $intercessor_settings_page, $intercessor_requesters_page,
-		        $intercessor_tools_page, $intercessor_reports_page, $intercessor_upgrades_page;
+		        $intercessor_tools_page, $intercessor_reports_page;
 
         // Bail if user is unauthorized.
         if ( ! current_user_can( 'edit_posts' ) || wp_doing_ajax() ) {
@@ -135,30 +137,18 @@ class Admin {
 		add_action( 'load-' . $intercessor_prayers_page, 'intercessor_add_prayers_screen_options' );
 		add_action( 'load-' . $intercessor_prayers_page, 'intercessor_prayers_contextual_help' );
 		add_action( 'load-' . $intercessor_settings_page, [ $settings_page, 'sidebar' ] );
-
-		// Activate update class.
-		$upgrades = new Upgrades();
-
-		// Add upgrades sub menu.
-		$intercessor_upgrades_page = add_submenu_page(
-			null,
-			esc_html__( 'Intercessor Upgrades', 'intercessor' ),
-			esc_html__( 'Intercessor Upgrades', 'intercessor' ),
-			'manage_prayer_settings',
-			'intercessor-upgrades',
-			[ $upgrades, 'screen' ]
-		);
     }
 
     /**
 	 * Add settings action link to the plugins page.
 	 *
-	 * @param string $links Links.
+	 * @param array $links Links.
 	 *
-	 * @since  0.9.5
 	 * @return array
+	 *@since  0.9.5
 	 */
-    public function add_action_links( $links ) {
+    public function add_action_links( array $links ): array
+    {
         return array_merge(
             array(
                 'settings' => '<a href="' . admin_url( 'admin.php?page=intercessor-settings' ) . '">' . esc_html__( 'Settings', 'intercessor' ) . '</a>',
@@ -175,10 +165,11 @@ class Admin {
 	 * @param array  $plugin_data Array of plugin data.
 	 * @param string $status      Status, default 'all'.
 	 *
-	 * @since 1.0.0
 	 * @return array
+	 *@since 1.0.0
 	 */
-	public function row_meta( $plugin_meta, $plugin_file, $plugin_data, $status ) {
+	public function row_meta( array $plugin_meta, string $plugin_file, array $plugin_data, string $status ): array
+    {
 
 		if ( INTERCESSOR_BASENAME !== $plugin_file ) {
 			return $plugin_meta;
@@ -189,5 +180,19 @@ class Admin {
 		];
 
 		return array_merge( $plugin_meta, $new_meta );
+    }
+
+    public function upgrades_menu() {
+        global $intercessor_upgrades_page;
+
+        // Add upgrades sub menu.
+        $intercessor_upgrades_page = add_submenu_page(
+            null,
+            esc_html__( 'Intercessor Upgrades', 'intercessor' ),
+            esc_html__( 'Intercessor Upgrades', 'intercessor' ),
+            'manage_prayer_settings',
+            'intercessor-upgrades',
+            'intercessor_upgrades_screen'
+        );
     }
 }

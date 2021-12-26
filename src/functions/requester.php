@@ -39,7 +39,7 @@ if ( ! function_exists( 'intercessor_get_requester_by' ) ) {
 	 *
 	 * @uses  \intercessor_get_item_by()
 	 */
-	function intercessor_get_requester_by( $field = '', $value = '' ) {
+	function intercessor_get_requester_by( string $field = '', string $value = '' ) {
 		// Return requester.
 		return intercessor_get_item_by( 'requester', $field, $value );
 	}
@@ -55,14 +55,14 @@ if ( ! function_exists( 'intercessor_get_requester_by' ) ) {
  * @param       mixed $user - ID or email
  * @return      int - the total number of prayers
  */
-function intercessor_count_prayers_of_requester( $user = null ) {
+function intercessor_count_prayers_of_requester( $user = null ) : int {
 	if ( empty( $user ) ) {
 		$user = get_current_user_id();
 	}
 
 	$stats = ! empty( $user ) ? intercessor_get_prayer_stats_by_user( $user ) : false;
 
-	return isset( $stats['prayers'] ) ? $stats['prayers'] : 0;
+	return $stats['prayers'] ?? 0;
 }
 
 if ( ! function_exists( 'intercessor_get_prayer_requester_id' ) ) {
@@ -71,10 +71,11 @@ if ( ! function_exists( 'intercessor_get_prayer_requester_id' ) ) {
 	 *
 	 * @param int $prayer_id Prayer ID
 	 *
-	 * @return string $requester_id Requester ID
+	 * @return int $requester_id Requester ID
 	 * @since 0.9.5
 	 */
-	function intercessor_get_prayer_requester_id( $prayer_id = null ) {
+	function intercessor_get_prayer_requester_id( int $prayer_id = null ): int
+    {
 		$prayer = intercessor_process_item( 'prayer', 'get', $prayer_id, false );
 		return $prayer->requester_id;
 	}
@@ -91,7 +92,7 @@ if ( ! function_exists( 'intercessor_get_prayer_requester_id' ) ) {
  * @return void
  * @since   0.9.5
  */
-function intercessor_update_requester_email_on_user_update( $user_id, $old_user_data ) {
+function intercessor_update_requester_email_on_user_update(int $user_id, WP_User $old_user_data ) {
 	$user = get_userdata( $user_id );
 
 	// Bail if the email address didn't actually change just now.
@@ -156,8 +157,8 @@ if ( ! function_exists( 'intercessor_get_requester_prayers' ) ) {
 	/**
 	 * Get prayer or prayer counts of requester.
 	 *
-	 * @param int $requester_id Requester ID.
-	 * @param bool $counts Whether to retrieve prayer counts.
+	 * @param int  $requester_id Requester ID.
+	 * @param bool $counts       Whether to retrieve prayer counts.
 	 *
 	 * @since 1.1.0
 	 * 

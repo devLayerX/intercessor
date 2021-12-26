@@ -33,4 +33,5 @@ return array(
     'f3454040c1f87b02425f2a1ba591fdce' => $baseDir . '/src/Admin/Tools/Export/functions.php',
     '356deb61ffa7d06ca4ab775389bf40a2' => $baseDir . '/src/Admin/Tools/Import/functions.php',
     '7de5e8ce67ec32d1f95eae452f36bbd0' => $baseDir . '/src/Admin/Reports/reports.php',
+    '0741fb7d1759581dbec6fc3fb475ee23' => $baseDir . '/src/Admin/Upgrades/functions.php',
 );

@@ -495,6 +495,7 @@ if ( ! function_exists( 'intercessor_get_pages' ) ) {
 		return $pages_options;
 	}
 }
+
 if ( ! function_exists( 'intercessor_sanitize_html_class' ) ) {
 	/**
 	 * Sanitize HTML Class Names
@@ -544,10 +545,11 @@ if ( ! function_exists( 'intercessor_sanitize_textarea' ) ) {
 	 *
 	 * @return string
 	 */
-	function intercessor_sanitize_textarea( $var ) {
+	function intercessor_sanitize_textarea(string $var ): string {
 		return implode( "\n", array_map( 'intercessor_clean', explode( "\n", $var ) ) );
 	}
 }
+
 if ( ! function_exists( 'intercessor_get_date_format' ) ) {
 	/**
 	 * Intercessor get date format.
@@ -557,7 +559,7 @@ if ( ! function_exists( 'intercessor_get_date_format' ) ) {
 	 * @since 1.0.0
 	 * @return mixed|string|void
 	 */
-	function intercessor_get_date_format( $format = 'date' ) {
+	function intercessor_get_date_format( string $format = 'date' ) {
 
 		// Default to 'date' if empty.
 		if ( empty( $format ) ) {
@@ -813,23 +815,6 @@ if ( ! function_exists( 'intercessor_is_valid_simple_captcha_response' ) ) {
 		}
 
 		return $is_valid;
-	}
-}
-
-if ( ! function_exists( 'intercessor_is_debug_mode' ) ) {
-
-	/**
-	 * Checks if it is Debug Mode
-	 *
-	 * @since 0.9.5
-	 * @return bool $debug True if debug mode is enabled, false otherwise
-	 */
-	function intercessor_is_debug_mode() {
-		$debug = intercessor_get_option( 'debug_mode', false );
-		if ( defined( 'INTERCESSOR_DEBUG_MODE' ) && INTERCESSOR_DEBUG_MODE ) {
-			$debug = true;
-		}
-		return (bool) apply_filters( 'intercessor_is_debug_mode', $debug );
 	}
 }
 
@@ -1549,4 +1534,18 @@ if ( ! function_exists( 'intercessor_set_time_limit' ) ) {
 		// Attempt to raise the memory limit. See: intercessor_set_batch_memory_limit()
 		wp_raise_memory_limit( 'intercessor_batch' );
 	}
+}
+
+if ( ! function_exists( '' ) ) {
+    /**
+     * Get Intercessor directory path.
+     *
+     * @param string $filename The specified file.
+     *
+     * @return string
+     * @since 1.0.0
+     */
+    function intercessor_get_path( string $filename = '' ): string {
+        return INTERCESSOR_DIR . ltrim( $filename, '/' );
+    }
 }
