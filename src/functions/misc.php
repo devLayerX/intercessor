@@ -1550,3 +1550,17 @@ if ( ! function_exists( 'intercessor_set_time_limit' ) ) {
 		wp_raise_memory_limit( 'intercessor_batch' );
 	}
 }
+
+if ( ! function_exists( '' ) ) {
+	/**
+	 * Get Intercessor directory path.
+	 *
+	 * @param string $filename The specified file.
+	 *
+	 * @return string
+	 * @since 1.0.0
+	 */
+	function intercessor_get_path( string $filename = '' ): string {
+		return INTERCESSOR_DIR . ltrim( $filename, '/' );
+	}
+}
