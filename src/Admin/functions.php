@@ -494,3 +494,49 @@ if ( ! function_exists( 'intercessor_get_admin_base_url' ) ) {
         return apply_filters( 'intercessor_get_admin_base_url', $base, $defaults, $admin_url );
     }
 }
+
+if ( ! function_exists( 'intercessor_has_upgrade' ) ) {
+	/**
+	 * Checks if plugin has upgrade.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return bool
+	 */
+	function intercessor_has_upgrade(): bool {
+		$version = intercessor_get_db_version();
+		$current = intercessor_format_db_version( INTERCESSOR_VERSION );
+
+		// Bail if no new version.
+		if ( version_compare( $current, $version, '>' ) ) {
+			return true;
+		}
+
+		return false;
+	}
+}
+
+if ( ! function_exists( 'intercessor_get_view' ) ) {
+    /**
+     * Get admin page views.
+     *
+     * @param string $path File path.
+     * @param array  $args Array of arguments to parse with query.
+     *
+     * @return void
+     * @since 1.1.0
+     */
+    function intercessor_get_view( string $path = '', array $args = [] ) {
+        // Allow file view.
+        if ( substr( $path, -4 ) !== '.php' ) {
+            $path = intercessor_get_path( "src/Admin/views/{$path}.php" );
+        }
+
+        // Include the file
+        if ( file_exists( $path ) ) {
+            // Protect the path with `EXTR_SKIP`.
+            extract( $args, EXTR_SKIP );
+            include $path;
+        }
+    }
+}
