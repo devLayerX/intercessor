@@ -121,8 +121,8 @@ class Base extends Batch {
     {
         if ( ! $this->can_export() ) {
             wp_die(
-                esc_html__( 'You do not have permission to run this upgrade.', 'easy-digital-downloads' ),
-                esc_html__( 'Error', 'easy-digital-downloads' ),
+                esc_html__( 'You do not have permission to run this upgrade.', 'intercessor' ),
+                esc_html__( 'Error', 'intercessor' ),
                 array(
                     'response' => 403,
                 )
@@ -134,12 +134,12 @@ class Base extends Batch {
         if ( $had_data ) {
             $this->done = false;
             // Save the *next* step to do.
-            update_option( sprintf( 'intercessor_v3_migration_%s_step', sanitize_key( $this->upgrade ) ), $this->step + 1 );
+            \update_option( sprintf( 'intercessor_v3_migration_%s_step', sanitize_key( $this->upgrade ) ), $this->step + 1 );
             return true;
         } else {
             $this->done    = true;
             $this->message = $this->completed_message;
-            intercessor_set_upgrade_complete( $this->upgrade );
+            \intercessor_set_upgrade_complete( $this->upgrade );
             delete_option( sprintf( 'intercessor_v3_migration_%s_step', sanitize_key( $this->upgrade ) ) );
             return false;
         }
