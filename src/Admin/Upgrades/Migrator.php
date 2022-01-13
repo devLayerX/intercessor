@@ -72,7 +72,7 @@ class Migrator {
         // Set up variables.
         $requester_id = absint( $data->requester_id );
         $old_counts   = absint( $data->prayer_count );
-        $prayer_count = intercessor_get_requester_prayers( $requester_id, true );
+        $prayer_count = \intercessor_get_requester_prayers( $requester_id, true );
 
         // Update prayer count if database varies from actual count.
         if ( $old_counts !== $prayer_count ) {

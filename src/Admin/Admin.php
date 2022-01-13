@@ -146,7 +146,7 @@ class Admin {
 			esc_html__( 'Intercessor Upgrades', 'intercessor' ),
 			'manage_prayer_settings',
 			'intercessor-upgrades',
-			[ $upgrades, 'screen' ]
+			'intercessor_upgrades_screen'
 		);
     }
 

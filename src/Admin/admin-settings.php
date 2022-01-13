@@ -20,14 +20,12 @@ defined( 'ABSPATH' ) || exit;
  * @return array $tabs Settings tabs.
  */
 function intercessor_setup_settings_tabs( $tabs ) {
-	$tabs = [
+	return [
         'general'  => esc_html__( 'General', 'intercessor' ),
         'frontend' => esc_html__( 'Frontend', 'intercessor' ),
         'emails'   => esc_html__( 'Emails', 'intercessor' ),
         'styles'   => esc_html__( 'Styles', 'intercessor' ),
 	];
-
-	return $tabs;
 }
 add_filter( 'intercessor_settings_tabs', 'intercessor_setup_settings_tabs' );
 
@@ -40,7 +38,7 @@ add_filter( 'intercessor_settings_tabs', 'intercessor_setup_settings_tabs' );
  * @return array $sections Plugin settings sections
  */
 function intercessor_setup_settings_sections( $sections ) {
-	$sections = [
+	return [
 		'general' => apply_filters(
 			'intercessor_settings_sections_general',
 			[
@@ -74,8 +72,6 @@ function intercessor_setup_settings_sections( $sections ) {
 			]
 		),
 	];
-
-	return $sections;
 }
 add_filter( 'intercessor_main_sections', 'intercessor_setup_settings_sections' );
 
@@ -83,11 +79,12 @@ add_filter( 'intercessor_main_sections', 'intercessor_setup_settings_sections' )
  * Add all settings sections and fields
  *
  * @param array $settings Settings fields.
+ *
 
- * @since 1.0.0
  * @return array
+ *@since 1.0.0
  */
-function intercessor_plugin_settings_fields( $settings ) {
+function intercessor_plugin_settings_fields( array $settings ): array {
 	$intercessor_settings = array(
 		/** General Settings */
 		'general' => apply_filters(

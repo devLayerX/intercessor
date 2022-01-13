@@ -43,17 +43,17 @@ class Loader {
      * Session
      *
      * @since 1.0.0
-     * @var Session
+     * @var object|Session
      */
-    private $session;
+    public $session;
 
     /**
      * HTML template helper class.
      *
      * @since 1.0.0
-     * @var Html
+     * @var object|Html
      */
-    private $html;
+    public $html;
     
 	/**
 	 * The Intercessor Roles Object.
@@ -270,6 +270,11 @@ class Loader {
         $this->cron    = new Cron();
         $this->reports = new Reports();
         new Shortcodes();
+
+	    // CLI.
+	    if ( defined( 'WP_CLI' ) && WP_CLI ) {
+		    new CLI();
+	    }
     }
 
     /**

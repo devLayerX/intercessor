@@ -44,13 +44,14 @@
             "src/Admin/Tools/tools.php",
             "src/Admin/Tools/Export/functions.php",
             "src/Admin/Tools/Import/functions.php",
-            "src/Admin/Reports/reports.php"
+            "src/Admin/Reports/reports.php",
+            "src/Admin/Upgrades/functions.php"
         ]
     },
     "config": {
         "vendor-dir": "vendor/"
     },
     "require": {
-        "php": "^7.0"
+        "php": ">=7.0"
     }
 }
