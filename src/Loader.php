@@ -221,7 +221,7 @@ class Loader {
      * @since 1.1.0
      * @access public
      */
-    public function setup_tables() {
+    public function setup_tables() : array {
         $this->tables = [
             'requesters'     => new Database\Tables\Requesters(),
             'requester_meta' => new Database\Tables\Requester_Meta(),
@@ -306,7 +306,7 @@ class Loader {
 
 		// Plugin Folder Path.
 		if ( ! defined( 'INTERCESSOR_DIR' ) ) {
-			define( 'INTERCESSOR_DIR', dirname( INTERCESSOR_FILE ) . '/' );
+            define( 'INTERCESSOR_DIR', plugin_dir_path( INTERCESSOR_FILE ) );
 		}
 
 		// Plugin Folder URL.
@@ -319,9 +319,5 @@ class Loader {
 			define( 'INTERCESSOR_BASENAME', plugin_basename( INTERCESSOR_FILE ) );
 		}
 
-        // Plugin Basename.
-        if ( ! defined( 'INTERCESSOR_DEBUG_MODE' ) ) {
-            define( 'INTERCESSOR_DEBUG_MODE', plugin_basename( INTERCESSOR_FILE ) );
-        }
     }
 }

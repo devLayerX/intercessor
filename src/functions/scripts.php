@@ -258,7 +258,9 @@ function intercessor_load_admin_scripts_styles( $hook ) {
 	wp_register_script( 'intercessor-settings', $js_dir . 'admin/settings/index' . $suffix . '.js', 'jquery', $version, false );
 	wp_register_script( 'intercessor-reports', $js_dir . 'admin/reports/index' . $suffix . '.js', 'jquery', $version, false );
 
-	// Individual admin pages.
+
+
+    // Individual admin pages.
 	$admin_pages = array(
 		'requesters' => array(
 			'intercessor-admin-export',

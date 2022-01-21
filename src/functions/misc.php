@@ -495,6 +495,7 @@ if ( ! function_exists( 'intercessor_get_pages' ) ) {
 		return $pages_options;
 	}
 }
+
 if ( ! function_exists( 'intercessor_sanitize_html_class' ) ) {
 	/**
 	 * Sanitize HTML Class Names
@@ -848,23 +849,6 @@ if ( ! function_exists( 'intercessor_is_valid_simple_captcha_response' ) ) {
 		}
 
 		return $is_valid;
-	}
-}
-
-if ( ! function_exists( 'intercessor_is_debug_mode' ) ) {
-
-	/**
-	 * Checks if it is Debug Mode
-	 *
-	 * @since 0.9.5
-	 * @return bool $debug True if debug mode is enabled, false otherwise
-	 */
-	function intercessor_is_debug_mode() {
-		$debug = intercessor_get_option( 'debug_mode', false );
-		if ( defined( 'INTERCESSOR_DEBUG_MODE' ) && INTERCESSOR_DEBUG_MODE ) {
-			$debug = true;
-		}
-		return (bool) apply_filters( 'intercessor_is_debug_mode', $debug );
 	}
 }
 
