@@ -82,7 +82,7 @@ class Base {
 		if ( method_exists( $this, $method ) ) {
 			return true;
 
-		// Return get method results if exists
+			// Return get method results if exists
 		} elseif ( property_exists( $this, $key ) ) {
 			return true;
 		}
@@ -113,7 +113,7 @@ class Base {
 		if ( method_exists( $this, $method ) ) {
 			return call_user_func( array( $this, $method ) );
 
-		// Return get method results if exists
+			// Return get method results if exists
 		} elseif ( property_exists( $this, $key ) ) {
 			return $this->{$key};
 		}
@@ -178,8 +178,14 @@ class Base {
 
 		// Trim spaces off the ends
 		$unspace = trim( $string );
+
+		// Only non-accented table names (avoid truncation)
 		$accents = remove_accents( $unspace );
+
+		// Only lowercase letters are allowed
 		$lower   = strtolower( $accents );
+
+		// Explode into parts
 		$parts   = explode( $sep, $lower );
 
 		// Loop through parts and concatenate the first letters together
@@ -275,7 +281,7 @@ class Base {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return object Database interface, or False if not set
+	 * @return \wpdb Database interface, or False if not set
 	 */
 	protected function get_db() {
 
@@ -291,7 +297,7 @@ class Base {
 		 * Developer note:
 		 *
 		 * It should be impossible for a database table to be interacted with
-		 * before the primary database interface it is setup.
+		 * before the primary database interface is setup.
 		 *
 		 * However, because applications are complicated, it is unsafe to assume
 		 * anything, so this silently returns false instead of halting everything.
@@ -322,12 +328,12 @@ class Base {
 		if ( empty( $result ) ) {
 			$retval = false;
 
-		// Bail if an error occurred
+			// Bail if an error occurred
 		} elseif ( is_wp_error( $result ) ) {
 			$this->last_error = $result;
 			$retval           = false;
 
-		// No errors
+			// No errors
 		} else {
 			$retval = true;
 		}

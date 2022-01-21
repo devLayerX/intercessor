@@ -179,7 +179,7 @@ if ( ! function_exists( 'intercessor_get_item_counts' ) ) {
      *
      * @return array Object item counts keyed by status.
      */
-    function intercessor_get_item_counts( string $object = '', array $args = [] ): array {
+    function intercessor_get_item_counts( string $object = '', array $args = [] ) {
 
         // Parse arguments.
         $items = wp_parse_args(

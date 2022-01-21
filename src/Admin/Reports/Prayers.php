@@ -11,6 +11,8 @@
 
 namespace Intercessor\Admin\Reports;
 
+use Intercessor\Reports;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
@@ -31,19 +33,20 @@ class Prayers extends Base {
 	 *
 	 * @since 0.9.5
 	 */
-	public function __construct( $_data = array() ) {
+	public function __construct( array $_data = [] ) {
 
+		// Set up data array.
 		if ( empty( $_data ) ) {
 			$this->data = $this->get_data();
 		}
 
-		parent::__construct();
+	//	parent::__construct();
 
 		// Generate unique ID.
 		$this->id = md5( wp_rand() );
 
-		// Setup default options.
-		$this->options = array(
+		// Set up default options.
+		$this->options = [
 			'y_mode'          => null,
 			'y_decimals'      => 0,
 			'x_decimals'      => 0,
@@ -60,7 +63,7 @@ class Prayers extends Base {
 			'lines'           => true,
 			'points'          => true,
 			'prayer_id'       => false,
-		);
+		];
 
 	}
 
@@ -71,33 +74,39 @@ class Prayers extends Base {
 	 */
 	public function get_data() {
 
-		$active   = array();
-		$archived = array();
-		$personal = array();
-		$pending  = array();
-
-		$dates = intercessor_get_report_dates();
-
-		$start = $dates['year'] . '-' . $dates['m_start'] . '-' . $dates['day'] . ' 00:00:00';
-		$end   = $dates['year_end'] . '-' . $dates['m_end'] . '-' . $dates['day_end'] . ' 23:59:59';
-		$date  = array(
+		// Set up variables.
+		$active   = [];
+		$archived = [];
+		$personal = [];
+		$pending  = [];
+		$dates    = intercessor_get_report_dates();
+		$start    = $dates['year'] . '-' . $dates['m_start'] . '-' . $dates['day'] . ' 00:00:00';
+		$end      = $dates['year_end'] . '-' . $dates['m_end'] . '-' . $dates['day_end'] . ' 23:59:59';
+		$date     = [
 			'start' => $start,
 			'end'   => $end,
-		);
+		];
 
-		$args = array(
-			'orderby'   => 'date',
-			'order'     => 'ASC',
-			'date'      => $date,
-			'number'    => -1,
-			'prayer_id' => $this->get( 'prayer_id' ),
-		);
+		// Build up arguments.
+		$args = [
+			'orderby'            => 'date_created',
+			'order'              => 'ASC',
+			'date_created_query' => [
+				'after'  => $start,
+				'before' => $end,
+			],
+			'status'             => [ 'active', 'pending', 'personal', 'archieved' ],
+		//	'number'    => -1,
+		//	'prayer_id' => $this->get( 'prayer_id' ),
+		];
 
-		$prayers = intercessor_get_prayers( $args );
-
+		$prayers = intercessor_get_items( 'prayer', $args );
+		//$reports = new Reports();
+		//$prayers = $reports->get_prayer_requests( 0, $start, $end, 'active' );
 		$pending[] = array( strtotime( $start ) * 1000 );
 		$pending[] = array( strtotime( $end ) * 1000 );
 
+		// Process prayers, if available.
 		if ( $prayers ) {
 			foreach ( $prayers as $prayer ) {
 

@@ -544,20 +544,21 @@ if ( ! function_exists( 'intercessor_sanitize_textarea' ) ) {
 	 *
 	 * @return string
 	 */
-	function intercessor_sanitize_textarea( $var ) {
+	function intercessor_sanitize_textarea( string $var ) : string {
 		return implode( "\n", array_map( 'intercessor_clean', explode( "\n", $var ) ) );
 	}
 }
+
 if ( ! function_exists( 'intercessor_get_date_format' ) ) {
 	/**
 	 * Intercessor get date format.
 	 *
 	 * @param string $format
 	 *
-	 * @since 1.0.0
 	 * @return mixed|string|void
+	 *@since 1.0.0
 	 */
-	function intercessor_get_date_format( $format = 'date' ) {
+	function intercessor_get_date_format( string $format = 'date' ) {
 
 		// Default to 'date' if empty.
 		if ( empty( $format ) ) {
@@ -622,19 +623,20 @@ if ( ! function_exists( 'intercessor_date_i18n' ) ) {
 	/**
 	 * Retrieves a localized, formatted date based on the WP timezone rather than UTC.
 	 *
-	 * @since 1.0.0
-	 *
 	 * @param int    $timestamp Timestamp. Can either be based on UTC or WP settings.
 	 * @param string $format    Optional. Accepts shorthand 'date', 'time', or 'datetime'
 	 *                          date formats, as well as any valid date_format() string.
 	 *                          Default 'date' represents the value of the 'date_format' option.
+	 *
 	 * @return string The formatted date, translated if locale specifies it.
+	 *@since 1.0.0
+	 *
 	 */
-	function intercessor_date_i18n( $timestamp, $format = 'date' ) {
+	function intercessor_date_i18n( int $timestamp, string $format = 'date' ): string {
 		$format = intercessor_get_date_format( $format );
 
 		// If timestamp is a string, attempt to turn it into a timestamp.
-		if ( is_string( $timestamp ) ) {
+		if ( ! is_numeric( $timestamp ) ) {
 			$timestamp = strtotime( $timestamp );
 		}
 
@@ -642,6 +644,39 @@ if ( ! function_exists( 'intercessor_date_i18n' ) ) {
 	}
 }
 
+if ( ! function_exists( 'intercessor_get_timezone_id' ) ) {
+	/**
+	 * Get the timezone.
+	 *
+	 * @since 1.1.0
+	 * @return mixed|string|void
+	 */
+	function intercessor_get_timezone_id() {
+		// Default return value.
+		$retval = 'UTC';
+
+		// Get some useful values.
+		$timezone   = get_option( 'timezone_string' );
+		$gmt_offset = get_option( 'gmt_offset', 0 ) * HOUR_IN_SECONDS;
+
+		// Use timezone string if it's available
+		if ( ! empty( $timezone ) ) {
+			$retval = $timezone;
+
+			// Use GMT offset to calculate.
+		} elseif ( is_numeric( $gmt_offset ) ) {
+
+			$hours   = abs( floor( $gmt_offset / HOUR_IN_SECONDS ) );
+			$minutes = abs( floor( ( $gmt_offset / MINUTE_IN_SECONDS ) % MINUTE_IN_SECONDS ) );
+			$math    = ( $gmt_offset >= 0 ) ? '+' : '-';
+			$value   = ! empty( $minutes )  ? "{$hours}:{$minutes}" : $hours;
+			$retval  = "GMT{$math}{$value}";
+		}
+
+		// Set.
+		return $retval;
+	}
+}
 
 /**
  * Checks if a password should be auto-generated for new users.

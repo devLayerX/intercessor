@@ -12,6 +12,8 @@
 namespace Intercessor;
 
 // Exit if accessed directly.
+use Intercessor\Database\Queries\Date;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -760,12 +762,12 @@ class Stats {
 	private function set_date_ranges() {
 
 		// Retrieve the time in UTC for the date ranges to be correctly parsed.
-		$date = intercessor()->utils->date();
+		$date = intercessor_date_i18n( time(), 'mysql' );
 
 		$date_filters = $this->get_dates_filter_options();
 
 		foreach ( $date_filters as $range => $label ) {
-			$this->date_ranges[ $range ] = $this->parse_dates_for_range( $range );
+			$this->date_ranges[ $range ] = \intercessor_get_report_dates();
 
 			switch ( $range ) {
 				case 'this_month':
@@ -862,7 +864,7 @@ class Stats {
 	 * }
 	 */
 	public function get_dates_filter( $values = 'strings', $timezone = null ) {
-		$dates = $this->parse_dates_for_range();
+		$dates = \intercessor_get_report_dates();
 
 		if ( 'strings' === $values ) {
 			if ( ! empty( $dates['start'] ) ) {
@@ -901,10 +903,12 @@ class Stats {
 	 * @param string          $date  Date string converted to `\EDD\Utils\Date` to anchor calculations to.
 	 * @return \EDD\Utils\Date[] Array of start and end date objects.
 	 */
-	public function parse_dates_for_range( $range = null, $date = 'now' ) {
+	public function parse_dates_for_range( $range = null ) {
 
 		// Set the time ranges in the user's timezone, so they ultimately see them in their own timezone.
-		$date = intercessor()->utils->date( $date, \intercessor_get_timezone_id(), false );
+	//	$date = intercessor()->utils->date( $date, \intercessor_get_timezone_id(), false );
+		$date = intercessor_date_i18n( time(), 'mysql' );
+
 
 		if ( null === $range || ! array_key_exists( $range, $this->get_dates_filter_options() ) ) {
 			$range = $this->get_dates_filter_range();

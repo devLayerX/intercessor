@@ -147,6 +147,7 @@ function intercessor_load_admin_scripts_styles( $hook ) {
 	// Register Intercessor styles.
 	wp_register_style( 'intercessor-admin', $css_dir . 'intercessor-admin' . $suffix . '.css', [], $version );
 	wp_enqueue_style( 'intercessor-admin' );
+	wp_register_style( 'intercessor-reports', $css_dir . 'intercessor-admin-reports' . $suffix . '.css', [], $version );
 
 	// Bail if not on intercessor admin pages.
 	if ( ! apply_filters( 'intercessor_load_admin_scripts', intercessor_is_admin_page(), $hook ) ) {
@@ -255,6 +256,7 @@ function intercessor_load_admin_scripts_styles( $hook ) {
 	wp_register_script( 'intercessor-export', $js_dir . 'admin/export/export' . $suffix . '.js', 'jquery', $version, false );
 	wp_register_script( 'intercessor-import', $js_dir . 'admin/import/import' . $suffix . '.js', 'jquery', $version, false );
 	wp_register_script( 'intercessor-settings', $js_dir . 'admin/settings/index' . $suffix . '.js', 'jquery', $version, false );
+	wp_register_script( 'intercessor-reports', $js_dir . 'admin/reports/index' . $suffix . '.js', 'jquery', $version, false );
 
 	// Individual admin pages.
 	$admin_pages = array(
