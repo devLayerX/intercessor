@@ -320,4 +320,56 @@ class CLI extends \WP_CLI_Command {
 
 		}
 	}
+
+
+	/**
+	 * Migrate prayed counts to the custom tables
+	 *
+	 * ## OPTIONS
+	 *
+	 * --force=<boolean>: If the routine should be run even if the upgrade routine has been run already
+	 *
+	 * ## EXAMPLES
+	 *
+	 * wp intercessor migrate_requesters
+	 * wp intercessor migrate_requesters --force
+	 */
+	public function update_db_version( $args, $assoc_args ) {
+		global $wpdb;
+
+		$force = isset( $assoc_args['force'] );
+
+		$upgrade_completed = \intercessor_has_upgrade_completed( 'requesters' );
+
+		if ( ! $force && $upgrade_completed ) {
+			WP_CLI::error( __( 'The requester prayed counts database upgrade has already been run. To do this anyway, use the --force argument.', 'intercessor' ) );
+		}
+
+		$sql     = "SELECT * FROM {$wpdb->ipr_requesters} WHERE status = 'active'";
+		$results = $wpdb->get_results( $sql );
+		$total   = count( $results );
+
+		if ( ! empty( $total ) ) {
+
+			$progress = new \cli\progress\Bar( 'Upgrading requesters Prayed counts', $total );
+
+			foreach ( $results as $result ) {
+				Migrator::requesters( $result );
+
+				$progress->tick();
+			}
+
+			$progress->finish();
+
+			WP_CLI::line( __( 'Migration complete: Requesters Prayed Counts', 'intercessor' ) );
+			intercessor_update_db_version();
+			intercessor_set_upgrade_complete( 'requesters' );
+
+		} else {
+
+			WP_CLI::line( __( 'No requester prayed count records found.', 'intercessor' ) );
+			intercessor_set_upgrade_complete( 'requesters' );
+
+		}
+	}
 }

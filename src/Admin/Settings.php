@@ -158,102 +158,7 @@ class Settings {
 		// Enqueue necessary scripts.
 		wp_enqueue_script( 'intercessor-settings' );
 
-		// Start the buffer.
-		ob_start();
-		?>
-		<div class="wrap <?php echo 'wrap-' . esc_attr( $active_tab ); ?>">
-			<h2><?php esc_html_e( 'Intercessor Settings', 'intercessor' ); ?></h2>
-			<h2 class="nav-tab-wrapper intercessor-settings-nav">
-				<?php
-				foreach ( $this->get_settings_tabs() as $tab_id => $tab_name ) {
-					$tab_url = add_query_arg(
-						array(
-							'settings-updated' => false,
-							'tab'              => $tab_id,
-						)
-					);
-
-					// Remove the section from the tabs.
-					$tab_url = \remove_query_arg( 'section', $tab_url );
-
-					$active = $active_tab === $tab_id ? ' nav-tab-active' : '';
-
-					echo '<a href="' . esc_url( $tab_url ) . '" class="nav-tab' . $active . '">';
-						echo esc_html( $tab_name );
-					echo '</a>';
-
-					flush_rewrite_rules( true );
-				}
-				?>
-			</h2>
-			<?php
-
-			$number_of_sections = count( $sections );
-			$number             = 0;
-
-			if ( $number_of_sections > 1 ) {
-				echo '<div><ul class="subsubsub intercessor-sub-nav">';
-				foreach ( $sections as $section_id => $section_name ) {
-					echo '<li>';
-					$number++;
-					$tab_url = add_query_arg(
-						array(
-							'settings-updated' => false,
-							'tab'              => $active_tab,
-							'section'          => $section_id,
-						)
-					);
-
-					$class = '';
-					if ( $section === $section_id ) {
-						$class = 'current';
-					}
-					echo '<a class="' . esc_attr( $class ) . '" href="' . esc_url( $tab_url ) . '">' . esc_attr( $section_name ) . '</a>';
-
-					if ( $number !== $number_of_sections ) {
-						echo ' | ';
-					}
-					echo '</li>';
-				}
-				echo '</ul></div>';
-			}
-			?>
-			<div id="tab_container">
-				<form method="post" action="options.php">
-					<table class="form-table">
-					<?php
-
-					settings_fields( 'intercessor_settings' );
-
-					if ( 'main' === $section ) {
-						do_action( 'intercessor_top', $active_tab );
-					}
-
-					do_action( 'intercessor_settings_tab_top_' . $active_tab . '_' . $section );
-
-					do_settings_sections( 'intercessor_settings_' . $active_tab . '_' . $section );
-
-					do_action( 'intercessor_settings_tab_bottom_' . $active_tab . '_' . $section  );
-
-					if ( 'main' === $section ) {
-						do_action( 'intercessor_settings_tab_bottom', $active_tab );
-					}
-
-					// If the main section was empty and we overrode the view
-					// with the next subsection, prepare the section for saving.
-					if ( true === $override ) {
-					    ?>
-						<input type="hidden" name="intercessor_section_override" value="<?php echo $section; ?>" />
-                        <?php
-					}
-					?>
-					</table>
-					<?php submit_button(); ?>
-				</form>
-			</div><!-- #tab_container-->
-		</div><!-- .wrap -->
-		<?php
-		echo ob_get_clean();
+        \intercessor_settings_display( $settings_tabs, $active_tab, $sections, $section, $override );
 	}
 
 	/**
@@ -358,7 +263,7 @@ class Settings {
 			foreach ( $sections as $section => $settings ) {
 				$section_tabs = $this->get_tabbed_sections( $tab );
 				if ( ! is_array( $section_tabs )
-					|| ! array_key_exists( $section, $section_tabs ) ) {
+				     || ! array_key_exists( $section, $section_tabs ) ) {
 					$section  = 'main';
 					$settings = $sections;
 				}
@@ -396,7 +301,7 @@ class Settings {
 							'step'          => null,
 							'tooltip_desc'  => false,
 							'tooltip_title' => false,
-                        )
+						)
 					);
 
 					// Add settings field.
@@ -573,7 +478,7 @@ class Settings {
 	 *
 	 * @access public
 	 * @since  1.0.0
-     *
+	 *
 	 * @param array $args The settings arguments.
 	 *
 	 * @return  void
@@ -689,7 +594,7 @@ class Settings {
 	 *
 	 * @access public
 	 * @since  1.0.0
-     *
+	 *
 	 * @param array $args The settings arguments.
 	 * @return  void
 	 */
@@ -701,8 +606,8 @@ class Settings {
 	 * HTML callback
 	 *
 	 * @since   1.0.0
-     * @access public
-     *
+	 * @access public
+	 *
 	 * @param array $args The settings arguments.
 	 *
 	 * @return  void
@@ -727,7 +632,7 @@ class Settings {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-     *
+	 *
 	 * @param array $args The settings argumentss.
 	 *
 	 * @return void
@@ -754,7 +659,7 @@ class Settings {
 	 *
 	 * @access public
 	 * @since   1.0.0
-     *
+	 *
 	 * @param array $args The settings arguments.
 	 *
 	 * @return  void
@@ -770,7 +675,7 @@ class Settings {
 	 *
 	 * @access public
 	 * @since  1.0.0
-     *
+	 *
 	 * @param array $args The settings arguments.
 	 *
 	 * @return  void
@@ -794,14 +699,14 @@ class Settings {
 
 		ob_start();
 		wp_editor(
-            stripslashes( $value ),
-            'intercessor_settings_' . esc_attr( $args['id'] ),
-            array(
-                'textarea_name' => 'intercessor_settings[' . esc_attr( $args['id'] ) . ']',
-                'textarea_rows' => absint( $rows ),
-                'editor_class'  => $class,
-            )
-        );
+			stripslashes( $value ),
+			'intercessor_settings_' . esc_attr( $args['id'] ),
+			array(
+				'textarea_name' => 'intercessor_settings[' . esc_attr( $args['id'] ) . ']',
+				'textarea_rows' => absint( $rows ),
+				'editor_class'  => $class,
+			)
+		);
 		$html = ob_get_clean();
 
 		$html .= '<br/><label for="intercessor_settings[' . $this->sanitize_key( $args['id'] ) . ']"> ' . wp_kses_post( $args['desc'] ) . '</label>';
@@ -814,7 +719,7 @@ class Settings {
 	 *
 	 * @access public
 	 * @since  1.0.0
-     *
+	 *
 	 * @param array $args The settings arguments.
 	 * @return void
 	 */
@@ -875,7 +780,7 @@ class Settings {
 	 *
 	 * @access public
 	 * @since  1.0.0
-     *
+	 *
 	 * @param array $args The settings arguments.
 	 *
 	 * @return  void
@@ -911,7 +816,7 @@ class Settings {
 	 *
 	 * @access public
 	 * @since   1.0.0
-     *
+	 *
 	 * @param array $args The settings arguments.
 	 *
 	 * @return  void
@@ -939,7 +844,7 @@ class Settings {
 	 * Renders email fields.
 	 *
 	 * @since 1.0.0
-     *
+	 *
 	 * @param array $args The settings arguments.
 	 *
 	 * @return void
@@ -966,8 +871,8 @@ class Settings {
 		$class = $this->sanitize_html_class( $args['field_class'] );
 
 		$placeholder = isset( $args['placeholder'] )
-		? $args['placeholder']
-		: '';
+			? $args['placeholder']
+			: '';
 
 		$disabled = ! empty( $args['disabled'] ) ? ' disabled="disabled"' : '';
 		$readonly = true === $args['readonly'] ? ' readonly="readonly"' : '';
@@ -983,7 +888,7 @@ class Settings {
 	 *
 	 * @access public
 	 * @since  1.0.0
-     *
+	 *
 	 * @param array $args The settings arguments.
 	 *
 	 * @return  void
@@ -999,10 +904,10 @@ class Settings {
 			$checked = false;
 
 			if ( $intercessor_options && $intercessor_options == $key ) {
-                $checked = true;
-            } elseif ( isset( $args['std'] ) && $args['std'] == $key && ! $intercessor_options ) {
-                $checked = true;
-            }
+				$checked = true;
+			} elseif ( isset( $args['std'] ) && $args['std'] == $key && ! $intercessor_options ) {
+				$checked = true;
+			}
 
 			$html .= '<div class="intercessor-check-wrapper">';
 			$html .= '<input name="intercessor_settings[' . $this->sanitize_key( $args['id'] ) . ']" id="intercessor_settings[' . $this->sanitize_key( $args['id'] ) . '][' . $this->sanitize_key( $key ) . ']" class="' . $class . '" type="radio" value="' . $this->sanitize_key( $key ) . '" ' . checked( true, $checked, false ) . '/>&nbsp;';
@@ -1020,7 +925,7 @@ class Settings {
 	 *
 	 * @access public
 	 * @since  1.0.0
-     *
+	 *
 	 * @param array $args The settings arguments.
 	 *
 	 * @return  void
@@ -1081,8 +986,8 @@ class Settings {
 	 * Text callback
 	 *
 	 * @since  1.0.0
-     * @access public
-     *
+	 * @access public
+	 *
 	 * @param array $args The settings arguments.
 	 *
 	 * @return  void
@@ -1125,7 +1030,7 @@ class Settings {
 	 * Textarea callback
 	 *
 	 * @since   1.0.0
-     *
+	 *
 	 * @param array $args The settings arguments.
 	 *
 	 * @return  void
@@ -1150,8 +1055,8 @@ class Settings {
 	 * Upload callback
 	 *
 	 * @since  1.0.0
-     * @access public
-     *
+	 * @access public
+	 *
 	 * @param array $args The settings arguments.
 	 *
 	 * @return  void
@@ -1178,8 +1083,8 @@ class Settings {
 	 * Hook callback
 	 *
 	 * @since  1.0.0
-     * @access public
-     *
+	 * @access public
+	 *
 	 * @param array $args The settings arguments.
 	 *
 	 * @return  void
@@ -1193,13 +1098,13 @@ class Settings {
 	 *
 	 * @access public
 	 * @since  1.0.0
-     *
+	 *
 	 * @param array $args The settings arguments.
 	 *
 	 * @return  void
 	 */
 	public function missing_callback( $args ) {
-        /* Translators: %s: id. */
+		/* Translators: %s: id. */
 		printf( __( 'The callback function used for the <strong>%s</strong> setting is missing.', 'intercessor' ), esc_attr( $args['id'] ) );
 	}
 
@@ -1208,7 +1113,7 @@ class Settings {
 	 *
 	 * @access public
 	 * @since  1.0.0
-     *
+	 *
 	 * @param string $html The current field HTML.
 	 * @param array  $args Arguments passed to the field.
 	 *
@@ -1225,183 +1130,183 @@ class Settings {
 			if ( false !== $has_p_tag ) {
 				$html = str_replace( '</p>', $tooltip . '</p>', $html );
 
-			    // Insert tooltip at end of label.
+				// Insert tooltip at end of label.
 			} elseif ( false !== $has_label ) {
 				$html = str_replace( '</label>', $tooltip . '</label>', $html );
 
-			    // Append tooltip to end of HTML.
+				// Append tooltip to end of HTML.
 			} else {
 				$html .= $tooltip;
 			}
 		}
 
 		return $html;
-    }
+	}
 
-    /**
-     * Sanitize HTML Class Names
-     *
-     * @param string|array $class HTML Class Name(s).
-     *
-     * @since 1.0.0
-     * @return string $class
-     */
-    public function sanitize_html_class( $class = '' ) {
+	/**
+	 * Sanitize HTML Class Names
+	 *
+	 * @param string|array $class HTML Class Name(s).
+	 *
+	 * @since 1.0.0
+	 * @return string $class
+	 */
+	public function sanitize_html_class( $class = '' ) {
 
-        if ( is_string( $class ) ) {
-            $class = sanitize_html_class( $class );
-        } elseif ( is_array( $class ) ) {
-            $class = array_values( array_map( 'sanitize_html_class', $class ) );
-            $class = implode( ' ', array_unique( $class ) );
-        }
+		if ( is_string( $class ) ) {
+			$class = sanitize_html_class( $class );
+		} elseif ( is_array( $class ) ) {
+			$class = array_values( array_map( 'sanitize_html_class', $class ) );
+			$class = implode( ' ', array_unique( $class ) );
+		}
 
-        return $class;
+		return $class;
 
-    }
+	}
 
-    /**
-     * Get an option
-     *
-     * Looks to see if the specified setting exists, returns default if not
-     *
-     * @since  1.0.0
-     * @access public
-     *
-     * @param string $key     Option Key.
-     * @param bool   $default Default value.
-     *
-     * @return mixed
-     * @global array $intercessor_options Array of all the options.
-     */
-    public function get_option( $key = '', $default = false ) {
-        global $intercessor_options;
+	/**
+	 * Get an option
+	 *
+	 * Looks to see if the specified setting exists, returns default if not
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 *
+	 * @param string $key     Option Key.
+	 * @param bool   $default Default value.
+	 *
+	 * @return mixed
+	 * @global array $intercessor_options Array of all the options.
+	 */
+	public function get_option( $key = '', $default = false ) {
+		global $intercessor_options;
 
-        $value = ! empty( $intercessor_options[ $key ] ) ? $intercessor_options[ $key ] : $default;
-        $value = apply_filters( 'intercessor_get_option', $value, $key, $default );
-        return apply_filters( 'intercessor_get_option_' . $key, $value, $key, $default );
-    }
+		$value = ! empty( $intercessor_options[ $key ] ) ? $intercessor_options[ $key ] : $default;
+		$value = apply_filters( 'intercessor_get_option', $value, $key, $default );
+		return apply_filters( 'intercessor_get_option_' . $key, $value, $key, $default );
+	}
 
-    /**
-     * Update an option
-     *
-     * Updates an ipr setting value in both the db and the global variable.
-     * Warning: Passing in an empty, false or null string value will remove
-     *          the key from the intercessor_options array.
-     *
-     * @since  1.0.0
-     * @access public
-     *
-     * @param string          $key   The Key to update.
-     * @param string|bool|int $value The value to set the key to.
-     *
-     * @global array $intercessor_options Array of all the options.
-     * @return boolean True if updated, false if not.
-     */
-    public function update_option( $key = '', $value = false ) {
+	/**
+	 * Update an option
+	 *
+	 * Updates an ipr setting value in both the db and the global variable.
+	 * Warning: Passing in an empty, false or null string value will remove
+	 *          the key from the intercessor_options array.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 *
+	 * @param string          $key   The Key to update.
+	 * @param string|bool|int $value The value to set the key to.
+	 *
+	 * @global array $intercessor_options Array of all the options.
+	 * @return boolean True if updated, false if not.
+	 */
+	public function update_option( $key = '', $value = false ) {
 
-        // Bail, if no key.
-        if ( empty( $key ) ) {
-            return false;
-        }
+		// Bail, if no key.
+		if ( empty( $key ) ) {
+			return false;
+		}
 
-        if ( empty( $value ) ) {
-            $remove_option = $this->delete_option( $key );
-            return $remove_option;
-        }
+		if ( empty( $value ) ) {
+			$remove_option = $this->delete_option( $key );
+			return $remove_option;
+		}
 
-        // Get the current settings.
-        $options = get_option( 'intercessor_settings' );
+		// Get the current settings.
+		$options = get_option( 'intercessor_settings' );
 
-        /**
-         * Filter before options are updated.
-         *
-         * @param string $value Option value.
-         * @param string $key   Option key.
-         *
-         * @since 1.0.0
-         */
-        $value = apply_filters( 'intercessor_update_option', $value, $key );
+		/**
+		 * Filter before options are updated.
+		 *
+		 * @param string $value Option value.
+		 * @param string $key   Option key.
+		 *
+		 * @since 1.0.0
+		 */
+		$value = apply_filters( 'intercessor_update_option', $value, $key );
 
-        // Ttry to update the value.
-        $options[ $key ] = $value;
-        $did_update      = update_option( 'intercessor_settings', $options );
+		// Ttry to update the value.
+		$options[ $key ] = $value;
+		$did_update      = update_option( 'intercessor_settings', $options );
 
-        // If it updated, let's update the global variable.
-        if ( $did_update ) {
-            global $intercessor_options;
-            $intercessor_options[ $key ] = $value;
+		// If it updated, let's update the global variable.
+		if ( $did_update ) {
+			global $intercessor_options;
+			$intercessor_options[ $key ] = $value;
 
-        }
+		}
 
-        return $did_update;
-    }
+		return $did_update;
+	}
 
-    /**
-     * Remove an option
-     *
-     * Removes an ipr setting value in both the db and the global variable.
-     *
-     * @since  1.0.0
-     * @access public
-     *
-     * @param string $key The Key to delete.
-     *
-     * @global $intercessor_options Array of all the options
-     * @return boolean True if removed, false if not.
-     */
-    public function delete_option( $key = '' ) {
-        global $intercessor_options;
+	/**
+	 * Remove an option
+	 *
+	 * Removes an ipr setting value in both the db and the global variable.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 *
+	 * @param string $key The Key to delete.
+	 *
+	 * @global $intercessor_options Array of all the options
+	 * @return boolean True if removed, false if not.
+	 */
+	public function delete_option( $key = '' ) {
+		global $intercessor_options;
 
-        // If no key, exit.
-        if ( empty( $key ) ) {
-            return false;
-        }
+		// If no key, exit.
+		if ( empty( $key ) ) {
+			return false;
+		}
 
-        // Get the current settings.
-        $options = get_option( 'intercessor_settings' );
+		// Get the current settings.
+		$options = get_option( 'intercessor_settings' );
 
-        // Try to update the value.
-        if ( isset( $options[ $key ] ) ) {
+		// Try to update the value.
+		if ( isset( $options[ $key ] ) ) {
 
-            unset( $options[ $key ] );
+			unset( $options[ $key ] );
 
-        }
+		}
 
-        // Remove this option from the global IPR settings to the array_merge in intercessor_settings_sanitize() doesn't re-add it.
-        if ( isset( $intercessor_options[ $key ] ) ) {
+		// Remove this option from the global IPR settings to the array_merge in intercessor_settings_sanitize() doesn't re-add it.
+		if ( isset( $intercessor_options[ $key ] ) ) {
 
-            unset( $intercessor_options[ $key ] );
+			unset( $intercessor_options[ $key ] );
 
-        }
+		}
 
-        $did_update = update_option( 'intercessor_settings', $options );
+		$did_update = update_option( 'intercessor_settings', $options );
 
-        // If it updated, let's update the global variable.
-        if ( $did_update ) {
-            global $intercessor_options;
-            $intercessor_options = $options;
-        }
+		// If it updated, let's update the global variable.
+		if ( $did_update ) {
+			global $intercessor_options;
+			$intercessor_options = $options;
+		}
 
-        return $did_update;
-    }
+		return $did_update;
+	}
 
-    /**
-     * Adds a tab to the contextual help menu in the current screen.
-     *
-     * @since 1.0.0
-     */
-    public function sidebar() {
-        $screen = \get_current_screen();
+	/**
+	 * Adds a tab to the contextual help menu in the current screen.
+	 *
+	 * @since 1.0.0
+	 */
+	public function sidebar() {
+		$screen = \get_current_screen();
 
 		$screen->set_help_sidebar(
 			'<p><strong>' . sprintf( __( 'For more information:', 'intercessor' ) . '</strong></p>' .
-			'<p>' . sprintf( __( 'Visit the <a href="%s">documentation</a> on the Intercessor website.', 'intercessor' ), esc_url( 'http://docs.prayerhousewp.com/' ) ) ) . '</p>' .
+			                         '<p>' . sprintf( __( 'Visit the <a href="%s">documentation</a> on the Intercessor website.', 'intercessor' ), esc_url( 'http://docs.prayerhousewp.com/' ) ) ) . '</p>' .
 			'<p>' . sprintf(
-						__( '<a href="%s">Post an issue</a> on <a href="%s">GitHub</a>. View <a href="%s">extensions</a>.', 'intercessor' ),
-						esc_url( 'https://github.com/victoraigbeghian/intercessor/issues' ),
-						esc_url( 'https://github.com/victoraigbeghian/intercessor' ),
-						esc_url( 'https://victoraigbeghian.com/intercessor/?utm_source=plugin-settings-page&utm_medium=contextual-help-sidebar&utm_term=extensions&utm_campaign=ContextualHelp' )
-					) . '</p>'
+				__( '<a href="%s">Post an issue</a> on <a href="%s">GitHub</a>. View <a href="%s">extensions</a>.', 'intercessor' ),
+				esc_url( 'https://github.com/victoraigbeghian/intercessor/issues' ),
+				esc_url( 'https://github.com/victoraigbeghian/intercessor' ),
+				esc_url( 'https://victoraigbeghian.com/intercessor/?utm_source=plugin-settings-page&utm_medium=contextual-help-sidebar&utm_term=extensions&utm_campaign=ContextualHelp' )
+			) . '</p>'
 		);
 
 		$screen->add_help_tab(
@@ -1448,5 +1353,5 @@ class Settings {
 		 * @since 1.0.0
 		 */
 		do_action( 'intercessor_settings_contextual_help', $screen );
-    }
+	}
 }
