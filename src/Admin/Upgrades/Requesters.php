@@ -73,22 +73,33 @@ class Requesters extends Base {
 	 * @return float Percentage.
 	 */
 	public function get_percentage_complete() {
-		$total = $this->get_db()->get_var( $this->get_db()->prepare( "SELECT COUNT(requester_id) AS count FROM {$this->get_db()->ipr_requesters} WHERE status = %s", esc_sql( 'active' ) ) );
+		$total = $this->get_db()->get_var(
+			$this->get_db()->prepare(
+				"SELECT COUNT(requester_id) AS count
+				FROM {$this->get_db()->ipr_requesters}
+				WHERE status = %s",
+				esc_sql( 'active' )
+			)
+		);
 
+		// Set total to 0 if nothing available.
 		if ( empty( $total ) ) {
 			$total = 0;
 		}
 
+		// Set up percentage values.
 		$percentage = 100;
 
 		if ( $total > 0 ) {
 			$percentage = ( ( $this->per_step * $this->step ) / $total ) * 100;
 		}
 
+		// Make sure percentage is not greater than 100.
 		if ( $percentage > 100 ) {
 			$percentage = 100;
 		}
 
+		// Return percentage value.
 		return $percentage;
 	}
 }

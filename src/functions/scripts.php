@@ -29,24 +29,23 @@ function intercessor_load_scripts() {
 	$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
 	if ( intercessor_is_prayer_request_form_page() ) {
-		wp_register_script( 'intercessor-js', $js_dir . 'intercessor' . $suffix . '.js', [ 'jquery' ], INTERCESSOR_VERSION, true );
+		wp_register_script( 'intercessor-js', $js_dir . 'intercessor' . $suffix . '.js', array( 'jquery' ), INTERCESSOR_VERSION, true );
 		wp_enqueue_script( 'intercessor-js' );
 	}
 
-	wp_register_script( 'intercessor-ajax', $js_dir . 'intercessor-ajax' . $suffix . '.js', [ 'jquery' ], INTERCESSOR_VERSION, false );
+	wp_register_script( 'intercessor-ajax', $js_dir . 'intercessor-ajax' . $suffix . '.js', array( 'jquery' ), INTERCESSOR_VERSION, false );
 
 	wp_localize_script(
 		'intercessor-ajax',
 		'intercessor_params',
 		apply_filters(
 			'intercessor_ajax_params',
-			[
+			array(
 				'ajaxurl'   => intercessor_get_ajax_url(),
 				'praying'   => esc_html__( 'You are praying.', 'intercessor' ),
 				'prayed'    => esc_html__( 'Thanks for praying.', 'intercessor' ),
 				'nopraying' => esc_html__( 'There was an error processing your praying for that request. please refresh your browser and try again.', 'intercessor' ),
-			]
-		)
+			) )
 	);
 
 	if ( intercessor_is_listing_page() ) {
@@ -56,7 +55,7 @@ function intercessor_load_scripts() {
 	}
 
 	if ( intercessor_is_prayer_history_page() ) {
-		wp_register_script( 'intercessor-history', $js_dir . 'intercessor-history' . $suffix . '.js', [ 'jquery' ], INTERCESSOR_VERSION, false );
+		wp_register_script( 'intercessor-history', $js_dir . 'intercessor-history' . $suffix . '.js', array( 'jquery' ), INTERCESSOR_VERSION, false );
 
 		wp_localize_script(
 			'intercessor-history',
@@ -73,12 +72,14 @@ function intercessor_load_scripts() {
 
 		// Enqueue Google recaptcha if the user is not logged in.
 		if ( ! is_user_logged_in() ) {
-			if ( intercessor_recaptcha_is_enabled() ) {
+		//	if ( intercessor_recaptcha_is_enabled() ) {
 				wp_register_script( 'intercessor-recaptcha', 'https://www.google.com/recaptcha/api.js', [], INTERCESSOR_VERSION, true );
 				wp_enqueue_script( 'intercessor-recaptcha' );
-			}
+		//	}
 		}
 	}
+
+
 }
 add_action( 'wp_enqueue_scripts', 'intercessor_load_scripts' );
 
@@ -137,7 +138,7 @@ function intercessor_load_admin_scripts_styles( $hook ) {
 
 	$js_dir     = INTERCESSOR_URL . 'assets/js/';
 	$css_dir    = INTERCESSOR_URL . 'assets/css/';
-	$admin_deps = [ 'jquery', 'jquery-form', 'underscore' ];
+	$admin_deps = array( 'jquery', 'jquery-form', 'underscore' );
 	$version    = INTERCESSOR_VERSION;
 
 	// Use minified libraries if SCRIPT_DEBUG is turned off.
@@ -146,6 +147,7 @@ function intercessor_load_admin_scripts_styles( $hook ) {
 	// Register Intercessor styles.
 	wp_register_style( 'intercessor-admin', $css_dir . 'intercessor-admin' . $suffix . '.css', [], $version );
 	wp_enqueue_style( 'intercessor-admin' );
+	wp_register_style( 'intercessor-reports', $css_dir . 'intercessor-admin-reports' . $suffix . '.css', [], $version );
 
 	// Bail if not on intercessor admin pages.
 	if ( ! apply_filters( 'intercessor_load_admin_scripts', intercessor_is_admin_page(), $hook ) ) {
@@ -156,7 +158,7 @@ function intercessor_load_admin_scripts_styles( $hook ) {
 	wp_register_style( 'jquery-chosen', $css_dir . 'chosen' . $suffix . '.css', [], $version );
 	wp_enqueue_style( 'jquery-chosen' );
 
-	wp_register_script( 'jquery-chosen', $js_dir . 'vendor/chosen.jquery' . $suffix . '.js', [ 'jquery' ], $version, true );
+	wp_register_script( 'jquery-chosen', $js_dir . 'vendor/chosen.jquery' . $suffix . '.js', array( 'jquery' ), $version, true );
 	wp_enqueue_script( 'jquery-chosen' );
 
 	wp_enqueue_script( 'jquery-form' );
@@ -171,7 +173,7 @@ function intercessor_load_admin_scripts_styles( $hook ) {
 	wp_register_style( 'colorbox', $css_dir . 'colorbox' . $suffix . '.css', [], '1.3.20' );
 	wp_enqueue_style( 'colorbox' );
 
-	wp_register_script( 'colorbox', $js_dir . 'vendor/jquery.colorbox-min.js', [ 'jquery' ], '1.3.20', true );
+	wp_register_script( 'colorbox', $js_dir . 'vendor/jquery.colorbox-min.js', array( 'jquery' ), '1.3.20', true );
 	wp_enqueue_script( 'colorbox' );
 
 	wp_enqueue_script( 'jquery-ui-datepicker' );
@@ -182,29 +184,15 @@ function intercessor_load_admin_scripts_styles( $hook ) {
 	wp_enqueue_script( 'thickbox' );
 	wp_enqueue_style( 'thickbox' );
 
-	$scripts = [ 'jquery', 'jquery-form', 'inline-edit-post' ];
+	$scripts = array( 'jquery', 'jquery-form', 'inline-edit-post' );
 
 //	wp_register_script( 'intercessor-admin-scripts', $js_dir . 'admin/intercessor-admin' . $suffix . '.js', $scripts, $version, false );
 
 //	wp_enqueue_script( 'intercessor-admin-scripts' );
 
-	// Notes.
-	wp_register_script( 'intercessor-admin-notes', $js_dir . 'admin/notes/index' . $suffix . '.js', [ 'jquery' ], $version, false );
-	wp_localize_script(
-		'intercessor-admin-notes',
-		'intercessor-note-vars',
-		[
-			'ajaxurl' => intercessor_get_ajax_url(),
-			'version' => $version,
-			'delete'  => esc_html__( 'Delete Note', 'intercessor' ),
-		]
-	);
-
-	// Prayer Requests.
-	wp_register_script( 'intercessor-admin-prayers', $js_dir . 'admin/prayers/index' . $suffix . '.js', [ 'jquery-chosen' ], $version, false );
+	wp_register_script( 'intercessor-admin-prayers', $js_dir . 'admin/admin-prayers' . $suffix . '.js', 'jquery-chosen', $version, false );
 
 	if ( 'intercessor-prayers' === intercessor_is_admin_page() ) {
-		wp_enqueue_script( 'intercessor-admin-notes' );
 		wp_enqueue_script( 'intercessor-admin-prayers' );
 	}
 
@@ -264,11 +252,11 @@ function intercessor_load_admin_scripts_styles( $hook ) {
 		)
 	);
 
-	// Register necessary admin scripts and styles.
-	wp_register_script( 'intercessor-export', $js_dir . 'admin/export/index' . $suffix . '.js', 'jquery', $version, false );
-	wp_register_script( 'intercessor-import', $js_dir . 'admin/import/index' . $suffix . '.js', 'jquery', $version, false );
+	// Register import and export scripts and styles.
+	wp_register_script( 'intercessor-export', $js_dir . 'admin/export/export' . $suffix . '.js', 'jquery', $version, false );
+	wp_register_script( 'intercessor-import', $js_dir . 'admin/import/import' . $suffix . '.js', 'jquery', $version, false );
 	wp_register_script( 'intercessor-settings', $js_dir . 'admin/settings/index' . $suffix . '.js', 'jquery', $version, false );
-    wp_register_script( 'intercessor-upgrades', $js_dir . 'admin/upgrades/index' . $suffix . '.js', 'jquery', $version, false );
+	wp_register_script( 'intercessor-reports', $js_dir . 'admin/reports/index' . $suffix . '.js', 'jquery', $version, false );
 
 
 
@@ -279,6 +267,7 @@ function intercessor_load_admin_scripts_styles( $hook ) {
 		),
 		'tools-export' => [],
 		'tools-import' => [],
+		'notes'        => [],
 		'prayers'      => array(
 			'intercessor-admin-notes',
 			'wp-util',

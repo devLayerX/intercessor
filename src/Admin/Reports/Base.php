@@ -24,14 +24,6 @@ defined( 'ABSPATH' ) || exit;
 class Base {
 
 	/**
-	 * Data to graph
-	 *
-	 * @var array
-	 * @since 0.9.5
-	 */
-	public $data;
-
-	/**
 	 * Unique ID for the graph
 	 *
 	 * @var string
@@ -40,12 +32,20 @@ class Base {
 	public $id = '';
 
 	/**
+	 * Data to graph
+	 *
+	 * @var array
+	 * @since 0.9.5
+	 */
+	public $data;
+
+	/**
 	 * Graph options
 	 *
 	 * @var array
 	 * @since 0.9.5
 	 */
-	public $options = array();
+	public $options = [];
 
 	/**
 	 * Get things started
@@ -54,7 +54,7 @@ class Base {
 	 *
 	 * @since 0.9.5
 	 */
-	public function __construct( $_data = array() ) {
+	public function __construct( array $_data = [] ) {
 
 		$this->data = $_data;
 
@@ -62,7 +62,7 @@ class Base {
 		$this->id = md5( wp_rand() );
 
 		// Setup default options.
-		$this->options = array(
+		$this->options = [
 			'y_mode'          => null,
 			'x_mode'          => null,
 			'y_decimals'      => 0,
@@ -80,7 +80,7 @@ class Base {
 			'lines'           => true,
 			'points'          => true,
 			'currency'        => true,
-		);
+		];
 
 	}
 
@@ -90,30 +90,11 @@ class Base {
 	 * @param string $key   The option key to set.
 	 * @param string $value The value to assign to the key.
 	 *
+     * @access public
 	 * @since 0.9.5
 	 */
-	public function set( $key, $value ) {
-		if ( 'data' === $key ) {
-
-			$this->data = $_data;
-
-		} else {
-
-			$this->options[ $key ] = $value;
-
-		}
-	}
-
-	/**
-	 * Get an option
-	 *
-	 * @param string $key The option key to get.
-	 *
-	 * @return bool|mixed
-	 * @since 0.9.5
-	 */
-	public function get( $key ) {
-		return isset( $this->options[ $key ] ) ? $this->options[ $key ] : false;
+	public function set( string $key, string $value ) {
+        $this->options[ $key ] = $value;
 	}
 
 	/**
@@ -126,6 +107,18 @@ class Base {
 	}
 
 	/**
+	 * Get an option.
+	 *
+	 * @param string $key The option key to get.
+	 *
+	 * @return bool|mixed
+	 * @since 0.9.5
+	 */
+	public function get( string $key ) {
+		return $this->options[ $key ] ?? false;
+	}
+
+	/**
 	 * Load the graphing library script
 	 *
 	 * @since 0.9.5
@@ -134,29 +127,8 @@ class Base {
 		// Use minified libraries if SCRIPT_DEBUG is turned off.
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 		wp_enqueue_script( 'jquery-flot', INTERCESSOR_URL . 'assets/js/jquery.flot' . $suffix . '.js' );
-
-		if ( $this->load_resize_script() ) {
-			wp_enqueue_script( 'jquery-flot-resize', INTERCESSOR_URL . 'assets/js/jquery.flot.resize' . $suffix . '.js' );
-		}
-
+		wp_enqueue_script( 'jquery-flot-resize', INTERCESSOR_URL . 'assets/js/jquery.flot.resize' . $suffix . '.js' );
 		wp_enqueue_style( 'intercessor-reports' );
-	}
-
-	/**
-	 * Determines if the resize script should be loaded.
-	 *
-	 * @since 1.1
-	 */
-	public function load_resize_script() {
-
-		$ret = true;
-
-		// The DMS theme is known to cause some issues with the resize script.
-		if ( defined( 'DMS_CORE' ) ) {
-			$ret = false;
-		}
-
-		return apply_filters( 'intercessor_load_flot_resize', $ret );
 	}
 
 	/**
@@ -192,13 +164,13 @@ class Base {
                             },
                             bars: {
                                 show: <?php echo $this->options['bars'] ? 'true' : 'false'; ?>,
-                                barWidth: 2,
+                                barWidth: 12,
                                 align: 'center'
                             },
                             lines: {
                                 show: <?php echo $this->options['lines'] ? 'true' : 'false'; ?>
                             },
-							<?php if ( $this->options[ 'multiple_y_axes' ] ) : ?>
+							<?php if ( $this->options['multiple_y_axes'] ) : ?>
                             yaxis: <?php echo $yaxis_count; ?>
 							<?php endif; ?>
                         },
@@ -246,7 +218,8 @@ class Base {
                         border: '1px solid #fdd',
                         padding: '2px',
                         'background-color': '#fee',
-                        opacity: 0.80
+                        opacity: 0.80,
+                        zIndex: 3,
                     }).appendTo("body").fadeIn(200);
                 }
 
@@ -300,8 +273,25 @@ class Base {
 	 * @since 0.9.5
 	 */
 	public function display() {
+		/**
+		 * Fires before the graph is displayed.
+		 *
+		 * @param object $this This object.
+		 * 
+		 * @since 1.1.0
+		 */
 		do_action( 'intercessor_before_graph', $this );
+		
+		// Display the graph.
 		echo $this->build_graph();
+
+		/**
+		 * Fires after the graph is displayed.
+		 *
+		 * @param object $this This object.
+		 * 
+		 * @since 1.1.0
+		 */
 		do_action( 'intercessor_after_graph', $this );
 	}
 
@@ -314,7 +304,7 @@ class Base {
 	function graph_controls() {
 		$date_options = apply_filters(
 			'intercessor_report_date_options',
-			array(
+			[
 				'today' 	    => esc_html__( 'Today', 'intercessor' ),
 				'yesterday'     => esc_html__( 'Yesterday', 'intercessor' ),
 				'this_week' 	=> esc_html__( 'This Week', 'intercessor' ),
@@ -326,12 +316,12 @@ class Base {
 				'this_year'		=> esc_html__( 'This Year', 'intercessor' ),
 				'last_year'		=> esc_html__( 'Last Year', 'intercessor' ),
 				'other'			=> esc_html__( 'Custom', 'intercessor' ),
-			)
+			]
 		);
 
-		$dates   = intercessor_get_report_dates();
-		$display = $dates['range'] == 'other' ? 'style="display:inline-block;"' : 'style="display:none;"';
-
+		// Set up variables.
+		$dates        = intercessor_get_report_dates();
+		$display      = $dates['range'] === 'other' ? 'style="display:inline-block;"' : 'style="display:none;"';
 		$current_time = current_time( 'timestamp' );
 
 		?>
@@ -339,7 +329,7 @@ class Base {
 			<div class="tablenav top">
 
 				<?php if ( is_admin() ) : ?>
-					<?php $tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'referral'; ?>
+					<?php $tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'prayers'; ?>
 					<?php $page = isset( $_GET['page'] ) ? $_GET['page'] : 'intercessor'; ?>
 					<input type="hidden" name="page" value="<?php echo esc_attr( $page ); ?>"/>
 				<?php else: ?>
@@ -349,9 +339,9 @@ class Base {
 
 				<input type="hidden" name="tab" value="<?php echo esc_attr( $tab ); ?>"/>
 
-				<?php if ( isset( $_GET['affiliate_id'] ) ) : ?>
-					<input type="hidden" name="affiliate_id" value="<?php echo absint( $_GET['affiliate_id'] ); ?>"/>
-					<input type="hidden" name="action" value="view_affiliate"/>
+				<?php if ( isset( $_GET['prayer_id'] ) ) : ?>
+					<input type="hidden" name="prayer_id" value="<?php echo absint( $_GET['prayer_id'] ); ?>"/>
+					<input type="hidden" name="action" value="view_prayer"/>
 				<?php endif; ?>
 
 				<select id="intercessor-graphs-date-options" name="range">
@@ -370,7 +360,7 @@ class Base {
 						<?php endfor; ?>
 					</select>
 					<select id="intercessor-graphs-year" name="year_start">
-						<?php for ( $i = 2007; $i <= date( 'Y', $current_time ); $i++ ) : ?>
+						<?php for ( $i = 2019; $i <= date( 'Y', $current_time ); $i++ ) : ?>
 							<option value="<?php echo absint( $i ); ?>" <?php selected( $i, $dates['year'] ); ?>><?php echo $i; ?></option>
 						<?php endfor; ?>
 					</select>
@@ -381,7 +371,7 @@ class Base {
 						<?php endfor; ?>
 					</select>
 					<select id="intercessor-graphs-year" name="year_end">
-						<?php for ( $i = 2007; $i <= date( 'Y', $current_time ); $i++ ) : ?>
+						<?php for ( $i = 2019; $i <= date( 'Y', $current_time ); $i++ ) : ?>
 							<option value="<?php echo absint( $i ); ?>" <?php selected( $i, $dates['year_end'] ); ?>><?php echo $i; ?></option>
 						<?php endfor; ?>
 					</select>

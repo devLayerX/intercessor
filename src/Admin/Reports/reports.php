@@ -16,8 +16,13 @@ function intercessor_reports_page() {
 
 	$active_tab = isset( $_GET[ 'tab' ] ) && array_key_exists( $_GET['tab'], intercessor_get_reports_tabs() ) ? $_GET[ 'tab' ] : 'prayers';
 
+	// Enqueue necessary styles and scripts.
+	wp_enqueue_style( 'intercessor-reports' );
+	wp_enqueue_script( 'intercessor-reports' );
+
 	?>
 	<div class="wrap">
+        <h1><?php esc_html_e( 'Intercessor Reports', 'intercessor' ); ?></h1>
 
 		<?php do_action( 'intercessor_reports_page_top' ); ?>
 
@@ -26,14 +31,14 @@ function intercessor_reports_page() {
 			foreach ( intercessor_get_reports_tabs() as $tab_id => $tab_name ) {
 
 				$tab_url = add_query_arg(
-					array(
+					[
 						'settings-updated'   => false,
 						'tab'                => $tab_id,
 						'intercessor_notice' => false,
-					)
+					]
 				);
 
-				$active = $active_tab == $tab_id ? ' nav-tab-active' : '';
+				$active = $active_tab === $tab_id ? ' nav-tab-active' : '';
 
 				echo '<a href="' . esc_url( $tab_url ) . '" title="' . esc_attr( $tab_name ) . '" class="nav-tab' . $active . '">';
 				echo esc_html( $tab_name );
@@ -62,8 +67,9 @@ function intercessor_reports_page() {
  */
 function intercessor_get_reports_tabs(): array {
 
-	$tabs                = array();
+	$tabs                = [];
 	$tabs['prayers']     = esc_html__( 'Prayers', 'intercessor' );
+	$tabs['prayed']      = esc_html__( 'Prayed Counts', 'intercessor' );
 	$tabs['requesters']  = esc_html__( 'Requesters', 'intercessor' );
 
 	return apply_filters( 'intercessor_reports_tabs', $tabs );
@@ -80,13 +86,13 @@ function intercessor_reports_tab_prayers() {
 	$stats = new Intercessor\Reports();
 
 	?>
-	<table id="intercessor_total_prayers" class="intercessor-table">
+	<table id="intercessor_active_prayers" class="intercessor-table">
 
 		<thead>
 
 		<tr>
 
-			<th><?php esc_html_e( 'Active Prayers', 'intercessor' ); ?></th>
+			<th><?php esc_html_e( 'Total Active Prayers', 'intercessor' ); ?></th>
 			<th><?php esc_html_e( 'Active Prayers This Month', 'intercessor' ); ?></th>
 			<th><?php esc_html_e( 'Active Prayers Today', 'intercessor' ); ?></th>
 
@@ -97,8 +103,8 @@ function intercessor_reports_tab_prayers() {
 		<tbody>
 
 		<tr>
-			<td><?php echo $stats->get_prayer_requests( 0, 'this_year', false,'active' ); ?></td>
-			<td><?php echo $stats->get_prayer_requests( 0, 'this_month', false,'active' ); ?></td>
+			<td><?php echo $stats->get_prayer_requests( 0, 'last year', false,'active' ); ?></td>
+			<td><?php echo $stats->get_prayer_requests( 0, 'this month', false,'active' ); ?></td>
 			<td><?php echo $stats->get_prayer_requests( 0, 'today', false,'active' ); ?></td>
 		</tr>
 
@@ -123,8 +129,8 @@ function intercessor_reports_tab_prayers() {
 		<tbody>
 
 		<tr>
-			<td><?php echo $stats->get_prayer_requests( 0, 'this_year', false,'pending' ); ?></td>
-			<td><?php echo $stats->get_prayer_requests( 0, 'this_month', false,'pending' ); ?></td>
+			<td><?php echo $stats->get_prayer_requests( 0, 'this year', false,'pending' ); ?></td>
+			<td><?php echo $stats->get_prayer_requests( 0, 'this month', false,'pending' ); ?></td>
 			<td><?php echo $stats->get_prayer_requests( 0, 'today', false,'pending' ); ?></td>
 		</tr>
 
@@ -192,6 +198,73 @@ function intercessor_reports_tab_prayers() {
 }
 add_action( 'intercessor_reports_tab_prayers', 'intercessor_reports_tab_prayers' );
 
+
+/**
+ * Display the prayers reports tab
+ *
+ * @since 0.9.5
+ * @return void
+ */
+function intercessor_reports_tab_prayed() {
+
+	$stats = new Intercessor\Reports();
+
+	?>
+    <table id="intercessor_active_prayers" class="intercessor-table">
+
+        <thead>
+
+        <tr>
+
+            <th><?php esc_html_e( 'Total Prayed For', 'intercessor' ); ?></th>
+            <th><?php esc_html_e( 'Prayed Today', 'intercessor' ); ?></th>
+            <th><?php esc_html_e( 'Prayed This Week', 'intercessor' ); ?></th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        <tr>
+            <td><?php echo $stats->get_prayed_for( 0, false, false, ); ?></td>
+            <td><?php echo $stats->get_prayed_for( 0, 'today', false ); ?></td>
+            <td><?php echo $stats->get_prayed_for( 0, 'this week', false ); ?></td>
+        </tr>
+
+        </tbody>
+
+    </table>
+
+    <table id="intercessor_pending_prayers" class="intercessor-table">
+        <thead>
+
+        <tr>
+            <th><?php esc_html_e( 'Prayed For This Month', 'intercessor' ); ?></th>
+            <th><?php esc_html_e( 'Prayed For Last Month', 'intercessor' ); ?></th>
+            <th><?php esc_html_e( 'Prayed For This Year', 'intercessor' ); ?></th>
+        </tr>
+
+        </thead>
+
+        <tbody>
+        <tr>
+            <td><?php echo $stats->get_prayed_for( 0, 'this month',  false ); ?></td>
+            <td><?php echo $stats->get_prayed_for( 0, 'last month', false ); ?></td>
+            <td><?php echo $stats->get_prayed_for( 0, 'this year', false ); ?></td>
+        </tr>
+        </tbody>
+
+    </table>
+
+	<?php
+	$graph = new \Intercessor\Admin\Reports\Prayers();
+	$graph->set( 'x_mode', 'time' );
+	$graph->display();
+
+}
+add_action( 'intercessor_reports_tab_prayed', 'intercessor_reports_tab_prayed' );
+
 /**
  * Display the intercessor requesters reports tab
  *
@@ -199,7 +272,114 @@ add_action( 'intercessor_reports_tab_prayers', 'intercessor_reports_tab_prayers'
  * @return void
  */
 function intercessor_reports_tab_requesters() {
+	$stats = new Intercessor\Reports();
 
+	?>
+    <table id="intercessor_active_prayers" class="intercessor-table">
+
+        <thead>
+
+        <tr>
+
+            <th><?php esc_html_e( 'Total Requesters', 'intercessor' ); ?></th>
+            <th><?php esc_html_e( 'Requesters Today', 'intercessor' ); ?></th>
+            <th><?php esc_html_e( 'Requesters This Week', 'intercessor' ); ?></th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        <tr>
+            <td><?php echo $stats->get_requesters( 0,false, false ); ?></td>
+            <td><?php echo $stats->get_requesters( 0, 'today', false ); ?></td>
+            <td><?php echo $stats->get_requesters( 0, 'this week', false ); ?></td>
+        </tr>
+
+        </tbody>
+
+    </table>
+
+    <table id="intercessor_pending_prayers" class="intercessor-table">
+
+        <thead>
+
+        <tr>
+
+            <th><?php esc_html_e( 'Requesters This Month', 'intercessor' ); ?></th>
+            <th><?php esc_html_e( 'Requesters This Year', 'intercessor' ); ?></th>
+            <th><?php esc_html_e( 'Requesters Last Year', 'intercessor' ); ?></th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        <tr>
+            <td><?php echo $stats->get_requesters( 0, 'this month', false ); ?></td>
+            <td><?php echo $stats->get_prayer_requests( 0, 'this year', false,'pending' ); ?></td>
+            <td><?php echo $stats->get_prayer_requests( 0, 'today', false,'pending' ); ?></td>
+        </tr>
+
+        </tbody>
+
+    </table>
+
+    <table id="intercessor_personal_prayers" class="intercessor-table">
+
+        <thead>
+
+        <tr>
+
+            <th><?php esc_html_e( 'Private Prayers', 'intercessor' ); ?></th>
+            <th><?php esc_html_e( 'Private Prayers This Month', 'intercessor' ); ?></th>
+            <th><?php esc_html_e( 'Private Prayers Today', 'intercessor' ); ?></th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        <tr>
+            <td><?php echo $stats->get_prayer_requests( 0, 'this_year', false,'personal' ); ?></td>
+            <td><?php echo $stats->get_prayer_requests( 0, 'this_month', false,'personal' ); ?></td>
+            <td><?php echo $stats->get_prayer_requests( 0, 'today', false,'personal' ); ?></td>
+        </tr>
+
+        </tbody>
+
+    </table>
+
+    <table id="intercessor_archived_counts" class="intercessor-table">
+
+        <thead>
+
+        <tr>
+
+            <th><?php esc_html_e( 'Archived Prayer Requests', 'intercessor' ); ?></th>
+            <th><?php esc_html_e( 'Archived Prayer Requests This Month', 'intercessor' ); ?></th>
+            <th><?php esc_html_e( 'Archived Prayer Requests Today', 'intercessor' ); ?></th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        <tr>
+            <td><?php echo $stats->get_prayer_requests( 0, 'this_year', false,'archived' ); ?></td>
+            <td><?php echo $stats->get_prayer_requests( 0, 'this_month', false,'archived' ); ?></td>
+            <td><?php echo $stats->get_prayer_requests( 0, 'today', false,'archived' ); ?></td>
+        </tr>
+
+        </tbody>
+
+    </table>
+
+	<?php
 	$graph = new \Intercessor\Admin\Reports\Requesters();
 	$graph->set( 'x_mode', 'time' );
 	$graph->display();
@@ -217,7 +397,7 @@ add_action( 'intercessor_reports_tab_requesters', 'intercessor_reports_tab_reque
  * @return array
  */
 function intercessor_get_report_dates() {
-	$dates = array();
+	$dates = [];
 
 	$current_time      = current_time( 'timestamp' );
 
@@ -397,3 +577,4 @@ function intercessor_get_report_dates() {
 
 	return apply_filters( 'intercessor_report_dates', $dates );
 }
+

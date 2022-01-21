@@ -17,10 +17,10 @@ class Requesters extends Base {
 
 		$start = $dates['year'] . '-' . $dates['m_start'] . '-' . $dates['day'] . ' 00:00:00';
 		$end   = $dates['year_end'] . '-' . $dates['m_end'] . '-' . $dates['day_end'] . ' 23:59:59';
-		$date  = array(
+		$date  = [
 			'start' => $start,
-			'end'   => $end
-		);
+			'end'   => $end,
+		];
 
 		// Setup arguments to retrieve requesters by.
 		$requester_args = [
@@ -32,15 +32,15 @@ class Requesters extends Base {
 
 		// Retrieve requesters.
 		$requesters       = intercessor_get_items( 'requester', $requester_args );
-		$requester_data   = array();
-		$requester_data[] = array( strtotime( $start ) * 1000 );
-		$requester_data[] = array( strtotime( $end ) * 1000 );
+		$requester_data   = [];
+		$requester_data[] = [ strtotime( $start ) * 1000 ];
+		$requester_data[] = [ strtotime( $end ) * 1000 ];
 
 		if ( $requesters ) {
 
 			foreach ( $requesters as $requester ) {
 
-				if ( 'today' == $dates['range'] || 'yesterday' == $dates['range'] ) {
+				if ( 'today' === $dates['range'] || 'yesterday' === $dates['range'] ) {
 
 					$point = strtotime( $requester->date_created ) * 1000;
 
@@ -62,20 +62,13 @@ class Requesters extends Base {
 						$requester_data[ $time ] = array( $timestamp, 1 );
 
 					}
-
-
 				}
-
-
 			}
-
 		}
 
-		$data = array(
+		return [
 			esc_html__( 'Prayer Requesters', 'intercessor' ) => $requester_data
-		);
-
-		return $data;
+		];
 
 	}
 }

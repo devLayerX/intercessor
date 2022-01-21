@@ -137,6 +137,19 @@ class Admin {
 		add_action( 'load-' . $intercessor_prayers_page, 'intercessor_add_prayers_screen_options' );
 		add_action( 'load-' . $intercessor_prayers_page, 'intercessor_prayers_contextual_help' );
 		add_action( 'load-' . $intercessor_settings_page, [ $settings_page, 'sidebar' ] );
+
+		// Activate update class.
+		$upgrades = new Upgrades();
+
+		// Add upgrades sub menu.
+		$intercessor_upgrades_page = add_submenu_page(
+			null,
+			esc_html__( 'Intercessor Upgrades', 'intercessor' ),
+			esc_html__( 'Intercessor Upgrades', 'intercessor' ),
+			'manage_prayer_settings',
+			'intercessor-upgrades',
+			'intercessor_upgrades_screen'
+		);
     }
 
     /**

@@ -43,7 +43,7 @@ class Loader {
      * Session
      *
      * @since 1.0.0
-     * @var Session
+     * @var object|Session
      */
     public $session;
 
@@ -51,7 +51,7 @@ class Loader {
      * HTML template helper class.
      *
      * @since 1.0.0
-     * @var Html
+     * @var object|Html
      */
     public $html;
     
@@ -270,6 +270,11 @@ class Loader {
         $this->cron    = new Cron();
         $this->reports = new Reports();
         new Shortcodes();
+
+	    // CLI.
+	    if ( defined( 'WP_CLI' ) && WP_CLI ) {
+		    new CLI();
+	    }
     }
 
     /**

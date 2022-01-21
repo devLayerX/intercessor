@@ -51,7 +51,7 @@ class Base extends Batch {
     public $export_type = '';
 
     /**
-     * Allows for a non-download batch processing to be run.
+     * Allows for a batch processing to be run.
      *
      * @since 1.1.0
      * @var   bool
@@ -134,12 +134,12 @@ class Base extends Batch {
         if ( $had_data ) {
             $this->done = false;
             // Save the *next* step to do.
-            \update_option( sprintf( 'intercessor_v3_migration_%s_step', sanitize_key( $this->upgrade ) ), $this->step + 1 );
+            update_option( sprintf( 'intercessor_v3_migration_%s_step', sanitize_key( $this->upgrade ) ), $this->step + 1 );
             return true;
         } else {
             $this->done    = true;
             $this->message = $this->completed_message;
-            \intercessor_set_upgrade_complete( $this->upgrade );
+            intercessor_set_upgrade_complete( $this->upgrade );
             delete_option( sprintf( 'intercessor_v3_migration_%s_step', sanitize_key( $this->upgrade ) ) );
             return false;
         }

@@ -148,9 +148,9 @@ class Recent_Prayers extends \WP_Widget {
 		$page_id      = intercessor_get_option( 'prayers_page' );
 		$prayers_url  = \get_permalink( $page_id );
 		$button_text  = ! empty( $instance['button_text'] ) ? sanitize_text_field( $instance['button_text'] ) : $prayed_label;
-		$display_date = isset( $instance['display_date'] ) ? $instance['display_date'] : false;
-		$show_counts  = isset( $instance['show_counts'] ) ? $instance['show_counts'] : false;
-		$show_more    = isset( $instance['show_more'] ) ? $instance['show_more'] : false;
+		$display_date = $instance['display_date'] ?? false;
+		$show_counts  = $instance['show_counts'] ?? false;
+		$show_more    = $instance['show_more'] ?? false;
 		$order        = $instance['order'];
 		$orderby      = $instance['orderby'];
 		$words_limit  = ! empty( $instance['words_limit'] ) ? absint( $instance['words_limit'] ) : 80;
@@ -206,10 +206,10 @@ class Recent_Prayers extends \WP_Widget {
 			foreach ( $prayers as $prayer ) :
 				$prayer_id    = absint( $prayer->id );
 				$message      = stripslashes( $prayer->message );
-				$date          = esc_attr( $prayer->date_created );
-				$gmt_offset    = \get_option( 'gmt_offset' );
-				$prayer_date   = \intercessor_time_ago( $date, $gmt_offset );
-				$counts       = \intercessor_get_prayed_requests( $prayer_id );
+				$date         = esc_attr( $prayer->date_created );
+				$gmt_offset   = \get_option( 'gmt_offset' );
+				$prayer_date  = \intercessor_time_ago( $date, $gmt_offset );
+				$counts       = \intercessor_get_prayed_for_counts( $prayer_id );
 				$display_name = \intercessor_get_prayer_name( $prayer_id );
 				$prayer_title = stripslashes( $prayer->title );
 

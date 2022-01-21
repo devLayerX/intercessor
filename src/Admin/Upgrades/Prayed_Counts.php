@@ -47,7 +47,7 @@ class Prayed_Counts extends Base {
 
 		$results = $this->get_db()->get_results( $this->get_db()->prepare(
 			"SELECT *
-			 FROM {$this->get_db()->ipr_prayer_meta}
+			 FROM {$this->get_db()->ipr_prayermeta}
 			 WHERE meta_key = %s
 			 ORDER BY ipr_prayer_id ASC
 			 LIMIT %d, %d",
@@ -74,19 +74,28 @@ class Prayed_Counts extends Base {
 	 * @return float Percentage.
 	 */
 	public function get_percentage_complete() {
-		$total = $this->get_db()->get_var( $this->get_db()->prepare( "SELECT COUNT(ipr_prayer_id) AS count FROM {$this->get_db()->ipr_prayer_meta} WHERE meta_key = %s", esc_sql( 'prayed_counts' ) ) );
+		$total = $this->get_db()->get_var(
+			$this->get_db()->prepare(
+				"SELECT COUNT(ipr_prayer_id) AS count
+				FROM {$this->get_db()->ipr_prayer_meta} 
+				WHERE meta_key = %s",
+				esc_sql( 'prayed_counts' )
+			)
+		);
 
         // Set counter to null if nothing exists in the database.
 		if ( empty( $total ) ) {
 			$total = 0;
 		}
 
+		// Set up percentage value.
 		$percentage = 100;
 
 		if ( $total > 0 ) {
 			$percentage = ( ( $this->per_step * $this->step ) / $total ) * 100;
 		}
 
+		// Set percentage to 100.
 		if ( $percentage > 100 ) {
 			$percentage = 100;
 		}

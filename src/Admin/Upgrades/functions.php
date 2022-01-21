@@ -314,10 +314,6 @@ if ( ! function_exists( 'intercessor_get_v110_upgrade' ) ) {
                 'name'  => __( 'Prayed Counts', 'intercessor' ),
                 'class' => 'Intercessor\\Admin\\Upgrades\\Prayed_Counts'
             ],
-            'prayer_meta'  => [
-                'name'  => __( 'Prayer Meta', 'intercessor' ),
-                'class' => 'Intercessor\\Admin\\Upgrades\\Prayer_Meta'
-            ],
             'requesters'    => [
                 'name'  => __( 'Requester', 'intercessor' ),
                 'class' => 'Intercessor\\Admin\\Upgrades\\Requesters'
@@ -654,11 +650,6 @@ add_action( 'intercessor_register_batch_exporter', 'intercessor_register_batch_p
  */
 function intercessor_load_batch_processors_for_v110_upgrade( string $class ) {
     switch ( $class ) {
-        case 'Intercessor\Admin\Upgrades\Prayers':
-            require_once  INTERCESSOR_DIR . 'src/Admin/Upgrades/Base.php';
-            require_once  INTERCESSOR_DIR . 'src/Admin/Upgrades/Migrator.php';
-            require_once  INTERCESSOR_DIR . 'src/Admin/Upgrades/Prayers.php';
-            break;
         case 'Intercessor\Admin\Upgrades\Requesters':
             require_once  INTERCESSOR_DIR . 'src/Admin/Upgrades/Base.php';
             require_once  INTERCESSOR_DIR . 'src/Admin/Upgrades/Migrator.php';
@@ -668,11 +659,6 @@ function intercessor_load_batch_processors_for_v110_upgrade( string $class ) {
             require_once  INTERCESSOR_DIR . 'src/Admin/Upgrades/Base.php';
             require_once  INTERCESSOR_DIR . 'src/Admin/Upgrades/Migrator.php';
             require_once  INTERCESSOR_DIR . 'src/Admin/Upgrades/Prayed_Counts.php';
-            break;
-        case 'Intercessor\Admin\Upgrades\Prayer_Meta':
-            require_once  INTERCESSOR_DIR . 'src/Admin/Upgrades/Base.php';
-            require_once  INTERCESSOR_DIR . 'src/Admin/Upgrades/Migrator.php';
-            require_once  INTERCESSOR_DIR . 'src/Admin/Upgrades/Prayer_Meta.php';
             break;
     }
 }

@@ -937,7 +937,7 @@ function intercessor_is_prayer_history_page() {
  * @since 0.9.5
  * @return bool True when IPR AJAX is disabled, false otherwise.
  */
-function intercessor_is_ajax_disabled() {
+function intercessor_is_ajax_disabled(): bool {
 	return apply_filters( 'intercessor_is_ajax_disabled', false );
 }
 
