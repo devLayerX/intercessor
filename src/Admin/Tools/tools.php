@@ -83,6 +83,10 @@ function intercessor_get_tools_tabs() : array {
  * @return void
  */
 function intercessor_export_tab() {
+	// Enqueue styles and scripts.
+	wp_enqueue_style( 'intercessor-datepicker' );
+	wp_enqueue_script( 'intercessor-export' );
+
 	/**
 	 * Fires before the export selection boxes.
 	 *

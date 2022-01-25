@@ -152,16 +152,17 @@ function intercessor_load_admin_styles() {
 
 	// Register styles.
 	wp_register_style( 'jquery-chosen', $css_dir . 'chosen' . $suffix . '.css', [], $version );
-	wp_register_style( 'colorbox', $css_dir . 'colorbox' . $suffix . '.css', [], '1.3.20' );
-	
+	wp_register_style( 'intercessor-reports', $css_dir . 'intercessor-admin-reports' . $suffix . '.css', [], $version );
+
 	// Enqueue necessary styles.
 	wp_enqueue_style( 'wp-color-picker' );
-	wp_enqueue_style( 'colorbox' );
 	wp_enqueue_style( 'thickbox' );
 	wp_enqueue_style( 'jquery-chosen' );
 	wp_enqueue_media();
 
-	wp_register_style( 'intercessor-reports', $css_dir . 'intercessor-admin-reports' . $suffix . '.css', [], $version );
+	// jQuery UI styles are loaded on our admin pages only.
+	$ui_style = ( 'classic' === get_user_option( 'admin_color' ) ) ? 'classic' : 'fresh';
+	wp_enqueue_style( 'jquery-ui-css', $css_dir . 'jquery-ui-' . $ui_style . '.min.css' );
 }
 add_action( 'admin_enqueue_scripts', 'intercessor_load_admin_styles', 100 );
 
@@ -186,13 +187,11 @@ function intercessor_load_admin_scripts() {
 	}
 	// Register required scripts globally.
 	wp_register_script( 'jquery-chosen', $js_dir . 'vendor/chosen.jquery' . $suffix . '.js', $admin_deps, $version, true );
-	wp_register_script( 'colorbox', $js_dir . 'vendor/jquery.colorbox-min.js', $admin_deps, '1.3.20', true );
 	wp_register_script( 'intercessor-admin-prayers', $js_dir . 'admin/prayers/index' . $suffix . '.js', $admin_deps, $version, false );
 
 	// Enqueue the scripts.
 	wp_enqueue_script( 'jquery-chosen' );
 	wp_enqueue_script( 'jquery-form' );
-	wp_enqueue_script( 'colorbox' );
 	wp_enqueue_script( 'jquery-ui-datepicker' );
 	wp_enqueue_script( 'jquery-ui-dialog' );
 	wp_enqueue_script( 'jquery-ui-tooltip' );

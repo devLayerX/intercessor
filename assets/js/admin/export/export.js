@@ -6,90 +6,108 @@
  * @license:     http://opensource.org/licenses/gpl-3.0.php GNU Public License
  */
 
- const IPR_Export = {
+ 
+jQuery( document ).ready( function( $ ) {
+	const IPR_Export = {
 
-	init: function() {
-		this.submit();
-	},
-
-	submit: function() {
-		const self = this;
-
-		$( document.body ).on( 'submit', '.intercessor-export-form', function( e ) {
-			e.preventDefault();
-
-			const form = $( this ),
-				submitButton = form.find( 'button[type="submit"]' ).first();
-
-			if ( submitButton.hasClass( 'button-disabled' ) || submitButton.is( ':disabled' ) ) {
-				return;
+		init: function() {
+			this.prepare();
+			this.submit();
+		},
+	
+		prepare: function() {
+			/**
+			 * Date picker
+			 *
+			 * This juggles a few CSS classes to avoid styling collisions with other
+			 * third-party plugins.
+			 */
+			var intercessor_datepicker = $( 'input.intercessor-datepicker' );
+			if ( intercessor_datepicker.length > 0 ) {
+				var dateFormat = 'mm/dd/yy';
+				intercessor_datepicker.datepicker( {
+					dateFormat: dateFormat
+				} );
 			}
+		},
 
-			const data = form.serialize();
-
-			if ( submitButton.hasClass( 'button-primary' ) ) {
-				submitButton.removeClass( 'button-primary' ).addClass( 'button-secondary' );
-			}
-			submitButton.attr( 'disabled', true ).addClass( 'updating-message' );
-			form.find( '.notice-wrap' ).remove();
-			form.append( '<div class="notice-wrap"><div class="intercessor-progress"><div></div></div></div>' );
-
-			// start the process
-			self.process_step( 1, data, self );
-		} );
-	},
-
-	process_step: function( step, data, self ) {
-		$.ajax( {
-			type: 'POST',
-			url: ajaxurl,
-			data: {
-				form: data,
-				action: 'intercessor_do_ajax_export',
-				step: step,
-			},
-			dataType: 'json',
-			success: function( response ) {
-				if ( 'done' === response.step || response.error || response.success ) {
-					// We need to get the actual in progress form, not all forms on the page
-					const export_form = $( '.intercessor-export-form' ).find( '.intercessor-progress' ).parent().parent();
-					const notice_wrap = export_form.find( '.notice-wrap' );
-
-					export_form.find( 'button' ).attr( 'disabled', false ).removeClass( 'updating-message' ).addClass( 'updated-message' );
-					export_form.find( 'button .spinner' ).hide().css( 'visibility', 'visible' );
-
-					if ( response.error ) {
-						const error_message = response.message;
-						notice_wrap.html( '<div class="updated error"><p>' + error_message + '</p></div>' );
-					} else if ( response.success ) {
-						const success_message = response.message;
-						notice_wrap.html( '<div id="intercessor-batch-success" class="updated notice"><p>' + success_message + '</p></div>' );
-						if ( response.data ) {
-							$.each( response.data, function ( key, value ) {
-								$( '.intercessor_' + key ).html( value );
-							} );
+		submit: function() {
+			const self = this;
+	
+			$( document.body ).on( 'submit', '.intercessor-export-form', function( e ) {
+				e.preventDefault();
+	
+				const form = $( this ),
+					submitButton = form.find( 'button[type="submit"]' ).first();
+	
+				if ( submitButton.hasClass( 'button-disabled' ) || submitButton.is( ':disabled' ) ) {
+					return;
+				}
+	
+				const data = form.serialize();
+	
+				if ( submitButton.hasClass( 'button-primary' ) ) {
+					submitButton.removeClass( 'button-primary' ).addClass( 'button-secondary' );
+				}
+				submitButton.attr( 'disabled', true ).addClass( 'updating-message' );
+				form.find( '.notice-wrap' ).remove();
+				form.append( '<div class="notice-wrap"><div class="intercessor-progress"><div></div></div></div>' );
+	
+				// start the process
+				self.process_step( 1, data, self );
+			} );
+		},
+	
+		process_step: function( step, data, self ) {
+			$.ajax( {
+				type: 'POST',
+				url: ajaxurl,
+				data: {
+					form: data,
+					action: 'intercessor_do_ajax_export',
+					step: step,
+				},
+				dataType: 'json',
+				success: function( response ) {
+					if ( 'done' === response.step || response.error || response.success ) {
+						// We need to get the actual in progress form, not all forms on the page
+						const export_form = $( '.intercessor-export-form' ).find( '.intercessor-progress' ).parent().parent();
+						const notice_wrap = export_form.find( '.notice-wrap' );
+	
+						export_form.find( 'button' ).attr( 'disabled', false ).removeClass( 'updating-message' ).addClass( 'updated-message' );
+						export_form.find( 'button .spinner' ).hide().css( 'visibility', 'visible' );
+	
+						if ( response.error ) {
+							const error_message = response.message;
+							notice_wrap.html( '<div class="updated error"><p>' + error_message + '</p></div>' );
+						} else if ( response.success ) {
+							const success_message = response.message;
+							notice_wrap.html( '<div id="intercessor-batch-success" class="updated notice"><p>' + success_message + '</p></div>' );
+							if ( response.data ) {
+								$.each( response.data, function ( key, value ) {
+									$( '.intercessor_' + key ).html( value );
+								} );
+							}
+						} else {
+							notice_wrap.remove();
+							window.location = response.url;
 						}
 					} else {
-						notice_wrap.remove();
-						window.location = response.url;
+						$( '.intercessor-progress div' ).animate( {
+							width: response.percentage + '%',
+						}, 50, function() {
+							// Animation complete.
+						} );
+						self.process_step( parseInt( response.step ), data, self );
 					}
-				} else {
-					$( '.intercessor-progress div' ).animate( {
-						width: response.percentage + '%',
-					}, 50, function() {
-						// Animation complete.
-					} );
-					self.process_step( parseInt( response.step ), data, self );
+				},
+			} ).fail( function( response ) {
+				if ( window.console && window.console.log ) {
+					console.log( response );
 				}
-			},
-		} ).fail( function( response ) {
-			if ( window.console && window.console.log ) {
-				console.log( response );
-			}
-		} );
-	},
-};
-
-jQuery( document ).ready( function( $ ) {
+			} );
+		},
+	};
+	
 	IPR_Export.init();
 } );
