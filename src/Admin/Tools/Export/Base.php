@@ -107,8 +107,7 @@ class Base {
 	 */
 	public function csv_cols_out() {
 		$cols = $this->get_csv_cols();
-
-		$i = 1;
+		$i    = 1;
 
 		// Output each column.
 		foreach ( $cols as $col_id => $column ) {
@@ -189,7 +188,7 @@ class Base {
 	}
 
 	/**
-	 * Perform the export.
+	 * Perform the export process.
 	 *
 	 * @since 0.9.5
 	 *
@@ -199,7 +198,7 @@ class Base {
 	 * @uses Base::csv_cols_out()
 	 * @uses Base::csv_rows_out()
 	 */
-	public function export() {
+	public function process() {
 
 		// Bail if user is unauthorized.
 		if ( ! $this->can_export() ) {

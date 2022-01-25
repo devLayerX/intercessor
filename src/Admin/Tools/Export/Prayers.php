@@ -5,60 +5,64 @@
  * This class handles prayer export
  *
  * @package     Intercessor
- * @subpackage  Admin/Reports
+ * @subpackage  Admin/Tools/Export
  * @copyright   Copyright (c) 2019, Victor Aigbeghian
  * @license     http://opensource.org/licenses/GPL-3.0.php GNU Public License
- * @since       0.9.5
+ * @since       1.0.0
  */
 
 namespace Intercessor\Admin\Tools\Export;
 
-// Exit if accessed directly
 use Intercessor\Requester;
 
-defined( 'ABSPATH' ) || exit;
+// Exit if accessed directly.
+ if ( defined( 'ABSPATH' ) ) {
+	exit;
+ }
 
 /**
  * IPR_Prayers_Export Class
  *
- * @since 0.9.5
+ * @since 1.0.0
  */
 class Prayers extends Base {
 	/**
 	 * Our export type. Used for export-type specific filters/actions
+	 *
 	 * @var string
-	 * @since 0.9.5
+	 *
+	 * @since 1.0.0
 	 */
 	public $export_type = 'prayers';
 
 	/**
-	 * Set the export headers
+	 * Date
 	 *
-	 * @since 0.9.5
-	 * @return void
+	 * @var array
+	 *
+	 * @since 1.0.0
 	 */
-	public function headers() {
-		intercessor_set_time_limit();
+	public $date;
 
-		$month = isset( $_POST['month'] ) ? absint( $_POST['month'] ) : date( 'n' );
-		$year  = isset( $_POST['year']  ) ? absint( $_POST['year']  ) : date( 'Y' );
-
-		nocache_headers();
-		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename="' . apply_filters( 'intercessor_prayers_export_filename', 'intercessor-export-' . $this->export_type . '-' . $month . '-' . $year ) . '.csv"' );
-		header( 'Expires: 0' );
-	}
+	/**
+	 * Status
+	 *
+	 * @var array
+	 *
+	 * @since 1.0.0
+	 */
+	public $status;
 
 	/**
 	 * Set the CSV columns
 	 *
-	 * @since 0.9.5
+	 * @since 1.0.0
 	 * @return array $cols All the columns
 	 */
 	public function csv_cols() {
-		$columns = array(
-			'id'           => esc_html__( 'ID', 'intercessor' ), // unaltered prayer ID
-			'requester_id' => esc_html__( 'Requester ID', 'intercessor' ), // requester ID
+		return [
+			'id'           => esc_html__( 'ID', 'intercessor' ), // unaltered prayer ID.
+			'requester_id' => esc_html__( 'Requester ID', 'intercessor' ), // requester ID.
 			'user_id'      => esc_html__( 'User ID', 'intercessor' ),
 			'first_name'   => esc_html__( 'First Name', 'intercessor' ),
 			'last_name'    => esc_html__( 'Last Name', 'intercessor' ),
@@ -72,33 +76,38 @@ class Prayers extends Base {
 			'date_created' => esc_html__( 'Date Created', 'intercessor' ),
 			'date_active'  => esc_html__( 'Date Active', 'intercessor' ),
 			'end_date'     => esc_html__( 'End Date', 'intercessor' ),
-		);
-
-		return $columns;
+		];
 	}
 
 	/**
 	 * Get the Export Data
 	 *
-	 * @since 0.9.5
+	 * @since 1.0.0
 	 * @global object $wpdb Used to query the database using the WordPress
 	 *   Database API
 	 * @return array $data The data for the CSV file
 	 */
 	public function get_data() {
-
-		$data = array();
-
-		$args = array(
-			'offset' => 0,
+		// Set up variables.
+		$data = [];
+		$args = [
+			'date'   => ! empty( $this->date ) ? $this->date : '',
 			'number' => -1,
-			'status' => isset( $_POST['intercessor_prayers_export_status'] ) ? $_POST['intercessor_prayers_export_status'] : 'any',
-			'month'  => isset( $_POST['month'] ) ? absint( $_POST['month'] ) : date( 'n' ),
-			'year'   => isset( $_POST['year'] ) ? absint( $_POST['year'] ) : date( 'Y' )
-		);
+			'status' => $this->status,
+		];
 
-		$prayers = intercessor()->prayers->get_prayers( $args );
+		// Set up dates range to query.
+		if ( ! empty( $this->date ) ) {
+			$args['date_created_query'] = [
+				'before' => $this->date['start'],
+				'after'  => $this->date['end'],
+			];
+		}
 
+		// Get available prayers from database.
+		$prayers = intercessor_get_items( 'prayer', $args );
+
+		// Set up prayer export data if prayer requests found.
 		if ( $prayers ) {
 
 			foreach ( $prayers as $prayer ) {
@@ -106,10 +115,11 @@ class Prayers extends Base {
 				$first_name = $requester->get_first_name();
 				$last_name  = $requester->get_last_name();
 
-				$data[] = array(
+				// Build prayer data.
+				$data[] = [
 					'id'           => $prayer->id,
 					'requester_id' => $prayer->requester_id,
-					'user_id'	   => $prayer->user_id,
+					'user_id'      => $prayer->user_id,
 					'first_name'   => $first_name,
 					'last_name'    => $last_name,
 					'email'        => $prayer->email,
@@ -122,14 +132,14 @@ class Prayers extends Base {
 					'date_created' => $prayer->date_created,
 					'start_date'   => $prayer->start_date,
 					'end_date'     => $prayer->end_date,
-				);
+				];
 			}
 		}
-
 
 		$data = apply_filters( 'intercessor_export_get_data', $data );
 		$data = apply_filters( 'intercessor_export_get_data_' . $this->export_type, $data );
 
+		// Return export data.
 		return $data;
 	}
 }

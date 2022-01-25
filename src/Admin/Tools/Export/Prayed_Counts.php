@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Requesters Export Class
+ * Prayed Counts Export Class
  *
- * This class handles requester export
+ * This class handles prayed export
  *
  * @package     Intercessor
  * @subpackage  Admin/Tools/Export
- * @copyright   Copyright (c) 2019, Victor Aigbeghian
+ * @copyright   Copyright (c) 2022, Victor Aigbeghian
  * @license     http://opensource.org/licenses/GPL-3.0.php GNU Public License
  * @since       1.0.0
  */
@@ -18,11 +18,11 @@ namespace Intercessor\Admin\Tools\Export;
 defined('ABSPATH') || exit;
 
 /**
- * Requesters Export Class
+ * Prayed Counts Export Class
  *
  * @since 1.0.0
  */
-class Requesters extends Base
+class Prayed_Counts extends Base
 {
 	/**
 	 * Our export type. Used for export-type specific filters/actions
@@ -30,7 +30,7 @@ class Requesters extends Base
 	 * @var string
 	 * @since 1.0.0
 	 */
-	public $export_type = 'requesters';
+	public $export_type = 'prayed';
 
 	/**
 	 * Date
@@ -42,15 +42,6 @@ class Requesters extends Base
 	public $date;
 
 	/**
-	 * Status
-	 *
-	 * @var array
-	 *
-	 * @since 1.0.0
-	 */
-	public $status;
-
-	/**
 	 * Set the CSV columns
 	 *
 	 * @since 1.0.0
@@ -60,12 +51,9 @@ class Requesters extends Base
 	{
 		return [
 			'id'            => esc_html__('ID', 'intercessor'),
-			'user_id'       => esc_html__('User ID', 'intercessor'),
-			'name'          => esc_html__('Name', 'intercessor'),
-			'email'         => esc_html__('Email', 'intercessor'),
-			'status'        => esc_html__('Status', 'intercessor'),
+			'prayer_id'     => esc_html__('Prayer ID', 'intercessor'),
+			'prayed_for'    => esc_html__('Prayed For', 'intercessor'),
 			'date_created'  => esc_html__('Date created', 'intercessor'),
-			'date_modified' => esc_html__('Date modified', 'intercessor'),
 		];
 	}
 
@@ -82,7 +70,6 @@ class Requesters extends Base
 		// Set up variables.
 		$data = [];
 		$args = [
-			'status' => $this->status,
 			'date'   => ! empty( $this->date ) ? $this->date : '',
 			'number' => -1,
 		];
@@ -95,24 +82,20 @@ class Requesters extends Base
 			];
 		}
 
-		// Get available requesters from database.
-		$requesters = \intercessor_get_items('requester', $args);
+		// Get available prayed counts from database.
+		$prayed_for = \intercessor_get_items('prayed', $args);
 
-		// Set up requester export data if requesters found.
-		if ( $requesters ) {
+		// Set up prayed export data if prayed found.
+		if ( $prayed_for ) {
 
-			foreach ( $requesters as $requester ) {
+			foreach ( $prayed_for as $prayed ) {
 
-				// Build requester data.
+				// Build prayed data.
 				$data[] = [
-					'id'            => $requester->id,
-					'user_id'       => $requester->user_id,
-					'name'          => $requester->name,
-					'email'         => $requester->email,
-					'status'        => $requester->status,
-					'prayer_count'  => $requester->prayer_count,
-					'date_created'  => $requester->date_created,
-					'date_modified' => $requester->date_modified,
+					'id'           => $prayed->id,
+					'prayer_id'    => $prayed->prayer_id,
+					'prayed_for'   => $prayed->prayed_for,
+					'date_created' => $prayed->date_created,
 				];
 			}
 		}
