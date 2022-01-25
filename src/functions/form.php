@@ -947,7 +947,7 @@ function intercessor_is_ajax_disabled(): bool {
  * @since 0.9.5
  * @return string URL to the AJAX file to call during AJAX requests.
  */
-function intercessor_get_ajax_url() {
+function intercessor_get_ajax_url(): string {
 	$scheme = defined( 'FORCE_SSL_ADMIN' ) && FORCE_SSL_ADMIN ? 'https' : 'admin';
 
 	$current_url = intercessor_get_current_page_url();
@@ -966,7 +966,7 @@ function intercessor_get_ajax_url() {
  * @since 0.9.5
  * @return string $page_url Current page URL
  */
-function intercessor_get_current_page_url() {
+function intercessor_get_current_page_url(): string {
 
 	global $wp;
 
@@ -996,34 +996,6 @@ function intercessor_get_current_page_url() {
 }
 
 /**
- * Send back to prayer request.
- *
- * Used to redirect a user back to the prayer
- * page if there are errors present.
- *
- * @param array $args
- * @access public
- * @since  0.9.5
- * @return Void
- */
-function intercessor_send_back_to_prayer_request( $args = [] ) {
-	$redirect = intercessor_get_prayer_request_uri();
-
-	if ( ! empty( $args ) ) {
-		// Check for backward compatibility
-		if ( is_string( $args ) )
-			$args = str_replace( '?', '', $args );
-
-		$args = wp_parse_args( $args );
-
-		$redirect = add_query_arg( $args, $redirect );
-	}
-
-	wp_redirect( apply_filters( 'intercessor_send_back_to_prayer_request', $redirect, $args ) );
-	intercessor_die();
-}
-
-/**
  * Check if a field is required
  *
  * @param string $field Field.
@@ -1032,7 +1004,7 @@ function intercessor_send_back_to_prayer_request( $args = [] ) {
  * @since       0.9.5
  * @return      bool
 */
-function intercessor_required_fields( $field = '' ) {
+function intercessor_required_fields( string $field = '' ): bool {
 	$required_fields = intercessor_request_form_required_fields();
 	return array_key_exists( $field, $required_fields );
 }
@@ -1043,7 +1015,7 @@ function intercessor_required_fields( $field = '' ) {
  * @since  0.9.5
  * @return array $emails Array of banned emails.
  */
-function intercessor_get_banned_emails() {
+function intercessor_get_banned_emails(): array {
     $banned = intercessor_get_option( 'banned_emails', [] );
     $emails = ! is_array( $banned )
         ? explode( "\n", $banned )
@@ -1061,7 +1033,7 @@ function intercessor_get_banned_emails() {
  * @param string $email Email to check if is banned.
  * @return bool
  */
-function intercessor_is_email_banned( $email = '' ) {
+function intercessor_is_email_banned( string $email = '' ): bool {
 
 	$email = trim( $email );
 	if ( empty( $email ) ) {
@@ -1225,12 +1197,12 @@ if ( ! function_exists( 'intercessor_login_form' ) ) {
 	 *
 	 * @param string $redirect Redirect page URL
 	 *
-	 * @since 0.9.5
-	 * @global $post
-	 *
 	 * @return string Login form
-	*/
-	function intercessor_login_form( $redirect = '' ) {
+	*@global $post
+	 *
+	 * @since 0.9.5
+	 */
+	function intercessor_login_form( string $redirect = '' ): string {
 		global $intercessor_login_redirect;
 
 		if ( empty( $redirect ) ) {
@@ -1253,11 +1225,11 @@ if ( ! function_exists( 'intercessor_register_form' ) ) {
 	 *
 	 * @param string $redirect Redirect page URL.
 	 *
-	 * @since 0.9.5
-	 * @global $post
 	 * @return string Register form
+	 *@global $post
+	 * @since 0.9.5
 	 */
-	function intercessor_register_form( $redirect = '' ) {
+	function intercessor_register_form( string $redirect = '' ): string {
 		global $intercessor_register_redirect;
 
 		if ( empty( $redirect ) ) {

@@ -1234,11 +1234,13 @@ if ( ! function_exists( 'intercessor_time_ago' ) ) {
 	 * @return string
 	 * @since 0.9.5
 	 */
-	function intercessor_time_ago( $date, $gmt_offset ) {
+	function intercessor_time_ago( string $date, string $gmt_offset ): string {
+		// Set up variables.
 		$date  = strtotime( $date ) ? strtotime( $date ) : $date;
 		$time  = time() - $date;
 		$value = '';
 
+		// Process different time ranges.
 		switch ( $time ) {
 			// Seconds.
 			case $time <= 60:
@@ -1308,11 +1310,11 @@ if ( ! function_exists( 'intercessor_redirect' ) ) {
 	 * Redirects to a specific page or lacation
 	 *
 	 * @param string $location Location to redirect to.
-	 * @param int    $status   Status of the redirect. Default 302.
+	 * @param int $status   Status of the redirect. Default 302.
 	 *
 	 * @since 1.0.0
 	 */
-	function intercessor_redirect( $location = '', $status = 302 ) {
+	function intercessor_redirect( string $location = '', int $status = 302 ) {
 		// Prevent redirects in unit tests.
 		if ( (bool) ( defined( 'WP_TESTS_DIR' ) && WP_TESTS_DIR ) || function_exists( '_manually_load_plugin' ) ) {
 			return;
@@ -1371,18 +1373,19 @@ if ( ! function_exists( 'intercessor_limit_text' ) ) {
 	 * Limit the words displayed by prayer message.
 	 *
 	 * @param string $text  Text.
-	 * @param int    $limit Number of word limit.
+	 * @param int $limit Number of word limit.
 	 *
-	 * @since 0.9.5
 	 * @return string
+	 *@since 0.9.5
 	 */
-	function intercessor_limit_text( $text, $limit ) {
+	function intercessor_limit_text( string $text, int $limit ): string {
 		if ( str_word_count( $text, 0 ) > $limit ) {
 			$words    = str_word_count( $text, 2 );
 			$position = array_keys( $words );
 			$text     = substr( $text, 0, $position[ $limit ] )  .  '...';
 		}
 
+		// return limited contents.
 		return $text;
     }
 }
@@ -1391,13 +1394,13 @@ if ( ! function_exists( 'intercessor_get_status_label' ) ) {
 	/**
 	 * Get the label for a status
 	 *
-	 * @since 1.0.0
-	 *
 	 * @param string $status
 	 *
 	 * @return string Label for the status
+	 *@since 1.0.0
+	 *
 	 */
-	function intercessor_get_status_label( $status = '' ) {
+	function intercessor_get_status_label( string $status = '' ): string {
 		static $labels = null;
 
 		// Array of status labels
@@ -1413,9 +1416,7 @@ if ( ! function_exists( 'intercessor_get_status_label' ) ) {
 		}
 
 		// Return the label if set, or uppercase the first letter if not.
-		$retval = isset( $labels[ $status ] )
-			? $labels[ $status ]
-			: ucwords( $status );
+		$retval = $labels[ $status ] ?? ucwords( $status );
 
 		// Filter & return
 		return apply_filters( 'intercessor_get_status_label', $retval, $status );
@@ -1505,12 +1506,12 @@ if ( ! function_exists( 'intercessor_is_func_disabled' ) ) {
 	 * Checks whether function is disabled.
 	 *
 	 * @since 1.3.5
-	 * @since 3.0.0 String type-checking the `in_array()` call
+	 * @since 3.0.0 String type-checking the `in_[` call
 	 *
 	 * @param string $function Name of the function.
 	 * @return bool Whether or not function is disabled.
 	 */
-	function intercessor_is_func_disabled( $function ) {
+	function intercessor_is_func_disabled( string $function ) : bool {
 		$disabled = explode( ',', @ini_get( 'disable_functions' ) );
 
 		return in_array( $function, $disabled, true );
@@ -1526,12 +1527,13 @@ if ( ! function_exists( 'intercessor_set_time_limit' ) ) {
 	 * The $time_limit parameter is filterable, but infinite values are not allowed
 	 * so any erroneous processes are able to terminate normally.
 	 *
-	 * @since 1.0.0
-	 *
 	 * @param boolean $ignore_user_abort Whether to call ignore_user_about( true )
 	 * @param int     $time_limit        How long to set the time limit to. Cannot be 0. Default 6 hours.
+	 *
+	 * @since 1.0.0
+	 *
 	 */
-	function intercessor_set_time_limit( $ignore_user_abort = true, $time_limit = 21600 ) {
+	function intercessor_set_time_limit( bool $ignore_user_abort = true, int $time_limit = 21600 ) {
 
 		// Default time limit is 6 hours
 		$default = HOUR_IN_SECONDS * 6;
@@ -1570,7 +1572,7 @@ if ( ! function_exists( 'intercessor_set_time_limit' ) ) {
 	}
 }
 
-if ( ! function_exists( '' ) ) {
+if ( ! function_exists( 'intercessor_get_path' ) ) {
 	/**
 	 * Get Intercessor directory path.
 	 *
@@ -1581,5 +1583,81 @@ if ( ! function_exists( '' ) ) {
 	 */
 	function intercessor_get_path( string $filename = '' ): string {
 		return INTERCESSOR_DIR . ltrim( $filename, '/' );
+	}
+}
+
+if ( ! function_exists( 'intercessor_object_to_array' ) ) {
+
+	/**
+	 * Convert object or array of objects to array.
+	 *
+	 * @param array $object An object or an array of objects
+	 *
+	 * @return array  An array or array of arrays, converted from the provided object(s)
+	 * @since    1.1.0
+	 */
+	function intercessor_object_to_array( array $object = [] ): array {
+
+		if ( empty( $object ) || ( ! is_object( $object ) && ! is_array( $object ) ) ) {
+			return $object;
+		}
+
+		if ( is_array( $object ) ) {
+			$return = [];
+			foreach ( $object as $item ) {
+				if ( $object instanceof \Intercessor\Prayer ) {
+					$return[] = $object->array_convert();
+				} else {
+					$return[] = intercessor_object_to_array( $item );
+				}
+			}
+		} else {
+			if ( $object instanceof \Intercessor\Prayer ) {
+				$return = $object->array_convert();
+			} else {
+				$return = get_object_vars( $object );
+
+				// Convert to array.
+				foreach ( $return as $key => $value ) {
+					$value = ( is_array( $value ) || is_object( $value ) ) ? intercessor_object_to_array( $value ) : $value;
+					$return[ $key ] = $value;
+				}
+			}
+		}
+
+		// Return convert array.
+		return $return;
+	}
+}
+
+if ( ! function_exists( 'intercessor_date_format' ) ) {
+
+	/**
+	 * Get date format string on basis of given context.
+	 *
+	 * @param string $date_context Date format context name.
+	 *
+	 * @return string Date format string
+	 * @since 1.0.0
+	 */
+	function intercessor_date_format( string $date_context = '' ): string {
+		/**
+		 * Filter the date context
+		 */
+		$date_format_contexts = apply_filters( 'intercessor_date_format_contexts', array() );
+
+		// Set date format to default date format.
+		$date_format = get_option( 'date_format' );
+
+		// Update date format.
+		if ( $date_context && ! empty( $date_format_contexts )
+		     && array_key_exists( $date_context, $date_format_contexts ) ) {
+			$date_format = ! empty( $date_format_contexts[ $date_context ] )
+				? $date_format_contexts[ $date_context ]
+				: $date_format;
+		}
+
+		// Return updated date format.
+		return apply_filters( 'intercessor_date_format', $date_format );
 	}
 }

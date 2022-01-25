@@ -46,6 +46,8 @@ class Admin {
 
         add_action( 'admin_menu', [ $this, 'menu' ] );
         add_action( 'admin_menu', [ $this, 'upgrades_menu'] );
+		
+	//	$this->maybe_load();
     }
 
 	/**
@@ -208,4 +210,30 @@ class Admin {
             'intercessor_upgrades_screen'
         );
     }
+
+	/**
+	 * Maybe load PDF files.
+	 *
+	 * @access private
+	 * @since 1.0.0
+	 * @return void
+	 */
+	private function maybe_load() {
+		// Maybe load pdf generation files.
+		if ( $this->generate_pdf() ) {
+			require_once INTERCESSOR_DIR . '/src/Admin/Tools/pdf-prayers.php';
+		}
+	}
+
+	/**
+	 * Generate PDF
+	 *
+	 * @access private
+	 * @since 1.0.0
+	 * @return bool
+	 */
+	private function generate_pdf(): bool {
+		return isset( $_GET['intercessor-action'] ) && 'generate_pdf' === \intercessor_clean( $_GET['intercessor-action'] );
+	}
+	
 }

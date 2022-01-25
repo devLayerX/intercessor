@@ -98,21 +98,27 @@ function intercessor_get_current_tools_tab() {
  * @since 0.9.5
  */
 function intercessor_tools_banned_emails_display() {
+    // Bail if use does not have the required capabilities.
 	if ( ! current_user_can( 'manage_prayer_settings' ) ) {
 		return;
 	}
 
+	/**
+	 * Fires before the banned emails box.
+     *
+     * @since 1.0.0
+	 */
 	do_action( 'intercessor_tools_banned_emails_before' );
 	?>
     <div class="postbox">
         <h3><span><?php esc_html_e( 'Banned Emails', 'intercessor' ); ?></span></h3>
         <div class="inside">
-            <p><?php esc_html_e( 'Emails placed in the box below will not be allowed to make purchases.', 'intercessor' ); ?></p>
+            <p><?php esc_html_e( 'Emails placed in the box below will not be allowed to submit prayer requests.', 'intercessor' ); ?></p>
             <form method="post"
                   action="<?php echo admin_url( 'admin.php?page=intercessor-tools&tab=general' ); ?>">
                 <p>
-                    <label for="banned_emails"><?php esc_html_e( 'Banned Emails', 'intercessor' ); ?>
-                    <textarea name="banned_emails" rows="10"
+                    <label for="intercessor_banned_emails"><?php esc_html_e( 'Banned Emails', 'intercessor' ); ?>
+                    <textarea name="intercessor_banned_emails" rows="10"
                               class="large-text"><?php echo implode( "\n", intercessor_get_banned_emails() ); ?></textarea>
                     </label>
                     <span class="description"><?php esc_html_e( 'Enter emails and/or domains (starting with "@") and/or TLDs (starting with ".") to disallow, one per line.', 'intercessor' ); ?></span>
@@ -126,9 +132,58 @@ function intercessor_tools_banned_emails_display() {
         </div><!-- .inside -->
     </div><!-- .postbox -->
 	<?php
+
+	/**
+	 * Fires after the banned emails box.
+	 *
+	 * @since 1.0.0
+	 */
 	do_action( 'intercessor_tools_banned_emails_after' );
+
+	/**
+	 * Fires after the banned emails box and the tools section.
+	 *
+	 * @since 1.0.0
+	 */
 	do_action( 'intercessor_tools_after' );
 }
+add_action( 'intercessor_tools_tab_general', 'intercessor_tools_banned_emails_display' );
+
+/**
+ * Save banned emails.
+ *
+ * @return bool|void
+ * @since 0.9.5
+ */
+function intercessor_tools_banned_emails_save() {
+	if ( ! wp_verify_nonce( $_POST['intercessor_banned_emails_nonce'], 'intercessor_banned_emails_nonce' ) ) {
+		return;
+	}
+
+	// Bail if user is not allowed.
+	if ( ! current_user_can( 'manage_prayer_settings' ) ) {
+		return;
+	}
+
+	if ( ! empty( $_POST['intercessor_banned_emails'] ) ) {
+		// Sanitize the input.
+		$emails = array_map( 'trim', explode( "\n", $_POST['intercessor_banned_emails'] ) );
+		$emails = array_unique( $emails );
+		$emails = array_map( 'sanitize_text_field', $emails );
+
+		foreach ( $emails as $id => $email ) {
+			if ( ! is_email( $email ) && $email[0] != '@' && $email[0] != '.' ) {
+				unset( $emails[ $id ] );
+			}
+		}
+	} else {
+		$emails = '';
+	}
+
+	// Update banned emails option.
+	return intercessor_update_option( 'banned_emails', $emails );
+}
+add_action( 'intercessor_save_banned_emails', 'intercessor_tools_banned_emails_save' );
 
 /**
  * Display the recount stats.
@@ -207,8 +262,7 @@ function intercessor_tools_recount_stats_display() {
 	<?php
 	do_action( 'intercessor_tools_recount_stats_after' );
 }
-
-//add_action( 'intercessor_tools_tab_recount', 'intercessor_tools_recount_stats_display' );
+add_action( 'intercessor_tools_tab_recount', 'intercessor_tools_recount_stats_display' );
 
 /**
  * Display the clear upgrades tab.
@@ -242,40 +296,6 @@ function intercessor_tools_clear_doing_upgrade_display() {
 }
 
 add_action( 'intercessor_tools_tab_general', 'intercessor_tools_clear_doing_upgrade_display' );
-
-/**
- * Save banned emails.
- *
- * @since 0.9.5
- */
-function intercessor_tools_banned_emails_save() {
-	if ( ! wp_verify_nonce( $_POST['intercessor_banned_emails_nonce'], 'intercessor_banned_emails_nonce' ) ) {
-		return;
-	}
-
-	// Bail if user is not allowed.
-	if ( ! current_user_can( 'manage_prayer_settings' ) ) {
-		return;
-	}
-
-	if ( ! empty( $_POST['banned_emails'] ) ) {
-		// Sanitize the input
-		$emails = array_map( 'trim', explode( "\n", $_POST['banned_emails'] ) );
-		$emails = array_unique( $emails );
-		$emails = array_map( 'sanitize_text_field', $emails );
-
-		foreach ( $emails as $id => $email ) {
-			if ( ! is_email( $email ) && $email[0] != '@' && $email[0] != '.' ) {
-				unset( $emails[ $id ] );
-			}
-		}
-	} else {
-		$emails = '';
-	}
-
-	intercessor_update_option( 'banned_emails', $emails );
-}
-add_action( 'intercessor_save_banned_emails', 'intercessor_tools_banned_emails_save' );
 
 /**
  * Execute upgrade notice clear.

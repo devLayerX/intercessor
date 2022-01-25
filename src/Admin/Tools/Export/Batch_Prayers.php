@@ -63,7 +63,6 @@ class Batch_Prayers extends Batch {
 	 * Get the export data.
 	 *
 	 * @since 0.9.5
-	 * @since 0.9.5 Updated to use new query methods.
 	 *
 	 * @return array $data The data for the CSV file.
 	 */
@@ -78,14 +77,15 @@ class Batch_Prayers extends Batch {
 			'orderby' => 'date',
 		];
 
+		// Get start and end dates.
 		if ( ! empty( $this->start ) || ! empty( $this->end ) ) {
-			$args['date_created'] = array(
-				array(
+			$args['date_created'] = [
+				[
 					'after'     => date( 'Y-m-d 00:00:00', strtotime( $this->start ) ),
 					'before'    => date( 'Y-m-d 23:59:59', strtotime( $this->end ) ),
 					'inclusive' => true,
-				),
-			);
+				],
+			];
 		}
 
 		if ( 'any' === $args['status'] ) {
@@ -129,29 +129,31 @@ class Batch_Prayers extends Batch {
 	 * Return the calculated completion percentage
 	 *
 	 * @since 0.9.5
-	 * @since 0.9.5 Updated to use new query methods.
 	 *
 	 * @return int
 	 */
 	public function get_percentage_complete() {
+		// Set up arguments for database query.
 		$args = [
 			'fields' => 'ids',
 		];
 
+		// Add date query to arguments if specified.
 		if ( ! empty( $this->start ) || ! empty( $this->end ) ) {
-			$args['date_created'] = array(
+			$args['date_query'] = [
 				[
 					'after'     => date( 'Y-n-d H:i:s', strtotime( $this->start ) ),
 					'before'    => date( 'Y-n-d H:i:s', strtotime( $this->end ) ),
 					'inclusive' => true,
-				],
-			);
+				]
+			];
 		}
 
 		if ( 'any' !== $this->status ) {
 			$args['status'] = $this->status;
 		}
 
+		// Get total prayed counts and percentage.
 		$total      = intercessor_count_items( 'prayer', $args );
 		$percentage = 100;
 
@@ -163,6 +165,7 @@ class Batch_Prayers extends Batch {
 			$percentage = 100;
 		}
 
+		// Return percentage value.
 		return $percentage;
 	}
 

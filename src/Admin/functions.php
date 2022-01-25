@@ -56,26 +56,22 @@ function intercessor_admin_removable_query_args() : array {
  *@since 	0.9.5
  *
  */
-function intercessor_is_admin_page( string $page = '' ) : bool {
+function intercessor_is_admin_page() : bool {
 
 	// Bail if the wp_loaded hook has not been called or it is not an admin.
 	if ( ! is_admin() || ! did_action( 'wp_loaded' ) ) {
 		$ret = false;
 	}
 
-	if ( empty( $page ) && isset( $_GET['page'] ) ) {
-		$page = sanitize_text_field( $_GET['page'] );
-	} else {
-		$ret = false;
-	}
-
-	$admin_pages = array(
+	// Get available pages.
+	$page        = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
+	$admin_pages = [
 		'intercessor-prayers',
 		'intercessor-requesters',
 		'intercessor-tools',
 		'intercessor-settings',
         'intercessor-upgrades',
-	);
+	];
 
 	if ( ! empty( $page ) && in_array( $page, $admin_pages ) ) {
 		$ret = true;

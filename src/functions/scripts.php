@@ -133,9 +133,8 @@ add_action( 'wp_enqueue_scripts', 'intercessor_load_styles' );
  * @global $post
  * @return void
  */
-function intercessor_load_admin_scripts_styles( $hook ) {
-	global $post;
-
+function intercessor_load_admin_scripts_styles() {
+	
 	$js_dir     = INTERCESSOR_URL . 'assets/js/';
 	$css_dir    = INTERCESSOR_URL . 'assets/css/';
 	$admin_deps = array( 'jquery', 'jquery-form', 'underscore' );
@@ -147,10 +146,9 @@ function intercessor_load_admin_scripts_styles( $hook ) {
 	// Register Intercessor styles.
 	wp_register_style( 'intercessor-admin', $css_dir . 'intercessor-admin' . $suffix . '.css', [], $version );
 	wp_enqueue_style( 'intercessor-admin' );
-	wp_register_style( 'intercessor-reports', $css_dir . 'intercessor-admin-reports' . $suffix . '.css', [], $version );
 
 	// Bail if not on intercessor admin pages.
-	if ( ! apply_filters( 'intercessor_load_admin_scripts', intercessor_is_admin_page(), $hook ) ) {
+	if ( ! intercessor_is_admin_page() ) {
 		return;
 	}
 
@@ -190,7 +188,7 @@ function intercessor_load_admin_scripts_styles( $hook ) {
 
 //	wp_enqueue_script( 'intercessor-admin-scripts' );
 
-	wp_register_script( 'intercessor-admin-prayers', $js_dir . 'admin/admin-prayers' . $suffix . '.js', 'jquery-chosen', $version, false );
+	wp_register_script( 'intercessor-admin-prayers', $js_dir . 'admin/prayers/index' . $suffix . '.js', [ 'jquery-chosen', 'jquery-ui-datepicker' ], $version, false );
 
 	if ( 'intercessor-prayers' === intercessor_is_admin_page() ) {
 		wp_enqueue_script( 'intercessor-admin-prayers' );
@@ -257,6 +255,8 @@ function intercessor_load_admin_scripts_styles( $hook ) {
 	wp_register_script( 'intercessor-import', $js_dir . 'admin/import/import' . $suffix . '.js', 'jquery', $version, false );
 	wp_register_script( 'intercessor-settings', $js_dir . 'admin/settings/index' . $suffix . '.js', 'jquery', $version, false );
 	wp_register_script( 'intercessor-reports', $js_dir . 'admin/reports/index' . $suffix . '.js', 'jquery', $version, false );
+
+	wp_register_style( 'intercessor-reports', $css_dir . 'intercessor-admin-reports' . $suffix . '.css', [], $version );
 
 
 

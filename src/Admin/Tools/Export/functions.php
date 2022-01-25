@@ -35,8 +35,7 @@ function intercessor_process_batch_export_prayer() {
 
 	do_action( 'intercessor_batch_export_class_include', $_REQUEST['class'] );
 
-	// @TODO
-//	$export = new $_REQUEST['class']();
+	// Load batch prayers class.
 	$export = new Batch_Prayers();
 
 	// Process export.
@@ -194,94 +193,95 @@ function intercessor_do_ajax_export() {
 	     && check_admin_referer( 'intercessor_ajax_export', 'intercessor_ajax_export' ) ) {
 */
 
-		if ( ! wp_verify_nonce( $_REQUEST['intercessor_ajax_export'], 'intercessor_ajax_export' ) ) {
-			die( '-2' );
-		}
+	if ( ! wp_verify_nonce( $_REQUEST['intercessor_ajax_export'], 'intercessor_ajax_export' ) ) {
+		die( '-2' );
+	}
 
-		do_action( 'intercessor_batch_export_class_include', $form['intercessor-export-class'] );
+	do_action( 'intercessor_batch_export_class_include', $form['intercessor-export-class'] );
 
-		$step  = absint( $_POST['step'] );
-		$class = sanitize_text_field( $form['intercessor-export-class'] );
+	$step  = absint( $_POST['step'] );
+	$class = sanitize_text_field( $form['intercessor-export-class'] );
 
-		/** @var Intercessor\Admin\Tools\Export\Batch $export */
-		$export = new $class( $step );
+	/** @var Intercessor\Admin\Tools\Export\Batch_History $export */
+	//$export = new $class( $step );
+	$export = new Intercessor\Admin\Tools\Export\Batch_History();
 
-		if ( ! $export->can_export() ) {
-			die( '-1' );
-		}
+	if ( ! $export->can_export() ) {
+		die( '-1' );
+	}
 
-		if ( ! $export->is_writable ) {
-			echo wp_json_encode(
-				array(
-					'error'   => true,
-					'message' => esc_html__( 'Export location or file not writable', 'intercessor' ),
-				)
-			);
+	if ( ! $export->is_writable ) {
+		echo wp_json_encode(
+			array(
+				'error'   => true,
+				'message' => esc_html__( 'Export location or file not writable', 'intercessor' ),
+			)
+		);
 
-			exit;
-		}
+		exit;
+	}
 
-		$export->set_properties( $_REQUEST );
+	$export->set_properties( $_REQUEST );
 
-		// Added in 0.9.5 to allow a bulk processor to pre-fetch some data to speed up the remaining steps and cache data.
-		$export->pre_fetch();
+	// Added in 0.9.5 to allow a bulk processor to pre-fetch some data to speed up the remaining steps and cache data.
+	$export->pre_fetch();
 
-		$ret        = $export->process_step();
-		$percentage = $export->get_percentage_complete();
+	$ret        = $export->process_step();
+	$percentage = $export->get_percentage_complete();
 
-		if ( $ret ) {
-			$step++;
+	if ( $ret ) {
+		$step++;
 
-			echo wp_json_encode(
-				array(
-					'step'       => $step,
-					'percentage' => $percentage,
-				)
-			);
+		echo wp_json_encode(
+			array(
+				'step'       => $step,
+				'percentage' => $percentage,
+			)
+		);
 
-			exit;
-		} elseif ( true === $export->is_empty ) {
-			echo wp_json_encode(
-				array(
-					'error'   => true,
-					'message' => esc_html__( 'No data found for export parameters', 'intercessor' ),
-				)
-			);
+		exit;
+	} elseif ( true === $export->is_empty ) {
+		echo wp_json_encode(
+			array(
+				'error'   => true,
+				'message' => esc_html__( 'No data found for export parameters', 'intercessor' ),
+			)
+		);
 
-			exit;
-		} elseif ( true === $export->done && true === $export->is_empty ) {
-			$message = ! empty( $export->message )
-				? $export->message
-				: esc_html__( 'Batch Processing Complete', 'intercessor' );
+		exit;
+	} elseif ( true === $export->done && true === $export->is_empty ) {
+		$message = ! empty( $export->message )
+			? $export->message
+			: esc_html__( 'Batch Processing Complete', 'intercessor' );
 
-			echo wp_json_encode( array(
-				'success' => true,
-				'message' => $message,
-			) );
+		echo wp_json_encode( array(
+			'success' => true,
+			'message' => $message,
+		) );
 
-			exit;
-		} else {
-			$args = array_merge(
-				$_REQUEST,
-				array(
-					'step'       	     => $step,
-					'class'      	     => $class,
-					'nonce'      	     => wp_create_nonce( 'intercessor-batch-export' ),
-					'intercessor_action' => 'prayer_batch_export',
-				)
-			);
+		exit;
+	} else {
+		$args = array_merge(
+			$_REQUEST,
+			array(
+				'step'       	     => $step,
+				'class'      	     => $class,
+				'nonce'      	     => wp_create_nonce( 'intercessor-batch-export' ),
+				'intercessor_action' => 'prayer_batch_export',
+			)
+		);
 
-			$prayer_url = add_query_arg( $args, admin_url() );
+		$prayer_url = add_query_arg( $args, admin_url() );
 
-			echo wp_json_encode(
-				array(
-					'step' => 'done',
-					'url'  => $prayer_url,
-				)
-			);
+		echo wp_json_encode(
+			array(
+				'step' => 'done',
+				'url'  => $prayer_url,
+			)
+		);
 
-			exit;
-		}
+		exit;
+	}
 //	}
 }
 add_action( 'wp_ajax_intercessor_do_ajax_export', 'intercessor_do_ajax_export' );

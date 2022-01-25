@@ -23,12 +23,16 @@ defined( 'ABSPATH' ) || exit;
  * @return void
  */
 function intercessor_prayers_page() {
+	// Enqueue necessary styles and scripts.
+	wp_enqueue_script( 'intercessor-admin-prayers' );
+
+	// Load needed files.
 	if ( isset( $_GET['intercessor-action'] ) && 'edit_prayer' === $_GET['intercessor-action'] ) {
 		require_once INTERCESSOR_DIR . 'src/Admin/Prayers/edit-prayer.php';
 	} elseif ( isset( $_GET['intercessor-action'] ) && 'add_prayer' === $_GET['intercessor-action'] ) {
 		require_once INTERCESSOR_DIR . 'src/Admin/Prayers/add-prayer.php';
 	} elseif ( isset( $_GET['intercessor-action'] ) && 'view_request_details' === $_GET['intercessor-action'] ) {
-	    wp_enqueue_script( 'intercessor-prayers' );
+	    
 		require_once INTERCESSOR_DIR . 'src/Admin/Prayers/view-details.php';
 	} else {
 		$prayers_table = new Table();

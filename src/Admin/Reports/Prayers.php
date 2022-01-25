@@ -89,20 +89,15 @@ class Prayers extends Base {
 
 		// Build up arguments.
 		$args = [
-			'orderby'            => 'date_created',
-			'order'              => 'ASC',
-			'date_created_query' => [
-				'after'  => $start,
-				'before' => $end,
-			],
-			'status'             => [ 'active', 'pending', 'personal', 'archieved' ],
-		//	'number'    => -1,
+			'orderby'   => 'date_created',
+			'order'     => 'ASC',
+		//	'status'    => [ 'active', 'pending', 'personal', 'archived' ],
+			'number'    => -1,
 		//	'prayer_id' => $this->get( 'prayer_id' ),
 		];
 
-		$prayers = intercessor_get_items( 'prayer', $args );
-		//$reports = new Reports();
-		//$prayers = $reports->get_prayer_requests( 0, $start, $end, 'active' );
+		$reports   = new Reports();
+		$prayers   = $reports->get_prayers(  $args );
 		$pending[] = array( strtotime( $start ) * 1000 );
 		$pending[] = array( strtotime( $end ) * 1000 );
 
@@ -139,15 +134,11 @@ class Prayers extends Base {
 			}
 		}
 
-		$data = array(
+		return array(
 			esc_html__( 'Active Prayer Requests', 'intercessor' )  => $active,
 			esc_html__( 'Private Prayer Requests', 'intercessor' ) => $personal,
 			esc_html__( 'Pending  Prayer Requests', 'intercessor' ) => $pending,
 			esc_html__( 'Archived Prayer Requests', 'intercessor' ) => $archived,
 		);
-
-		return $data;
-
 	}
-
 }

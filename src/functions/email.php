@@ -967,13 +967,13 @@ function intercessor_render_notification_in_browser() {
 /**
  * Triggers Prayer Notification to be sent after the prayer status is updated
  *
- * @param int    $prayer_id Prayer ID.
  * @param string $to_email  Email to send notification to.
+ * @param int    $prayer_id Prayer ID.
  *
  * @return void
  * @since 0.9.5
  */
-function intercessor_trigger_prayer_notification( int $prayer_id = 0, string $to_email ) {
+function intercessor_trigger_prayer_notification(  string $to_email, int $prayer_id = 0 ) {
 	// Make sure we don't send a prayer notification while editing a prayer request.
 	if ( isset( $_POST['intercessor-action'] ) && 'edit_prayer' === $_POST['intercessor-action'] ) {
 		return;

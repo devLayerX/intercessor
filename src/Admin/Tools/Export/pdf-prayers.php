@@ -17,9 +17,10 @@ defined( 'ABSPATH' ) || exit;
  * Generate pdf data.
  *
  * @param array $data Data array.
+ *
  * @since 1.0.0
  */
-function intercessor_generate_pdf( $data ) {
+function intercessor_generate_pdf( array $data ) {
 
 	if ( ! current_user_can( 'view_prayer_reports' ) ) {
 		wp_die(
@@ -45,8 +46,6 @@ function intercessor_generate_pdf( $data ) {
 		);
 	}
 
-//	require_once INTERCESSOR_DIR . 'src/admin/tools/class-ipr-pdf.php';
-
 	$daterange = utf8_decode(
 		sprintf(
 		/* translators: 1: start date 2: end date */
@@ -61,9 +60,8 @@ function intercessor_generate_pdf( $data ) {
 	$custom_font  = 'dejavusans';
 	$font_style   = '';
 
-	if ( file_exists( INTERCESSOR_DIR . 'vendor/tcpdf/fonts/CODE2000.TTF' )
-		&& in_array( array( 'RIAL', 'RUB', 'IRR' ) ) ) {
-		TCPDF_FONTS::addTTFfont( INTERCESSOR_DIR . 'vendor/tcpdf/fonts/CODE2000.TTF', '' );
+	if ( file_exists( INTERCESSOR_DIR . '/src/libraries/tcpdf/fonts/CODE2000.TTF' ) ) {
+		TCPDF_FONTS::addTTFfont( INTERCESSOR_DIR . '/src/libraries/tcpdf/fonts/CODE2000.TTF', '' );
 		$custom_font = 'CODE2000';
 		$font_style  = 'B';
 	}
@@ -106,7 +104,7 @@ function intercessor_generate_pdf( $data ) {
 	$pdf->SetFont( apply_filters( 'intercessor_pdf_custom_font', $custom_font ), $font_style, 12 );
 
 	// Prayer request stats.
-	$prayer_stats = new Intercessor\Prayer_Stats();
+	$prayer_stats = new Intercessor\Stats();
 
 	$args = array(
 		'number' => -1,
@@ -129,13 +127,13 @@ function intercessor_generate_pdf( $data ) {
 			$title      = wp_unslash( $prayer->title );
 			$message    = wp_unslash( $prayer->message );
 			$requester  = $name . "\n\n" . $email;
-			$prayed     = intercessor_get_prayed_requests( $prayer->id );
+			$prayed     = intercessor_get_prayed_for_counts( $prayer->id );
 
 			// Get prayer requests.
-			$prayer_requests = $prayer_stats->get_prayer_requests( $prayer->id, 'this_year' );
+			$prayer_requests = $prayer_stats->get_prayer_count( $prayer->id, 'this_year' );
 
 			// This will help filter data before appending it to PDF Report.
-			$prepare_pdf_data   = array();
+			$prepare_pdf_data   = [];
 			$prepare_pdf_data[] = $number;
 			$prepare_pdf_data[] = $title;
 			$prepare_pdf_data[] = $message;
@@ -183,13 +181,13 @@ add_action( 'intercessor_generate_pdf_prayers', 'intercessor_generate_pdf' );
  * @uses   GoogleChartAxis
  * @return string $chart->getUrl() URL for the Google Chart
  */
-function intercessor_output_prayers_chart() {
-	require_once INTERCESSOR_DIR . 'vendor/googlechartlib/GoogleChart.php';
-	require_once INTERCESSOR_DIR . 'vendor/googlechartlib/markers/GoogleChartShapeMarker.php';
-	require_once INTERCESSOR_DIR . 'vendor/googlechartlib/markers/GoogleChartTextMarker.php';
+function intercessor_output_prayers_chart(): string {
+	require_once INTERCESSOR_DIR . '/src/libraries/googlechartlib/GoogleChart.php';
+	require_once INTERCESSOR_DIR . '/src/libraries/googlechartlib/markers/GoogleChartShapeMarker.php';
+	require_once INTERCESSOR_DIR . '/src/libraries/googlechartlib/markers/GoogleChartTextMarker.php';
 
 	$chart = new GoogleChart( 'lc', 900, 330 );
-	$stats = new \Intercessor\Prayer_Stats();
+	$stats = new \Intercessor\Reports();
 
 	$i        = 1;
 	$personal = "";

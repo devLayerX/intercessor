@@ -1,6 +1,51 @@
 /* global intercessor_vars */
+/*
+( function( $ ) {
+    const handleEmailDatepicker = function() {
+        
+        // Show the email template previews.
+        const email_preview_wrap = $('#email-preview-wrap');
+        if ( email_preview_wrap.length ) {
+            var emailPreview = $('#email-preview');
+            email_preview_wrap.colorbox({
+                inline: true,
+                href: emailPreview,
+                width: '80%',
+                height: 'auto'
+            } );
+        }
+
+        // Date picker.
+        const intercessor_datepicker = $( 'input.intercessor_datepicker' );
+        if ( intercessor_datepicker.length > 0 ) {
+            var dateFormat = 'mm/dd/yy';
+            intercessor_datepicker.datepicker( {
+                dateFormat: dateFormat
+            } );
+        }
+
+        // Initilize color picker.
+        const intercessor_color_picker = $('.intercessor-color-picker');
+
+        if ( intercessor_color_picker.length ) {
+            intercessor_color_picker.wpColorPicker();
+        }
+
+        // Tooltips.
+        const tooltips = $('.intercessor-help-tip');
+        intercessor_attach_tooltips( tooltips );
+    }
+
+    
+
+}( jQuery ) );  */
+/* eslint-enable */
+
+
+
+
+
 jQuery(document).ready(function($) {
-    'use strict';
 
     // Initilize color picker.
     var intercessor_color_picker = $('.intercessor-color-picker');
@@ -85,18 +130,6 @@ jQuery(document).ready(function($) {
         file_frame.open();
     } );
 
-
-    // Show the email template previews
-    var email_preview_wrap = $('#email-preview-wrap');
-    if( email_preview_wrap.length ) {
-        var emailPreview = $('#email-preview');
-        email_preview_wrap.colorbox({
-            inline: true,
-            href: emailPreview,
-            width: '80%',
-            height: 'auto'
-        } );
-    }
 
     /**
      * Notes

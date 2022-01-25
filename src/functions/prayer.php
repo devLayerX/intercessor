@@ -509,7 +509,7 @@ function intercessor_insert_prayer( $prayer_data = [] ) {
 		do_action( 'intercessor_inserted_prayer', $prayer_id, $prayer_data );
 
 		// Trigger prayer notification.
-		intercessor_trigger_prayer_notification( $prayer_id, $prayer_args['email'] );
+		intercessor_trigger_prayer_notification( $prayer_args['email'], $prayer_id );
 
 		// Setup pending or active prayer notices.
 		if ( 'pending' === $args['status'] ) {

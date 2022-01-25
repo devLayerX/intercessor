@@ -126,17 +126,16 @@ class Base {
 	public function load_scripts() {
 		// Use minified libraries if SCRIPT_DEBUG is turned off.
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
-		wp_enqueue_script( 'jquery-flot', INTERCESSOR_URL . 'assets/js/jquery.flot' . $suffix . '.js' );
-		wp_enqueue_script( 'jquery-flot-resize', INTERCESSOR_URL . 'assets/js/jquery.flot.resize' . $suffix . '.js' );
+		wp_enqueue_script( 'jquery-flot', INTERCESSOR_URL . 'assets/js/vendor/jquery.flot' . $suffix . '.js' );
+		wp_enqueue_script( 'jquery-flot-resize', INTERCESSOR_URL . 'assets/js/vendor/jquery.flot.resize' . $suffix . '.js' );
 		wp_enqueue_style( 'intercessor-reports' );
 	}
 
 	/**
 	 * Build the graph and return it as a string
 	 *
-	 * @var array
+	 * @return false|string
 	 * @since 0.9.5
-	 * @return string
 	 */
 	public function build_graph() {
 
@@ -298,10 +297,9 @@ class Base {
 	/**
 	 * Show report graph date filters
 	 *
-	 * @return void
 	 * @since 0.9.5
 	 */
-	function graph_controls() {
+	public function graph_controls() {
 		$date_options = apply_filters(
 			'intercessor_report_date_options',
 			[
@@ -382,5 +380,4 @@ class Base {
 		</form>
 		<?php
 	}
-
 }

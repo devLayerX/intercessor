@@ -540,52 +540,15 @@ class Settings {
 	 * @access public
 	 * @since   1.0.0
 	 *
-	 * @param array $input The value entered in the field.
+	 * @param string $input The value entered in the field.
 	 *
-	 * @return array $input The sanitized value
+	 * @return string $input The sanitized value
 	 */
 	public function text_field_sanitization( $input ) {
-		$tags = array(
-			'p' => array(
-				'class' => [],
-				'id'    => [],
-			),
-			'span' => array(
-				'class' => [],
-				'id'    => [],
-			),
-			'a' => array(
-				'href'   => [],
-				'target' => [],
-				'title'  => [],
-				'class'  => [],
-				'id'     => [],
-			),
-			'strong' => [],
-			'em' => [],
-			'br' => [],
-			'img' => array(
-				'src'   => [],
-				'title' => [],
-				'alt'   => [],
-				'id'    => [],
-			),
-			'div' => array(
-				'class' => [],
-				'id'    => [],
-			),
-			'ul' => array(
-				'class' => [],
-				'id'    => [],
-			),
-			'li' => array(
-				'class' => [],
-				'id'    => [],
-			)
-		);
+		// Get allowed tags.
+		$allowed_tags = \intercessor_allowed_tags();
 
-		$allowed_tags = apply_filters( 'intercessor_allowed_html_tags', $tags );
-
+		// Return filtered content.
 		return trim( wp_kses( $input, $allowed_tags ) );
 	}
 

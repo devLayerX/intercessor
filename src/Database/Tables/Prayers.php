@@ -32,7 +32,7 @@ final class Prayers extends Table {
 	 * @since 1.0.0
 	 * @var string
 	 */
-	protected $name = 'prayers';
+	public $name = 'prayers';
 
 	/**
 	 * Database version
