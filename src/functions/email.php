@@ -1053,7 +1053,6 @@ if ( ! function_exists( 'intercessor_send_prayed_email' ) ) {
 
 	    // Setup array of prayed for arguments.
 	    $args = [
-		    'groupby'            => 'prayer_id',
 		    'date_created_query' => [
 			    'after'  => $date_value,
 			    //	'before' => $end_date,
@@ -1069,20 +1068,20 @@ if ( ! function_exists( 'intercessor_send_prayed_email' ) ) {
 			    $ids        = (int) $prayed->prayer_id;
 
 			    // Prepare values.
-			    $counted  = intercessor_get_prayed_for_counts( $ids );
-				$requester_id = intercessor_get_prayer_requester_id( $ids );
-				$requester    = new Requester( $requester_id );
-				$requester_email = $requester->email;
-			    $prayer   = intercessor_process_item( 'prayer', 'get', $ids, false );
-			    //$prayer   = intercessor_get_item_by( 'prayer', 'id', $ids );
-				$email    = $prayer->email;
-				//$email    = intercessor_get_prayer_email( $ids );
+			    $counted         = intercessor_get_prayed_for_counts( $ids );
+			//	$requester_id    = intercessor_get_prayer_requester_id( $ids );
+			//	$requester       = new Requester( $requester_id );
+			//	$requester_email = $requester->email;
+			    $prayer          = intercessor_process_item( 'prayer', 'get', $ids, false );
+			    $prayer   = intercessor_get_item_by( 'prayer', 'id', $ids );
+			//	$email    = $prayer->email;
+				$email    = intercessor_get_prayer_email( $ids );
 				$notify   = intercessor_get_prayer_notify( $ids );
 				$answered = intercessor_is_answered_prayer( $ids );
 
 			    // Send email to requesters who wish to be notified.
 			    if ( $notify && ! $answered ) {
-				    intercessor_email_prayed_notification( $ids, $counted, $requester_email );
+				    intercessor_email_prayed_notification( $ids, $counted, $email );
 			    }
 		    }
 	    } else {

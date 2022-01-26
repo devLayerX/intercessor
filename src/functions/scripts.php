@@ -164,7 +164,7 @@ function intercessor_load_admin_styles() {
 	$ui_style = ( 'classic' === get_user_option( 'admin_color' ) ) ? 'classic' : 'fresh';
 	wp_enqueue_style( 'jquery-ui-css', $css_dir . 'jquery-ui-' . $ui_style . '.min.css' );
 }
-add_action( 'admin_enqueue_scripts', 'intercessor_load_admin_styles', 100 );
+add_action( 'admin_enqueue_scripts', 'intercessor_load_admin_styles' );
 
 
 /**

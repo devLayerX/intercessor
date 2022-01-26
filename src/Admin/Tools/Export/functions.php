@@ -175,9 +175,53 @@ function intercessor_process_settings_export() {
 	header( 'Expires: 0' );
 
 	echo wp_json_encode( $settings );
-	exit;;
+	exit;
 }
-add_action( 'intercessor_export_settings', 'intercessor_process_settings_export' );
+add_action( 'intercessor_admin_export_settings', 'intercessor_process_settings_export' );
+
+
+/**
+ * Process prayer requests export.
+ *
+ * @since 1.0.0
+ */
+function intercessor_process_pdf_prayers_export() {
+	$submitted = $_POST['intercessor_export_settings_nonce'];
+
+	// Bail if prayeds export not submitted.
+/*	if ( empty( $submitted ) ) {
+		return;
+	}
+
+	// Bail if nonce did not verify.
+	if ( ! wp_verify_nonce( $submitted, 'intercessor_export_settings_nonce' ) ) {
+		return;
+	}
+*/
+	// Bail if use cannot process export.
+	if ( ! current_user_can( 'export_prayer_reports' ) ) {
+		return;
+	}
+
+	// Set up export variables.
+	$settings = [];
+	$settings = get_option( 'intercessor_settings' );
+
+	ignore_user_abort( true );
+
+	if ( ! ini_get( 'safe_mode' ) ) {
+		set_time_limit( 0 );
+	}
+	// Process export.
+	nocache_headers();
+	header( 'Content-Type: application/json; charset=utf-8' );
+	header( 'Content-Disposition: attachment; filename=intercessor-settings-export-' . date( 'm-d-Y' ) . '.json' );
+	header( 'Expires: 0' );
+
+	echo wp_json_encode( $settings );
+	exit;
+}
+add_action( 'intercessor_export_pdf_prayers', 'intercessor_process_pdf_prayers_export' );
 
 
 /**

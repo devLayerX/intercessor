@@ -228,7 +228,7 @@ function intercessor_export_tab() {
 				<div class="inside">
 					<p><?php esc_html_e( 'Export the Intercessor settings for this site as a .json file. You could then easily import the configuration into another site.', 'intercessor' ); ?></p>
 					<form method="post" action="<?php echo admin_url( 'admin.php?page=intercessor-tools&tab=export' ); ?>">
-						<p><input type="hidden" name="intercessor_action" value="export_settings" /></p>
+						<p><input type="hidden" name="intercessor_action" value="admin_export_settings" /></p>
 						<p>
 							<?php wp_nonce_field( 'intercessor_export_settings_nonce', 'intercessor_export_settings_nonce' ); ?>
 							<?php submit_button( esc_html__( 'Export', 'intercessor' ), 'secondary', 'submit', false ); ?>
