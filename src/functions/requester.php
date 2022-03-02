@@ -10,6 +10,8 @@
 */
 
 // Exit if accessed directly.
+
+use Intercessor\Database\Queries\Requester as QueriesRequester;
 use Intercessor\Requester;
 
 defined( 'ABSPATH' ) || exit;
@@ -172,7 +174,7 @@ if ( ! function_exists( 'intercessor_get_requester_prayers' ) ) {
 
 		// Setup arguments to get prayers.
 		$prayer_args = [
-			'requester_id__in' => $requester_id,
+			'requester_id' => $requester_id,
 		];
 
 		// Get prayer(s) for requester.
@@ -180,7 +182,8 @@ if ( ! function_exists( 'intercessor_get_requester_prayers' ) ) {
 
 		// Get counts of prayer.
 		if ( true === $counts ) {
-			$found = intercessor_count_items( 'prayer', $prayer_args );
+			$query = new \Intercessor\Database\Queries\Prayer( $prayer_args );
+			$found = absint( $query->found_items );
 		} else {
 			$found = $prayers;
 		}

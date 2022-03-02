@@ -102,6 +102,16 @@ class Requesters extends Schema {
 			'sortable'   => true,
 		],
 
+		// Date modified.
+		[
+			'name'       => 'date_modified',
+			'type'       => 'datetime',
+			'default'    => '',
+			'created'    => true,
+			'date_query' => true,
+			'sortable'   => true,
+		],
+
 		// uuid.
 		[
 			'uuid' => true,

@@ -8,6 +8,8 @@
  * @license     http://opensource.org/licenses/GPL-3.0.php GNU Public License
  */
 
+use Intercessor\Html;
+
 // Exit if accessed directly,
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -23,6 +25,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function intercessor_tools_page() {
 
+	// Enqueue styles and scripts.
+	wp_enqueue_style( 'intercessor-datepicker' );
+	wp_enqueue_script( 'intercessor-export' );
+
+	// Get active tab.
 	$active_tab = isset( $_GET[ 'tab' ] ) && array_key_exists( $_GET['tab'], intercessor_get_tools_tabs() ) ? $_GET[ 'tab' ] : 'export';
 
 	ob_start();
@@ -83,9 +90,6 @@ function intercessor_get_tools_tabs() : array {
  * @return void
  */
 function intercessor_export_tab() {
-	// Enqueue styles and scripts.
-	wp_enqueue_style( 'intercessor-datepicker' );
-	wp_enqueue_script( 'intercessor-export' );
 
 	/**
 	 * Fires before the export selection boxes.
@@ -203,10 +207,6 @@ function intercessor_export_tab() {
 					<p><?php esc_html_e( 'Export Prayer Requests to a PDF file.', 'intercessor' ); ?></p>
 					<form method="post" enctype="multipart/form-data" action="<?php echo admin_url( 'admin.php?page=intercessor-tools&tab=export' ); ?>">
 						<p>
-							<input type="text" class="intercessor-datepicker" autocomplete="off" name="start_date" placeholder="<?php esc_html_e( 'From - mm/dd/yyyy', 'intercessor' ); ?>"/>
-							<input type="text" class="intercessor-datepicker" autocomplete="off" name="end_date" placeholder="<?php esc_html_e( 'To - mm/dd/yyyy', 'intercessor' ); ?>"/>
-						</p>
-						<p>
 							<input type="hidden" name="intercessor_action" value="export_pdf_prayers" />
 							<?php wp_nonce_field( 'intercessor_export_pdf_prayers_nonce', 'intercessor_export_pdf_prayers_nonce' ); ?>
 							<?php submit_button( esc_html__( 'Export', 'intercessor' ), 'secondary', 'submit', false ); ?>
@@ -258,6 +258,9 @@ add_action( 'intercessor_tools_tab_export', 'intercessor_export_tab' );
  * @return void
  */
 function intercessor_import_tab() {
+	// Enqueue necessary script.
+	wp_enqueue_script( 'intercessor-import' );
+
 	/**
 	 * Fires before the import selection boxes.
 	 *
@@ -442,6 +445,7 @@ function intercessor_migration_tab() {
 		$roles[ $role ]['label'] = translate_user_role( $label );
 		$roles[ $role ]['count'] = isset( $user_counts['avail_roles'][ $role ] ) ? $user_counts['avail_roles'][ $role ] : 0;
 	}
+	$html = new Html();
 	?>
 	<div id="intercessor-dashboard-widgets-wrap">
 		<div class="metabox-holder">
@@ -451,43 +455,34 @@ function intercessor_migration_tab() {
 				</div><!-- .inside -->
 			</div><!-- .postbox -->
 
-			<div class="postbox">
-				<h3><span><?php esc_html_e( 'User Accounts', 'intercessor' ); ?></span></h3>
+			<div class="postbox intercessor-export-prayers-report">
+				<h3><span><?php esc_html_e( 'Export Prayer Requests', 'intercessor' ); ?></span></h3>
 				<div class="inside">
-					<p><?php esc_html_e( 'Use this tool to create requester accounts for each of your existing WordPress user accounts that belong to the selected roles below.', 'intercessor' ); ?></p>
-					<p><?php esc_html_e( '<strong>NOTE:</strong> Users that already have requester accounts will be skipped. Duplicate accounts will not be created.', 'intercessor' ); ?></p>
-					<form method="get" id="intercessor-migrate-user-accounts">
-						<h4><span><?php esc_html_e( 'Select User Roles', 'intercessor' ); ?></span></h4>
-						<?php foreach ( $roles as $role => $data ) : ?>
-							<?php $has_users = ! empty( $data['count'] ); ?>
-							<label>
-								<input type="checkbox" name="roles[]" value="<?php echo esc_attr( $role ); ?>" <?php checked( $has_users ); disabled( ! $has_users ) ?>>
-								<span class="<?php echo ( ! $has_users ) ? 'muted' : ''; ?>"><?php echo esc_html( $data['label'] ); ?> (<?php echo absint( $data['count'] ); ?>)</span>
-							</label>
-							<br>
-						<?php endforeach; ?>
-						<input type="hidden" name="type" value="users"/>
-						<input type="hidden" name="part" value="requesters"/>
-						<input type="hidden" name="page" value="intercessor-migrate"/>
-						<p>
-							<input type="submit" value="<?php esc_html_e( 'Create Affiliate Accounts for Users', 'intercessor' ); ?>" class="button" />
-						</p>
+					<p><?php esc_html_e( 'Download a CSV of prayer request over a specific time range.', 'intercessor' ); ?></p>
+					<form id="intercessor-export-prayers" class="intercessor-export-form intercessor-move-data" method="post">
+						<?php echo $html->month_dropdown( 'start_month' ); ?>
+						<?php echo $html->year_dropdown( 'start_year' ); ?>
+						<?php echo _x( 'to', 'Date one to date two', 'intercessor' ); ?>
+						<?php echo $html->month_dropdown( 'end_month' ); ?>
+						<?php echo $html->year_dropdown( 'end_year' ); ?>
+						<?php wp_nonce_field( 'intercessor_ajax_export', 'intercessor_ajax_export' ); ?>
+						<input type="hidden" name="intercessor-export-class" value="Intercessor\Admin\Tools\Export\Batch_Prayers"/>
+						<span>
+							<input type="submit" value="<?php esc_html_e( 'Generate CSV', 'intercessor' ); ?>" class="button-secondary"/>
+							<span class="spinner"></span>
+						</span>
 					</form>
 				</div><!-- .inside -->
 			</div><!-- .postbox -->
 
-			<div class="postbox">
-				<h3><span>Intercessor Pro</span></h3>
+			<div class="postbox intercessor-export-requesters">
+				<h3><span><?php esc_html_e('Export Requesters in CSV','intercessor' ); ?></span></h3>
 				<div class="inside">
-					<p><?php esc_html_e( 'Use this tool to migrate existing requester / referral data from Affiliates Pro to AffiliateWP.', 'intercessor' ); ?></p>
-					<p><?php esc_html_e( '<strong>NOTE:</strong> this tool should only ever be used on a fresh install. If you have already collected requester or referral data, do not use this tool.', 'intercessor' ); ?></p>
-					<form method="get">
-						<input type="hidden" name="type" value="requesters-pro"/>
-						<input type="hidden" name="part" value="requesters"/>
-						<input type="hidden" name="page" value="intercessor-migrate"/>
-						<p>
-							<input type="submit" value="<?php esc_html_e( 'Migrate Data from Affiliates Pro', 'intercessor' ); ?>" class="button"/>
-						</p>
+					<p><?php esc_html_e( 'Download a CSV of all Requesters.', 'intercessor' ); ?></p>
+					<form id="intercessor-export-requesters" class="intercessor-export-form intercessor-move-data" method="post">
+						<?php wp_nonce_field( 'intercessor_ajax_export', 'intercessor_ajax_export' ); ?>
+						<input type="hidden" name="intercessor-export-class" value="Intercessor\Admin\Tools\Export\Batch_Requesters"/>
+						<input type="submit" value="<?php esc_html_e( 'Generate CSV', 'intercessor' ); ?>" class="button-secondary"/>
 					</form>
 				</div><!-- .inside -->
 			</div><!-- .postbox -->

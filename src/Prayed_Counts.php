@@ -13,8 +13,10 @@ namespace Intercessor;
 
 use Intercessor\Database\Rows as Rows;
 
-// Exit if accessed directly
-defined( 'ABSPATH' ) || exit;
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 
 /**
  * Prayed Counts Class.

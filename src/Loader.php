@@ -190,7 +190,7 @@ class Loader {
     /**
      * Setup instance.
      *
-     * @param string $plugin_file This loader.
+     * @param object $plugin_file This loader.
      *
      * @since 1.0.0
      */

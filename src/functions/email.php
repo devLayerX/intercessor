@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Add an email tag
  *
- * @param string $tag Email tag to be replace in email.
+ * @param string $tag Email tag to be replaced in email.
  * @param string $description Tag description.
  * @param string $func Callback function to run when email tag is found.
  * @param string $label Tag label.
@@ -197,9 +197,21 @@ function intercessor_setup_email_tags() {
 		[
 			'tag'         => 'prayer_link',
 			'label'       => esc_html__( 'Prayer Link', 'intercessor' ),
-			'description' => esc_html__( 'The linkt to the submitted prayer request', 'intercessor' ),
+			'description' => esc_html__( 'The link to the submitted prayer request', 'intercessor' ),
 			'function'    => 'intercessor_email_tag_prayer_link',
 		],
+		[
+				'tag'         => 'prayed_counts',
+				'label'       => esc_html__( 'Prayed Counts', 'intercessor' ),
+				'description' => esc_html__( 'The prayed counts for specified period in settings', 'intercessor' ),
+				'function'    => 'intercessor_email_tag_prayed_counts',
+		],
+			[
+					'tag'         => 'total_counts',
+					'label'       => esc_html__( 'Total Prayed Counts', 'intercessor' ),
+					'description' => esc_html__( 'The total lifetime prayed counts for a prayer request', 'intercessor' ),
+					'function'    => 'intercessor_email_tag_total_counts',
+			],
 	];
 
 	// Apply intercessor_email_tags filter.
@@ -245,7 +257,7 @@ function intercessor_email_tag_fullname( int $prayer_id ) : string {
 
 /**
  * Email template tag: username
- * The requester's user name on the site, if they registered an account.
+ * The requester's username on the site, if they registered an account.
  *
  * @param int $prayer_id Prayer ID.
  *
@@ -397,6 +409,37 @@ function intercessor_email_tag_prayer_link() : string {
 	$page_url = esc_url( get_permalink( $page_id ) );
 
 	return $page_url;
+}
+
+if ( ! function_exists( 'intercessor_email_tag_prayed_counts' ) ) {
+
+	/**
+	 * Email template tag: prayed_counts
+	 *
+	 * @since  1.1.0
+	 * @param int $prayer_id The Prayer ID.
+	 *
+	 * @return int The prayed counts for a specied period
+	 */
+	function intercessor_email_tag_prayed_counts( int $prayer_id ) : int {
+		return intercessor_get_prayed_for_counts_range( $prayer_id );
+	}
+}
+
+
+if ( ! function_exists( 'intercessor_email_tag_total_counts' ) ) {
+
+	/**
+	 * Email template tag: total_counts
+	 *
+	 * @since  1.1.0
+	 * @param int $prayer_id The Prayer ID.
+	 *
+	 * @return int The lifetime prayed counts for a prayer request.
+	 */
+	function intercessor_email_tag_total_counts( int $prayer_id ) : int {
+		return intercessor_get_prayed_for_counts( $prayer_id );
+	}
 }
 
 /** PRAYER NOTIFICATIONS */
@@ -552,9 +595,9 @@ if ( ! function_exists( 'intercessor_email_prayed_notification' ) ) {
 	 *
 	 * Prayed notifications are sent out only once per day.
 	 *
-	 * @param int $prayer_id   Prayer ID.
-	 * @param int $prayed_num  Number of times request was prayed for.
-	 * @param string $to_email Email to send prayed counts to.
+	 * @param int    $prayer_id  Prayer ID.
+	 * @param int    $prayed_num Number of times request was prayed for.
+	 * @param string $to_email   Email to send prayed counts to.
 	 *
 	 * @return void
 	 * @since 0.9.5
@@ -586,7 +629,7 @@ if ( ! function_exists( 'intercessor_email_prayed_notification' ) ) {
 		$subject = apply_filters( 'intercessor_prayer_subject', wp_strip_all_tags( $subject ), $prayer_id );
 		$subject = wp_specialchars_decode( intercessor_do_email_tags( $subject, $prayer_id ) );
 
-		$heading = intercessor_get_option( 'prayed_heading', __( 'You Have Been Prayed For Today!', 'intercessor' ) );
+		$heading = intercessor_get_option( 'prayed_heading', __( 'You Have Been Prayed For!', 'intercessor' ) );
 		$heading = apply_filters( 'intercessor_prayer_heading', $heading, $prayer_id, $prayed_data );
 		$heading = intercessor_do_email_tags( $heading, $prayer_id );
 
@@ -1041,21 +1084,13 @@ if ( ! function_exists( 'intercessor_send_prayed_email' ) ) {
 	 * @since 1.0.0
 	 */
     function intercessor_send_prayed_email() {
-	    // Configure start date.
-	    $default_date = intercessor_get_option( 'notify_period', 'weekly' );
-	    if ( 'daily' === $default_date ) {
-		    $date_value = 'yesterday';
-	    } elseif ( 'monthly' === $default_date ) {
-		    $date_value = 'last month';
-	    } else {
-		    $date_value = 'last week';
-	    }
+	    // Get notification date value.
+		$date_value = intercessor_get_notify_period();
 
 	    // Setup array of prayed for arguments.
 	    $args = [
 		    'date_created_query' => [
 			    'after'  => $date_value,
-			    //	'before' => $end_date,
 		    ],
 	    ];
 
@@ -1064,27 +1099,29 @@ if ( ! function_exists( 'intercessor_send_prayed_email' ) ) {
 
 	    // Send email to requester if prayed for.
 	    if ( $prayed_for ) {
-		    foreach ( $prayed_for as $prayed ) {
-			    $ids        = (int) $prayed->prayer_id;
+			// Set up default variable values.
+			$ids_args = [
+				'id__in' => $prayed_for->prayer_id,
+			];
 
-			    // Prepare values.
-			    $counted         = intercessor_get_prayed_for_counts( $ids );
-			//	$requester_id    = intercessor_get_prayer_requester_id( $ids );
-			//	$requester       = new Requester( $requester_id );
-			//	$requester_email = $requester->email;
-			    $prayer          = intercessor_process_item( 'prayer', 'get', $ids, false );
-			    $prayer   = intercessor_get_item_by( 'prayer', 'id', $ids );
-			//	$email    = $prayer->email;
-				$email    = intercessor_get_prayer_email( $ids );
-				$notify   = intercessor_get_prayer_notify( $ids );
-				$answered = intercessor_is_answered_prayer( $ids );
+			// Get array of prayers lifted within specified period.
+			$prayers  = intercessor_get_items( 'prayer', $ids_args );
 
-			    // Send email to requesters who wish to be notified.
-			    if ( $notify && ! $answered ) {
-				    intercessor_email_prayed_notification( $ids, $counted, $email );
-			    }
-		    }
+			// Get each prayer.
+			foreach ( $prayers as $prayer ) {
+				$prayer_id = $prayer->id;
+				$email     = intercessor_get_prayer_email( $prayer_id );
+				$notify    = intercessor_get_prayer_notify( $prayer_id );
+				$answered  = intercessor_is_answered_prayer( $prayer_id );
+				$counts    = intercessor_get_prayed_for_counts_range( $prayer_id );
+
+				// Send email to requesters who wish to be notified.
+				if ( $notify && $counts && ! $answered ) {
+					intercessor_email_prayed_notification( $prayer_id, $counts, $email );
+				}
+			}
 	    } else {
+			esc_html_e( 'Error processing prayed for email', 'intercessor' );
             return false;
         }
     }

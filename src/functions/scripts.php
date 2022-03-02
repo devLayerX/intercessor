@@ -209,6 +209,7 @@ function intercessor_load_admin_scripts() {
 			'add_new_prayer'          => esc_html__( 'Add New Prayer', 'intercessor' ),
 			'delete_prayer'           => esc_html__( 'Are you sure you wish to delete this prayer?', 'intercessor' ),
 			'delete_prayer_note'      => esc_html__( 'Are you sure you wish to delete this note?', 'intercessor' ),
+			'wpajax'                  => new WP_Ajax_Response(),
 			'resend_notification'     => esc_html__( 'Are you sure you wish to resend the prayer notification?', 'intercessor' ),
 			'delete_prayer_request'   => sprintf(
 				/* translators: %s: prayer request */

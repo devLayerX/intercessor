@@ -260,7 +260,15 @@ add_action( 'intercessor_prayer_batch_export', 'intercessor_process_batch_export
  * @return void
  */
 function intercessor_export_all_requesters() {
-//	require_once INTERCESSOR_DIR . 'src/Admin/Tools/Export/Batch_Requesters.php';
+	if ( ! wp_verify_nonce( $_REQUEST['nonce'], 'intercessor-batch-export' ) ) {
+		wp_die(
+			esc_html__( 'Nonce verification failed', 'intercessor' ),
+			esc_html__( 'Error', 'intercessor' ),
+			array( 'response' => 403 )
+		);
+	}
+
+	do_action( 'intercessor_batch_export_class_include', $_REQUEST['class'] );
 
 	$requester_export = new Intercessor\Admin\Tools\Export\Batch_Requesters();
 
@@ -396,9 +404,6 @@ function intercessor_do_ajax_export() {
 
 	$_REQUEST = $form;
 	$form     = (array) $form;
-/*	if ( ! empty( $form )
-	     && check_admin_referer( 'intercessor_ajax_export', 'intercessor_ajax_export' ) ) {
-*/
 
 	if ( ! wp_verify_nonce( $_REQUEST['intercessor_ajax_export'], 'intercessor_ajax_export' ) ) {
 		die( '-2' );
@@ -406,23 +411,23 @@ function intercessor_do_ajax_export() {
 
 	do_action( 'intercessor_batch_export_class_include', $form['intercessor-export-class'] );
 
-	$step  = absint( $_POST['step'] );
+	$step  = isset( $_POST['step'] ) ? absint( $_POST['step'] ) : false;
 	$class = sanitize_text_field( $form['intercessor-export-class'] );
 
-	/** @var Intercessor\Admin\Tools\Export\Batch_History $export */
-	//$export = new $class( $step );
-	$export = new Intercessor\Admin\Tools\Export\Batch_History();
-
+	/** @var Intercessor\Admin\Tools\Export\Batch$export */
+	$export = new $class( $step );
+	
+	// Bail if user cannot perform export.
 	if ( ! $export->can_export() ) {
 		die( '-1' );
 	}
 
 	if ( ! $export->is_writable ) {
 		echo wp_json_encode(
-			array(
+			[
 				'error'   => true,
 				'message' => esc_html__( 'Export location or file not writable', 'intercessor' ),
-			)
+			]
 		);
 
 		exit;
@@ -440,19 +445,19 @@ function intercessor_do_ajax_export() {
 		$step++;
 
 		echo wp_json_encode(
-			array(
+			[
 				'step'       => $step,
 				'percentage' => $percentage,
-			)
+			]
 		);
 
 		exit;
 	} elseif ( true === $export->is_empty ) {
 		echo wp_json_encode(
-			array(
+			[
 				'error'   => true,
 				'message' => esc_html__( 'No data found for export parameters', 'intercessor' ),
-			)
+			]
 		);
 
 		exit;
@@ -461,34 +466,35 @@ function intercessor_do_ajax_export() {
 			? $export->message
 			: esc_html__( 'Batch Processing Complete', 'intercessor' );
 
-		echo wp_json_encode( array(
-			'success' => true,
-			'message' => $message,
-		) );
+		echo wp_json_encode(
+			[
+				'success' => true,
+				'message' => $message,
+			]
+		);
 
 		exit;
 	} else {
 		$args = array_merge(
 			$_REQUEST,
-			array(
+			[
 				'step'       	     => $step,
 				'class'      	     => $class,
 				'nonce'      	     => wp_create_nonce( 'intercessor-batch-export' ),
-				'intercessor_action' => 'prayer_batch_export',
-			)
+				'intercessor_action' => 'intercessor_batch_export',
+			]
 		);
 
 		$prayer_url = add_query_arg( $args, admin_url() );
 
 		echo wp_json_encode(
-			array(
+			[
 				'step' => 'done',
 				'url'  => $prayer_url,
-			)
+			]
 		);
 
 		exit;
 	}
-//	}
 }
 add_action( 'wp_ajax_intercessor_do_ajax_export', 'intercessor_do_ajax_export' );

@@ -41,13 +41,11 @@ class Notices {
 	/**
 	 * Add a notice to the notices array
 	 *
+	 * @param array $args Array of arguments.
+	 *
 	 * @since 0.9.5
-	 *
-	 * @param array $args
-	 *
-	 * @return bool
 	 */
-	public function add_notice( $args = [] ) {
+	public function add_notice( array $args = [] ) {
 
 		// Parse args
 		$r = wp_parse_args(
@@ -112,7 +110,7 @@ class Notices {
 			$this->notices = [];
 		}
 
-		// Add notice to notices array.
+		// Add notice to $notices array.
 		$this->notices[] = $message;
 	}
 
@@ -267,11 +265,11 @@ class Notices {
 	/**
 	 * Notices about actions that the user has taken
 	 *
-	 * @since 0.9.5
+	 * @param string $notice Notice.
 	 *
-	 * @param string $notice
+	 * @since 0.9.5
 	 */
-	private function add_user_action_notices( $notice = '' ) {
+	private function add_user_action_notices( string $notice = '' ) {
 
 		// Sanitize notice key.
 		$notice = sanitize_key( $notice );
@@ -515,15 +513,13 @@ class Notices {
 	/**
 	 * Escape message string output
 	 *
-	 * @param string $message
+	 * @param string $message Message to display.
 	 *
 	 * @return string
 	 */
-	private function esc_notice( $message = '' ) {
+	private function esc_notice( string $message = '' ): string {
 		$tags = wp_kses_allowed_html( 'post' );
-		$text = wp_kses( $message, $tags );
 
-		return $text;
+		return wp_kses( $message, $tags );
 	}
 }
-

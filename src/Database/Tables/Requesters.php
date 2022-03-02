@@ -77,7 +77,7 @@ final class Requesters extends Table {
 			KEY status (status(20)),
 			KEY date_created (date_created)";
 	}
-	
+
 	/**
 	 * Upgrade to version 202109011
 	 * - Change the dafault value for the column `date_created` to `CURRENT_TIMESTAMP`

@@ -55,15 +55,18 @@ if ( ! function_exists( 'intercessor_count_prayed' ) ) {
      * Count prayed requests
      *
      * @param array $args Arguments to parse.
+     *
+     * @return int Number of found prayed counts.
      */
     function intercessor_count_prayed( array $args = [] ) : int {
         // Setup defaults.
+	    $set_date = intercessor_get_notify_period();
         $defaults = wp_parse_args(
             $args,
             [
                 'count'              => true,
                 'date_created_query' => [
-                    'after'          => 'last month', // week, day, month.
+                    'after'          => $set_date, // week, day, month.
                 ],
             ]
         );
@@ -75,83 +78,13 @@ if ( ! function_exists( 'intercessor_count_prayed' ) ) {
 	}
 }
 
-if ( ! function_exists( 'intercessor_count_prayed_for' ) ) {
-    /**
-     * Count prayed for with arguments.
-     *
-     * @since 1.0.0
-     * @return void
-     */
-    function intercessor_count_prayed_for() {
-        $notify = intercessor_get_option( 'notify_period', 'weekly' );
-
-        if ( 'daily' === $notify ) {
-            $value = 'yesterday';
-        } elseif ( 'monthly' === $notify ) {
-            $value = 'last month';
-        } else {
-            $value = 'last week';
-        }
-
-        // Setup arguments.
-        $args = [
-            'date_created_query' => [
-                'after' => $value, // week, day, month.
-            ],
-        ];
-
-        // Retrieve prayers prayed for within specified period.
-        $prayed_for = intercessor_get_items( 'prayed', $args );
-
-        // Proceed only if prayed requests are available.
-        if ( $prayed_for ) {
-            foreach ( $prayed_for as $prayed ) {
-                $prayed_id = $prayed->prayer_id;
-
-                // Bail if no prayer ID.
-               if ( ! $prayed_id ) {
-                    return;
-                }
-
-                // Get prayer request.
-                $prayer   = intercessor_get_item_by( 'prayer', 'id', $prayed_id );
-                $to_email = $prayer->email;
-
-                // Group all prayed requests and count.
-                $count_args = [
-                    'id__in'             => $prayed_id,
-                    'count'              => true,
-                    'groupby'            => 'prayed_id',
-                    'date_created_query' => [
-                        'after' => $value, // week, day, month.
-                    ],
-                ];
-
-                // Get prayed requests and counts.
-                $no_prayed = intercessor_get_items( 'prayed', $count_args );
-                $counts    = intercessor_count_items( 'prayed', $count_args );
-
-                // Bail if not prayed for.
-                if ( ! $counts || $no_prayed ) {
-                    return;
-                }
-
-                // Email prayed for notification if requested during prayer submission.
-                if ( intercessor_get_prayer_notify( $prayed_id ) ) {
-                    intercessor_email_prayed_notification( $prayed_id, $counts, $to_email, $prayer );
-                }
-            }
-        }
-    }
-}
-
 if ( ! function_exists( 'intercessor_get_prayed_for_counts' ) ) {
     /**
      * Get prayed for counts for a prayer ID.
      *
      * @param int $prayer_id Prayer ID.
      *
-     * @since 1.0.0 
+     * @since 1.0.0
      */
     function intercessor_get_prayed_for_counts( int $prayer_id ) {
         // Bail if no prayer ID supplied.
@@ -163,13 +96,63 @@ if ( ! function_exists( 'intercessor_get_prayed_for_counts' ) ) {
         $args = [
             'prayer_id' => $prayer_id,
         ];
-     
+
         // Get prayed for counts.
         $prayed     = intercessor_get_items( 'prayed', $args );
         $key        = esc_attr( 'prayed_for' );
         $prayed_for = array_sum( array_column( $prayed, $key ) );
 
         // Return values of prayed counts.
-        return apply_filters( 'intercesssor_get_prayed_for_counts', $prayed_for );
+        return apply_filters( 'intercessor_get_prayed_for_counts', $prayed_for );
     }
+}
+
+if ( ! function_exists( 'intercessor_get_prayed_for_counts_range' ) ) {
+	/**
+	 * Get prayed for counts for a prayer ID with date range.
+	 *
+	 * @param int $prayer_id Prayer ID.
+	 *
+	 * @since 1.0.0
+	 */
+	function intercessor_get_prayed_for_counts_range( int $prayer_id ) {
+		// Bail if no prayer ID supplied.
+		if ( empty( $prayer_id ) ) {
+			return false;
+		}
+
+		// Setup prayed for args.
+		$set_date = intercessor_get_notify_period();
+		$args     = [
+			'prayer_id' => $prayer_id,
+			'date_created_query' => [
+				'after'          => $set_date, // week, day, month.
+			],
+		];
+
+		// Get prayed for counts.
+		$prayed     = intercessor_get_items( 'prayed', $args );
+		$key        = esc_attr( 'prayed_for' );
+		$prayed_for = array_sum( array_column( $prayed, $key ) );
+
+		// Return values of prayed counts.
+		return apply_filters( 'intercessor_get_prayed_for_counts_range', $prayed_for );
+	}
+}
+
+if ( ! function_exists( 'intercessor_get_notify_period' ) ) {
+	function intercessor_get_notify_period() {
+		// Configure start date.
+		$default_date = intercessor_get_option( 'notify_period', 'weekly' );
+		if ( 'daily' === $default_date ) {
+			$date_value = 'yesterday';
+		} elseif ( 'monthly' === $default_date ) {
+			$date_value = 'last month';
+		} else {
+			$date_value = 'last week';
+		}
+
+		// Return the filtered value.
+		return apply_filters( 'intercessor_notify_requester_period', $date_value );
+	}
 }

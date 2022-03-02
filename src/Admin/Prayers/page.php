@@ -32,7 +32,6 @@ function intercessor_prayers_page() {
 	} elseif ( isset( $_GET['intercessor-action'] ) && 'add_prayer' === $_GET['intercessor-action'] ) {
 		require_once INTERCESSOR_DIR . 'src/Admin/Prayers/add-prayer.php';
 	} elseif ( isset( $_GET['intercessor-action'] ) && 'view_request_details' === $_GET['intercessor-action'] ) {
-	    
 		require_once INTERCESSOR_DIR . 'src/Admin/Prayers/view-details.php';
 	} else {
 		$prayers_table = new Table();

@@ -16,25 +16,23 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Generate pdf data.
  *
- * @param array $data Data array.
- *
  * @since 1.0.0
  */
-function intercessor_generate_pdf( array $data ) {
+function intercessor_generate_pdf() {
 
 	if ( ! current_user_can( 'view_prayer_reports' ) ) {
 		wp_die(
 			esc_html__( 'You do not have permission to generate prayer requests PDF.', 'intercessor' ),
 			esc_html__( 'Error', 'intercessor' ),
-			array( 'response' => 403 )
+			[ 'response' => 403 ]
 		);
 	}
 
-	if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'intercessor_generate_pdf_prayers' ) ) {
+	if ( ! wp_verify_nonce( $_POST['intercessor_export_settings_nonce'], 'intercessor_export_pdf_prayers_nonce' ) ) {
 		wp_die(
 			esc_html__( 'Nonce verification failed.', 'intercessor' ),
 			esc_html__( 'Error', 'intercessor' ),
-			array( 'response' => 403 )
+			[ 'response' => 403 ]
 		);
 	}
 
@@ -42,7 +40,7 @@ function intercessor_generate_pdf( array $data ) {
 		wp_die(
 			esc_html__( 'Main Dependency is Missing.', 'intercessor' ),
 			esc_html__( 'Error', 'intercessor' ),
-			array( 'response' => 403 )
+			[ 'response' => 403 ]
 		);
 	}
 
@@ -107,9 +105,10 @@ function intercessor_generate_pdf( array $data ) {
 	$prayer_stats = new Intercessor\Stats();
 
 	$args = array(
-		'number' => -1,
+		'number' => 9999999999,
 	);
 
+	// Get available prayer requests.
 	$prayers = intercessor_get_prayers( $args );
 
 	if ( $prayers ) {

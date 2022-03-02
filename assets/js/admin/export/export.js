@@ -22,7 +22,7 @@ jQuery( document ).ready( function( $ ) {
 			 * This juggles a few CSS classes to avoid styling collisions with other
 			 * third-party plugins.
 			 */
-			var intercessor_datepicker = $( 'input.intercessor-datepicker' );
+			var intercessor_datepicker = $( 'input.intercessor_datepicker' );
 			if ( intercessor_datepicker.length > 0 ) {
 				var dateFormat = 'mm/dd/yy';
 				intercessor_datepicker.datepicker( {
