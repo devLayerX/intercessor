@@ -92,6 +92,13 @@ class Requester extends \Intercessor\Database\Rows\Requester {
 	public $date_created;
 
 	/**
+	 * The requester's modification's date
+	 *
+	 * @since 0.9.5
+	 * @var string
+	 */
+	public $date_modified;
+	/**
 	 * The prayer IDs associated with the requester
 	 *
 	 * @since  0.9.5

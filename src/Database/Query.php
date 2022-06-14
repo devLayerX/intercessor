@@ -2304,7 +2304,7 @@ class Query extends Base {
 	 * @param string $unique
 	 * @return int|false The meta ID on success, false on failure.
 	 */
-	protected function add_item_meta( $item_id = 0, $meta_key = '', $meta_value = '', $unique = false ) {
+	public function add_item_meta( $item_id = 0, $meta_key = '', $meta_value = '', $unique = false ) {
 
 		// Shape the item ID
 		$item_id = $this->shape_item_id( $item_id );
@@ -2336,7 +2336,7 @@ class Query extends Base {
 	 * @param bool    $single
 	 * @return mixed Single metadata value, or array of values
 	 */
-	protected function get_item_meta( $item_id = 0, $meta_key = '', $single = false ) {
+	public function get_item_meta( $item_id = 0, $meta_key = '', $single = false ) {
 
 		// Shape the item ID
 		$item_id = $this->shape_item_id( $item_id );
@@ -2369,7 +2369,7 @@ class Query extends Base {
 	 * @param string $prev_value
 	 * @return bool True on successful update, false on failure.
 	 */
-	protected function update_item_meta( $item_id = 0, $meta_key = '', $meta_value = '', $prev_value = '' ) {
+	public function update_item_meta( $item_id = 0, $meta_key = '', $meta_value = '', $prev_value = '' ) {
 
 		// Shape the item ID
 		$item_id = $this->shape_item_id( $item_id );
@@ -2402,7 +2402,7 @@ class Query extends Base {
 	 * @param string $delete_all
 	 * @return bool True on successful delete, false on failure.
 	 */
-	protected function delete_item_meta( $item_id = 0, $meta_key = '', $meta_value = '', $delete_all = false ) {
+	public function delete_item_meta( $item_id = 0, $meta_key = '', $meta_value = '', $delete_all = false ) {
 
 		// Shape the item ID
 		$item_id = $this->shape_item_id( $item_id );

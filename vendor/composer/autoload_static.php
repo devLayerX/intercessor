@@ -22,6 +22,7 @@ class ComposerStaticInit886686ade4a0cc5f41ff5737f157e7b5
         '5b7c726726fad42f178b58931b584157' => __DIR__ . '/../..' . '/src/functions/user.php',
         'a3bfc07c60f4dbaec92bcaa72ea93e0f' => __DIR__ . '/../..' . '/src/functions/prayed.php',
         '8080b7ba75695e5b61978602b2b8649a' => __DIR__ . '/../..' . '/src/Admin/admin-settings.php',
+        'da4f3e412e2fe6157f634ec948348b92' => __DIR__ . '/../..' . '/src/Admin/views/settings-view.php',
         '315d5f323f69705097a0928cbaf91963' => __DIR__ . '/../..' . '/src/Admin/help.php',
         'b9e933f6e41329500be019a48a4f6381' => __DIR__ . '/../..' . '/src/Admin/functions.php',
         '5b0cf167c6bd4e77d3b2e50f280779d9' => __DIR__ . '/../..' . '/src/Admin/dashboard-widget.php',

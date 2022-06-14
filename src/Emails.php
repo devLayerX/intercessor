@@ -333,7 +333,7 @@ class Emails {
 	 * @since 0.9.5
 	 * @return bool
 	 */
-	public function send( $to, $subject, $message, $attachments = '' ) {
+	public function send( string $to, string $subject, string $message, $attachments = '' ) {
 
 		if ( ! did_action( 'init' ) && ! did_action( 'admin_init' ) ) {
 			_doing_it_wrong( __FUNCTION__, esc_html__( 'You cannot send email with Emails until init/admin_init has been reached', 'intercessor' ), null );
@@ -445,14 +445,15 @@ class Emails {
 	/**
 	 * Add an email tag
 	 *
-	 * @param string   $tag         Email tag to be replace in email.
-	 * @param string   $description The email tag description.
-	 * @param callable $func        Hook to run when email tag is found.
-	 * @param string   $label       Human readable tag label.
+	 * @param string $tag Email tag to be replaced in email.
+	 * @param string $description The email tag description.
+	 * @param callable $func Hook to run when email tag is found.
+	 * @param string|null $label Human readable tag label.
 	 *
+	 * @return void
 	 * @since 0.9.5
 	 */
-	public function add( $tag, $description, $func, $label = null ) {
+	public function add( string $tag, string $description, callable $func, string $label = null ) {
 		if ( is_callable( $func ) ) {
 			$this->tags[ $tag ] = [
 				'tag'         => $tag,
@@ -470,7 +471,7 @@ class Emails {
 	 *
 	 * @since 0.9.5
 	 */
-	public function remove( $tag ) {
+	public function remove( string $tag ) {
 		unset( $this->tags[ $tag ] );
 	}
 
@@ -483,7 +484,7 @@ class Emails {
 	 *
 	 * @return bool
 	 */
-	public function email_tag_exists( $tag ) {
+	public function email_tag_exists( string $tag ) : bool {
 		return array_key_exists( $tag, $this->tags );
 	}
 
@@ -494,7 +495,7 @@ class Emails {
 	 *
 	 * @return array
 	 */
-	public function get_tags() {
+	public function get_tags() : array {
 		return $this->tags;
 	}
 

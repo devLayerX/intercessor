@@ -1,106 +1,127 @@
 <?php
+
 /**
  * Requesters Export Class
  *
  * This class handles requester export
  *
  * @package     Intercessor
- * @subpackage  Admin/Tools
+ * @subpackage  Admin/Tools/Export
  * @copyright   Copyright (c) 2019, Victor Aigbeghian
  * @license     http://opensource.org/licenses/GPL-3.0.php GNU Public License
- * @since       0.9.5
+ * @since       1.0.0
  */
 
 namespace Intercessor\Admin\Tools\Export;
 
-// Exit if accessed directly
-defined( 'ABSPATH' ) || exit;
+// Exit if accessed directly.
+defined('ABSPATH') || exit;
 
 /**
  * Requesters Export Class
  *
- * @since 0.9.5
+ * @since 1.0.0
  */
-class Requesters extends Base {
+class Requesters extends Base
+{
 	/**
 	 * Our export type. Used for export-type specific filters/actions
 	 *
 	 * @var string
-	 * @since 0.9.5
+	 * @since 1.0.0
 	 */
-	public $export_type = 'Requesters';
+	public $export_type = 'requesters';
 
 	/**
-	 * Set the export headers
+	 * Date
 	 *
-	 * @since 0.9.5
-	 * @return void
+	 * @var array
+	 *
+	 * @since 1.0.0
 	 */
-	public function headers() {
-		intercessor_set_time_limit();
+	public $date;
 
-		$extra = '';
-
-		if ( ! empty( $_POST['intercessor_export_prayer'] ) ) {
-			$extra = sanitize_title( get_the_title( absint( $_POST['intercessor_export_prayer'] ) ) ) . '-';
-		}
-
-		nocache_headers();
-		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename="' . apply_filters( 'intercessor_requesters_export_filename', 'intercessor-export-' . $extra . $this->export_type . '-' . date( 'm-d-Y' ) ) . '.csv"' );
-		header( 'Expires: 0' );
-	}
+	/**
+	 * Status
+	 *
+	 * @var array
+	 *
+	 * @since 1.0.0
+	 */
+	public $status;
 
 	/**
 	 * Set the CSV columns
 	 *
-	 * @since 0.9.5
+	 * @since 1.0.0
 	 * @return array $cols All the columns
 	 */
-	public function csv_cols() {
-		if ( ! empty( $_POST['intercessor_export_prayer'] ) ) {
-			$cols = array(
-				'first_name' => esc_html__( 'First Name',   'intercessor' ),
-				'last_name'  => esc_html__( 'Last Name',   'intercessor' ),
-				'email'      => esc_html__( 'Email', 'intercessor' ),
-				'date'       => esc_html__( 'Date Created', 'intercessor' )
-			);
-		} else {
-
-			$cols = array();
-
-			if( 'emails' != $_POST['intercessor_export_option'] ) {
-				$cols['name'] = esc_html__( 'Name',   'intercessor' );
-			}
-
-			$cols['email'] = esc_html__( 'Email',   'intercessor' );
-
-			if( 'full' == $_POST['intercessor_export_option'] ) {
-				$cols['prayers'] = esc_html__( 'All Prayers',   'intercessor' );
-			}
-
-		}
-
-		return $cols;
+	public function csv_cols()
+	{
+		return [
+			'id'            => esc_html__('ID', 'intercessor'),
+			'user_id'       => esc_html__('User ID', 'intercessor'),
+			'name'          => esc_html__('Name', 'intercessor'),
+			'email'         => esc_html__('Email', 'intercessor'),
+			'status'        => esc_html__('Status', 'intercessor'),
+			'date_created'  => esc_html__('Date created', 'intercessor'),
+			'date_modified' => esc_html__('Date modified', 'intercessor'),
+		];
 	}
 
 	/**
 	 * Get the Export Data
 	 *
-	 * @since 0.9.5
+	 * @since 1.0.0
 	 * @global object $wpdb Used to query the database using the WordPress
 	 *   Database API
-	 * @global object $intercessor_logs IPR Logs Object
 	 * @return array $data The data for the CSV file
 	 */
-	public function get_data() {
+	public function get_data()
+	{
+		// Set up variables.
+		$data = [];
+		$args = [
+			'status' => $this->status,
+			'date'   => ! empty( $this->date ) ? $this->date : '',
+			'number' => -1,
+		];
 
-		$data = array();
+		// Set up dates range to query.
+		if ( ! empty( $this->date ) ) {
+			$args['date_created_query'] = [
+				'before' => $this->date['start'],
+				'after'  => $this->date['end'],
+			];
+		}
 
+		// Get available requesters from database.
+		$requesters = \intercessor_get_items('requester', $args);
 
-		$data = apply_filters( 'intercessor_export_get_data', $data );
-		$data = apply_filters( 'intercessor_export_get_data_' . $this->export_type, $data );
+		// Set up requester export data if requesters found.
+		if ( $requesters ) {
 
+			foreach ( $requesters as $requester ) {
+
+				// Build requester data.
+				$data[] = [
+					'id'            => $requester->id,
+					'user_id'       => $requester->user_id,
+					'name'          => $requester->name,
+					'email'         => $requester->email,
+					'status'        => $requester->status,
+					'prayer_count'  => $requester->prayer_count,
+					'date_created'  => $requester->date_created,
+					'date_modified' => $requester->date_modified,
+				];
+			}
+		}
+
+		// Filter data for export.
+		$data = apply_filters('intercessor_export_get_data', $data);
+		$data = apply_filters('intercessor_export_get_data_' . $this->export_type, $data);
+
+		// Return export data.
 		return $data;
 	}
 }

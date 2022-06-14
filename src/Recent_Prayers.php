@@ -68,20 +68,22 @@ class Recent_Prayers extends \WP_Widget {
 
 		$this->widget_name          = esc_html__( 'Recent Prayer Requests', 'intercessor' );
 		$this->default_widget_title = esc_html__( 'Recent Prayer Requests', 'intercessor' );
+		$widget_args = [
+			'classname'                   => $this->widget_slug,
+			'description'                 => esc_html__( 'Display your site&#8217;s most recent prayer requests.', 'intercessor' ),
+			'customize_selective_refresh' => true,
+			'show_instance_in_rest'       => true,
+		];
 
 		parent::__construct(
 			$this->widget_slug,
 			$this->widget_name,
-			[
-				'classname'                   => $this->widget_slug,
-				'description'                 => esc_html__( 'Display your site&#8217;s most recent prayer requests.', 'intercessor' ),
-				'customize_selective_refresh' => true,
-			]
+			$widget_args
 		);
 
 		// Include frontend script and style.
 		if ( \is_active_widget( false, false, $this->id_base ) || \is_customize_preview() ) {
-			add_action( 'wp_enqueue_scripts', [ $this, 'frontend_scripts' ] );
+			add_action( 'enqueue_block_assets', [ $this, 'frontend_scripts' ] );
 		}
 
 		// Clear cache on save.

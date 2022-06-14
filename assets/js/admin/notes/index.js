@@ -1,15 +1,16 @@
 /**
- * Intercessor Admin Notes JS
+ * IPR Admin Notes JS
  *
- * @package:     Intercessor
+ * @package:     IPR
  * @copyright:   Copyright (c) 2020, Victor Aigbeghian
  * @license:     http://opensource.org/licenses/gpl-3.0.php GNU Public License
  */
 
 var intercessor_note_vars;
 
-jQuery( document ).ready( function($) {
-    const Intercessor_Notes = {
+jQuery( document ).ready( function( $ ) {
+
+    const IPR_Notes = {
         init: function() {
             this.enter_key();
             this.add_note();
@@ -31,17 +32,17 @@ jQuery( document ).ready( function($) {
          * @since 1.0.0
          */
         add_note : function() {
-            $( '#intercessor-add-note' ).on( 'click', function(e) {
+            $( '#intercessor-add-note' ).on( 'click', function( e ) {
                 e.preventDefault();
 
-                var intercessor_button = $( this ),
+                const intercessor_button = $( this ),
                     intercessor_note = $( '#intercessor-note' ),
                     intercessor_notes = $( '.intercessor-notes' ),
                     intercessor_no_notes = $( '.intercessor-no-notes' ),
                     intercessor_spinner = $( '.intercessor-add-note .spinner' ),
                     intercessor_note_nonce = $( '#intercessor_note_nonce' );
 
-                var postData = {
+                const postData = {
                     action: 'intercessor_add_note',
                     nonce: intercessor_note_nonce.val(),
                     object_id: intercessor_button.data( 'object-id' ),
@@ -56,9 +57,9 @@ jQuery( document ).ready( function($) {
                     $.ajax({
                         type: 'POST',
                         data: postData,
-                        url:  intercessor_note_vars.ajaxurl,
+                        url:  ajaxurl,
                         success: function ( response ) {
-                            var res = wpAjax.parseAjaxResponse( response );
+                            let res = wpAjax.parseAjaxResponse( response );
                             res = res.responses[0];
 
                             intercessor_notes.append( res.data );
@@ -76,7 +77,7 @@ jQuery( document ).ready( function($) {
                     } );
 
                 } else {
-                    var border_color = intercessor_note.css( 'border-color' );
+                    const border_color = intercessor_note.css( 'border-color' );
                     intercessor_note.css( 'border-color', 'red' );
 
                     setTimeout( function() {
@@ -95,14 +96,14 @@ jQuery( document ).ready( function($) {
             $( document.body ).on( 'click', '.intercessor-delete-note', function( e ) {
                 e.preventDefault();
 
-                var intercessor_link = $( this ),
+                const intercessor_link = $( this ),
                     intercessor_notes = $( '.intercessor-note' ),
                     intercessor_note = intercessor_link.parents( '.intercessor-note' ),
                     intercessor_no_notes = $( '.intercessor-no-notes' ),
                     intercessor_note_nonce = $( '#intercessor_note_nonce' );
 
                 if ( confirm( intercessor_note_vars.delete ) ) {
-                    var postData = {
+                    const postData = {
                         action: 'intercessor_delete_note',
                         nonce: intercessor_note_nonce.val(),
                         note_id: intercessor_link.data( 'note-id' )
@@ -137,5 +138,5 @@ jQuery( document ).ready( function($) {
         }
     };
 
-    Intercessor_Notes.init();
+    IPR_Notes.init();
 } ); 

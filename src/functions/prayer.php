@@ -235,6 +235,84 @@ if ( ! function_exists( 'intercessor_is_active_prayer' ) ) {
 	}
 }
 
+if ( ! function_exists( 'intercessor_get_prayer_attribute' ) ) {
+	/**
+	 * Retrieve prayer attributes for a prayer ID.
+	 *
+	 * @param int $prayer_id The prayer ID to receive attributes for.
+	 *
+	 * @since 1.1.0
+	 * @return mixed
+	 */
+	function intercessor_get_prayer_attribute( int $prayer_id, string $attribute = '' ) {
+		// Bail if no valid prayer ID supplied.
+		if ( empty( $prayer_id ) ) {
+			return;
+		}
+
+		// Get the prayer request.
+		$prayer = intercessor_process_item( 'prayer', 'get', $prayer_id, false );
+		$value  = '';
+
+		// Try to retrieve the different attributes of the prayer request.
+		switch ( $attribute ) {
+			// Prayer number.
+			case 'number':
+				$format   = intercessor_get_option( 'prayer_id_format' );
+				$position = intercessor_get_option( 'number_position', 'left' );
+
+				if ( ! empty( $format ) ) {
+					if ( 'right' === $position ) {
+						$value = $prayer_id . $format;
+					} else {
+						$value = $format . ' ' . $prayer_id . ':';
+					}
+				}
+				break;
+
+			// Prayer title.
+			case 'title':
+				$value = $prayer->title;
+				break;
+
+			// Prayer Message.
+			case 'message':
+				$value = $prayer->message;
+				break;
+
+			// Prayer name.
+			case 'name':
+				if ( 'anon' === $prayer->share ) {
+					$value = esc_html__( 'Anonymous', 'intercessor' );
+				} else {
+					$requester = new Requester( $prayer->email );
+					$value     = esc_attr( $requester->name );
+				}
+				break;
+
+			// Prayer share;
+			case 'share':
+				$value = $prayer->share;
+				break;
+
+			// Prayer email.
+			case 'email':
+				$email        = $prayer->email;
+				$requester_id = $prayer->requester_id;
+
+				if ( empty( $email ) && ! empty( $requester_id ) ) {
+					$requester = new Requester( $requester_id, false );
+					$value     = $requester->email;
+				} else {
+					$value     = $email;
+				}
+				break;
+
+			// 	
+		}
+	}
+}
+
 if ( ! function_exists( 'intercessor_get_prayer_number' ) ) {
 
 	/**
@@ -304,7 +382,7 @@ if ( ! function_exists( 'intercessor_get_prayer_email' ) ) {
 		} else {
 			$returned  = $email;
 		}
-	
+
 		return $returned;
 	}
 }
@@ -341,10 +419,10 @@ if ( ! function_exists( 'intercessor_get_prayer_notify' ) ) {
 	 * @since 1.0.0
 	 * @return bool $notify True if selected otherwise false.
 	 */
-	function intercessor_get_prayer_notify( int $prayer_id ) {
+	function intercessor_get_prayer_notify( int $prayer_id ): bool {
 		$notify = false;
 		$prayer = intercessor_process_item( 'prayer', 'get', $prayer_id, false );
-		if ( 1 === $prayer->notify ) {
+		if ( '1' === $prayer->notify ) {
 			$notify = true;
 		}
 
@@ -352,17 +430,19 @@ if ( ! function_exists( 'intercessor_get_prayer_notify' ) ) {
 	}
 }
 
-/**
- * Retrieve the key associated with the prayer
- *
- * @param int|null $prayer_id Prayer ID.
- *
- * @return array $share Prayer share option.
- * @since 0.9.5
- */
-function intercessor_get_prayer_share( int $prayer_id ) {
-	$prayer = intercessor_process_item( 'prayer', 'get', $prayer_id, false );
-	return $prayer->share;
+if ( ! function_exists( 'intercessor_get_prayer_share' ) ) {
+	/**
+	 * Retrieve the key associated with the prayer
+	 *
+	 * @param int|null $prayer_id Prayer ID.
+	 *
+	 * @return string $share Prayer share option.
+	 * @since 0.9.5
+	 */
+	function intercessor_get_prayer_share( int $prayer_id ): string {
+		$prayer = intercessor_process_item( 'prayer', 'get', $prayer_id, false );
+		return $prayer->share;
+	}
 }
 
 if ( ! function_exists( 'intercessor_get_prayer_title' ) ) {
@@ -370,7 +450,7 @@ if ( ! function_exists( 'intercessor_get_prayer_title' ) ) {
 	/**
 	 * Get prayer request title.
 	 *
-	 * @param int $prayer_id
+	 * @param int $prayer_id Prayer ID.
 	 *
 	 * @since 1.0.0
 	 * @return mixed
@@ -509,7 +589,7 @@ function intercessor_insert_prayer( $prayer_data = [] ) {
 		do_action( 'intercessor_inserted_prayer', $prayer_id, $prayer_data );
 
 		// Trigger prayer notification.
-		intercessor_trigger_prayer_notification( $prayer_id, $prayer_args['email'] );
+		intercessor_trigger_prayer_notification( $prayer_args['email'], $prayer_id );
 
 		// Setup pending or active prayer notices.
 		if ( 'pending' === $args['status'] ) {
@@ -558,7 +638,7 @@ if ( ! function_exists( 'intercessor_get_prayer_button' ) ) {
 
 		// Setup praying button.
 		$button  = '<input name="prayer_id" class="prayers-id" value="' . $prayer_id . '" type="hidden"/>';
-		
+
 		// Verify if prayer already answered.
 		if ( $answered ) {
 			$button .= '<input type="submit" name="intercessor_prayed_updater" disabled="disabled" class="prayed-updater intercessor-submit" value="' . $done . '" />';
@@ -583,7 +663,7 @@ if ( ! function_exists( 'intercessor_get_prayer_button' ) ) {
 function intercessor_process_praying_for_request() {
 	// Get submitted prayer ID.
 	$prayer_id = isset( $_POST['praying_id'] ) ? absint( $_POST['praying_id'] ) : 0;
-	
+
 	// Process form only if it is submitted.
 	if ( ! empty( $prayer_id ) ) {
 		// Bail if nonce fails.

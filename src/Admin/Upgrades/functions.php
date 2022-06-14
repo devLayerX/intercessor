@@ -23,18 +23,18 @@ if ( ! function_exists( 'intercessor_should_upgrade' ) ) {
      * @since 1.0.0
      * @return bool
      */
-    function intercessor_should_upgrade(): bool
-    {
-        $version = intercessor_get_db_version();
-        $current = intercessor_format_db_version( INTERCESSOR_VERSION );
+    function intercessor_should_upgrade() : bool {
+	    $intercessor_version = intercessor_get_db_version();
+	    $current_version     = intercessor_format_db_version( INTERCESSOR_VERSION );
 
-        // Bail if no new version.
-        if ( version_compare( $current, $version, '>=' ) ) {
-            return false;
-        } else {
-            return true;
-        }
+	    // Bail if no new version.
+	    if ( (int) $current_version > (int) $intercessor_version ) {
+		    return true;
+	    } else {
+		    return false;
+	    }
     }
+
 }
 
 if ( ! function_exists( 'intercessor_upgrades_screen' ) ) {
@@ -268,10 +268,10 @@ function intercessor_show_upgrade_notices() {
     }
 
     // Bail if no upgrades needed.
-/*    if ( ! intercessor_should_upgrade() ) {
+   if ( ! intercessor_should_upgrade() ) {
         return;
     }
-*/
+
     // Possible upgrades.
     $upgrade_args = [
         'prayed_counts' => 'prayed_counts',
@@ -291,7 +291,7 @@ function intercessor_show_upgrade_notices() {
         $prayers = intercessor_get_items( 'prayer', $prayer_args );
 
         if ( ! empty( $prayers ) ) {
-            require_once INTERCESSOR_DIR . 'src/Admin/Upgrades/views/upgrade-view.php';
+            require_once INTERCESSOR_DIR . 'src/Admin/views/upgrade-view.php';
         }
     }
 }

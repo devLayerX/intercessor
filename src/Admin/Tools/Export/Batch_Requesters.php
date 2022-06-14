@@ -13,6 +13,8 @@
 
 namespace Intercessor\Admin\Tools\Export;
 
+use function intercessor_count_items;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
@@ -29,7 +31,7 @@ class Batch_Requesters extends Batch {
 	 * @var string
 	 * @since 0.9.5
 	 */
-	public $export_type = 'Requesters';
+	public $export_type = 'requesters';
 
 	/**
 	 * Set the CSV columns
@@ -39,15 +41,17 @@ class Batch_Requesters extends Batch {
 	 * @return array $cols All the columns
 	 */
 	public function csv_cols() {
-		$cols = array(
-			'id'      	 => esc_html__( 'ID', 'intercessor' ),
-			'name'    	 => esc_html__( 'Name', 'intercessor' ),
-			'email'   	 => esc_html__( 'Email', 'intercessor' ),
-			'prayers' 	 => esc_html__( 'Number of Prayers', 'intercessor' ),
-			'prayer_ids' => esc_html__( 'Prayer ID', 'intercessor' ),
-		);
 
-		return $cols;
+		return [
+			'id'      	    => esc_html__( 'ID', 'intercessor' ),
+			'user_id'       => esc_html__( 'User ID', 'intercessor' ),
+			'name'    	    => esc_html__( 'Name', 'intercessor' ),
+			'email'   	    => esc_html__( 'Email', 'intercessor' ),
+			'status'   	    => esc_html__( 'Status', 'intercessor' ),
+			'prayer_count'  => esc_html__( 'Number of Prayers', 'intercessor' ),
+			'date_created'  => esc_html__( 'Date created', 'intercessor' ),
+			'date_modified' => esc_html__( 'Date modified', 'intercessor' ),
+		];
 	}
 
 	/**
@@ -58,8 +62,9 @@ class Batch_Requesters extends Batch {
 	 * @return array $data The data for the CSV file.
 	 */
 	public function get_data() {
-		$data = array();
+		$data = [];
 
+		// Get all requesters.
 		$requesters = intercessor_get_items(
 			'requester',
 			[
@@ -68,17 +73,25 @@ class Batch_Requesters extends Batch {
 			]
 		);
 
-			$i = 0;
+		$i = 0;
 
-			foreach ( $requesters as $requester ) {
-				$data[ $i ]['id']         = $requester->id;
-				$data[ $i ]['name']       = $requester->name;
-				$data[ $i ]['email']      = $requester->email;
-				$data[ $i ]['prayers']    = $requester->prayer_count;
-				$data[ $i ]['prayer_ids'] = $requester->prayer_ids;
+		// Build requester data.
+		foreach ( $requesters as $requester ) {
+			$requester_id = $requester->id;
+			$counts       = intercessor_get_requester_prayers( $requester_id, true );
 
-				$i++;
-			}
+			// Export data.
+			$data[ $i ]['id']            = $requester_id;
+			$data[ $i ]['user_id']       = $requester->user_id;
+			$data[ $i ]['name']          = $requester->name;
+			$data[ $i ]['email']         = $requester->email;
+			$data[ $i ]['status']        = $requester->status;
+			$data[ $i ]['prayer_count']  = $counts;
+			$data[ $i ]['date_created']  = $requester->date_modified;
+			$data[ $i ]['date_modified'] = $requester->date_modified;
+
+			$i++;
+		}
 
 		$data = apply_filters( 'intercessor_export_get_data', $data );
 		$data = apply_filters( 'intercessor_export_get_data_' . $this->export_type, $data );
@@ -97,7 +110,11 @@ class Batch_Requesters extends Batch {
 		$percentage = 0;
 
 		// Total count of Requesters.
-		$total = intercessor_count_items( 'requester', false );
+		$args = [
+			'status' => 'active',
+			'fields' => 'ids',
+		];
+		$total = intercessor_count_items( 'requester', $args );
 
 		if ( $total > 0 ) {
 			$percentage = ( ( 30 * $this->step ) / $total ) * 100;
@@ -125,5 +142,26 @@ class Batch_Requesters extends Batch {
 		$this->end = isset( $request['end'] )
 			? sanitize_text_field( $request['end'] )
 			: '';
+	}
+
+	/**
+	 * Get requester prayer counts.
+	 *
+	 * @param int $requester_id Requester ID.
+	 *
+	 * @since 1.1.0
+	 * @access private
+	 *
+	 * @return int Number of requester's prayer requests.
+	 */
+	private function get_requesters_prayers( $requester_id ) {
+		// Set up arguments to retrieve requester prayers.
+		$args = [
+			'requester_id__in' => $requester_id,
+			'fields'           => 'ids',
+		];
+
+		// Return number of prayers of requester.
+		return intercessor_count_items( 'prayer', $args );
 	}
 }

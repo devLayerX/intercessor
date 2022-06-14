@@ -227,7 +227,7 @@ function intercessor_reports_tab_prayed() {
         <tbody>
 
         <tr>
-            <td><?php echo $stats->get_prayed_for( 0, false, false, ); ?></td>
+            <td><?php echo $stats->get_prayed_for( 0, false, false ); ?></td>
             <td><?php echo $stats->get_prayed_for( 0, 'today', false ); ?></td>
             <td><?php echo $stats->get_prayed_for( 0, 'this week', false ); ?></td>
         </tr>

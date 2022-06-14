@@ -119,12 +119,12 @@ class Upgrades {
 	 *
 	 * @since 1.1.0
 	 * @access private
-	 * @return bool|void True if upgrades added, otherwise void.
+	 * @return bool True if upgrades added, otherwise void.
 	 */
-	private function done( string $action ) {
+	private function done( string $action ) : bool {
 		// Bail if no new upgrade action available.
 		if ( empty( $action ) ) {
-			return;
+			return false;
 		}
 
 		// Get completed upgrades.
@@ -140,7 +140,7 @@ class Upgrades {
 		$completed_upgrades = array_unique( array_values( $completed ) );
 
 		// Return the results of upgrading the option.
-		\update_option( 'intercessor_completed_upgrades', $completed_upgrades );
+		return \update_option( 'intercessor_completed_upgrades', $completed_upgrades );
 	}
 
 	/**
@@ -164,7 +164,11 @@ class Upgrades {
 		$parsed = \wp_parse_args( $url_args, $args );
 
 		// verify nonce.
-		$url = \wp_nonce_url( add_query_arg( $parsed, admin_url( 'index.php' ) ), 'intercessor-upgrade-nonce' );
+		$url = \wp_nonce_url(
+            add_query_arg( $parsed, admin_url( 'index.php' )
+            ),
+            'intercessor-upgrade-nonce'
+        );
 
 		// Return.
 		return str_replace( '&amp;', '&', $url );
@@ -263,6 +267,7 @@ class Upgrades {
         // Get completed upgrades.
 		$completed_upgrades = $this->completed();
 
+        // Return array of completed upgrades.
 		return in_array( $action, $completed_upgrades, true );
 	}
 
@@ -293,7 +298,7 @@ class Upgrades {
 		// Sanitize the step.
 		$step = $this->current_upgrade();
 		//$func = "Intercessor\\Admin\\Upgrades\\do_{$step}";
-        $func = $this->do_ . "$step";
+        $func = $this->do_ . "{$step}";
 
 		// Process the step.
 		if ( function_exists( $func ) ) {

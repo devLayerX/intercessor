@@ -33,6 +33,7 @@
             "src/functions/user.php",
             "src/functions/prayed.php",
             "src/Admin/admin-settings.php",
+            "src/Admin/views/settings-view.php",
             "src/Admin/help.php",
             "src/Admin/functions.php",
             "src/Admin/dashboard-widget.php",

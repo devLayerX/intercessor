@@ -7,172 +7,174 @@
  */
 
 jQuery( document ).ready( function( $ ) {
-    var Intercessor_Import = {
 
-        init: function() {
-            this.submit();
-        },
-    
-        submit: function() {
-            const self = this;
-    
-            $( '.intercessor-import-form' ).ajaxForm( {
-                beforeSubmit: self.before_submit,
-                success: self.success,
-                complete: self.complete,
-                dataType: 'json',
-                error: self.error,
-            } );
-        },
-    
-        before_submit: function( arr, form, options ) {
-            form.find( '.notice-wrap' ).remove();
-            form.append( '<div class="notice-wrap"><span class="spinner is-active"></span><div class="intercessor-progress"><div></div></div></div>' );
-    
-            //check whether client browser fully supports all File API.
-            if ( window.File && window.FileReader && window.FileList && window.Blob ) {
-    
-                // HTML5 File API is supported by browser
-    
-            } else {
-                const import_form = $( '.intercessor-import-form' ).find( '.intercessor-progress' ).parent().parent();
-                const notice_wrap = import_form.find( '.notice-wrap' );
-    
-                import_form.find( '.button-disabled' ).removeClass( 'button-disabled' );
-    
-                //Error for older unsupported browsers that doesn't support HTML5 File API
-                notice_wrap.html( '<div class="update error"><p>' + intercessor_vars.unsupported_browser + '</p></div>' );
-                return false;
-            }
-        },
-    
-        success: function( responseText, statusText, xhr, form ) {},
-    
-        complete: function( xhr ) {
-            const self = $( this ),
-                response = jQuery.parseJSON( xhr.responseText );
-    
-            if ( response.success ) {
-                const form = $( '.intercessor-import-form .notice-wrap' ).parent();
-    
-                form.find( '.intercessor-import-file-wrap,.notice-wrap' ).remove();
-                form.find( '.intercessor-import-options' ).slideDown();
-    
-                // Show column mapping
-                let select = form.find( 'select.intercessor-import-csv-column' ),
-                    row = select.parents( 'tr' ).first(),
-                    options = '',
-                    columns = response.data.columns.sort( function( a, b ) {
-                        if ( a < b ) {
-                            return -1;
-                        }
-                        if ( a > b ) {
-                            return 1;
-                        }
-                        return 0;
-                    } );
-    
-                $.each( columns, function( key, value ) {
-                    options += '<option value="' + value + '">' + value + '</option>';
-                } );
-    
-                select.append( options );
-    
-                select.on( 'change', function() {
-                    const key = $( this ).val();
-    
-                    if ( ! key ) {
-                        $( this ).parent().next().html( '' );
-                    } else if ( false !== response.data.first_row[ key ] ) {
-                        $( this ).parent().next().html( response.data.first_row[ key ] );
-                    } else {
-                        $( this ).parent().next().html( '' );
-                    }
-                } );
-    
-                $.each( select, function() {
-                    $( this ).val( $( this ).attr( 'data-field' ) ).change();
-                } );
-    
-                $( document.body ).on( 'click', '.intercessor-import-proceed', function( e ) {
-                    e.preventDefault();
-    
-                    form.append( '<div class="notice-wrap"><span class="spinner is-active"></span><div class="intercessor-progress"><div></div></div></div>' );
-    
-                    response.data.mapping = form.serialize();
-    
-                    Intercessor_Import.process_step( 1, response.data, self );
-                } );
-            } else {
-                Intercessor_Import.error( xhr );
-            }
-        },
-    
-        error: function( xhr ) {
-            // Something went wrong. This will display error on form.
-    
-            const response = jQuery.parseJSON( xhr.responseText );
-            const import_form = $( '.intercessor-import-form' ).find( '.intercessor-progress' ).parent().parent();
-            const notice_wrap = import_form.find( '.notice-wrap' );
-    
-            import_form.find( '.button-disabled' ).removeClass( 'button-disabled' );
-    
-            if ( response.data.error ) {
-                notice_wrap.html( '<div class="update error"><p>' + response.data.error + '</p></div>' );
-            } else {
-                notice_wrap.remove();
-            }
-        },
-    
-        process_step: function( step, import_data, self ) {
-            $.ajax( {
-                type: 'POST',
-                url: ajaxurl,
-                data: {
-                    form: import_data.form,
-                    nonce: import_data.nonce,
-                    class: import_data.class,
-                    upload: import_data.upload,
-                    mapping: import_data.mapping,
-                    action: 'intercessor_do_ajax_import',
-                    step: step,
-                },
-                dataType: 'json',
-                success: function( response ) {
-                    if ( 'done' === response.data.step || response.data.error ) {
-                        // We need to get the actual in progress form, not all forms on the page
-                        const import_form = $( '.intercessor-import-form' ).find( '.intercessor-progress' ).parent().parent();
-                        const notice_wrap = import_form.find( '.notice-wrap' );
-    
-                        import_form.find( '.button-disabled' ).removeClass( 'button-disabled' );
-    
-                        if ( response.data.error ) {
-                            notice_wrap.html( '<div class="update error"><p>' + response.data.error + '</p></div>' );
-                        } else {
-                            import_form.find( '.intercessor-import-options' ).hide();
-                            $( 'html, body' ).animate( {
-                                scrollTop: import_form.parent().offset().top,
-                            }, 500 );
-    
-                            notice_wrap.html( '<div class="updated"><p>' + response.data.message + '</p></div>' );
-                        }
-                    } else {
-                        $( '.intercessor-progress div' ).animate( {
-                            width: response.data.percentage + '%',
-                        }, 50, function() {
-                            // Animation complete.
-                        } );
-    
-                        Intercessor_Import.process_step( parseInt( response.data.step ), import_data, self );
-                    }
-                },
-            } ).fail( function( response ) {
-                if ( window.console && window.console.log ) {
-                    console.log( response );
-                }
-            } );
-        },
-    };
+	var IPR_Import = {
 
-	Intercessor_Export.init();
+		init: function() {
+			this.submit();
+		},
+	
+		submit: function() {
+			const self = this;
+	
+			$( '.intercessor-import-form' ).ajaxForm( {
+				beforeSubmit: self.before_submit,
+				success: self.success,
+				complete: self.complete,
+				dataType: 'json',
+				error: self.error,
+			} );
+		},
+	
+		before_submit: function( arr, form, options ) {
+			form.find( '.notice-wrap' ).remove();
+			form.append( '<div class="notice-wrap"><div class="intercessor-progress"><div></div></div></div>' );
+	
+			//check whether client browser fully supports all File API
+			if ( window.File && window.FileReader && window.FileList && window.Blob ) {
+	
+				// HTML5 File API is supported by browser
+	
+			} else {
+				const import_form = $( '.intercessor-import-form' ).find( '.intercessor-progress' ).parent().parent();
+				const notice_wrap = import_form.find( '.notice-wrap' );
+	
+				import_form.find( '.button:disabled' ).attr( 'disabled', false );
+	
+				//Error for older unsupported browsers that doesn't support HTML5 File API
+				notice_wrap.html( '<div class="update error"><p>' + intercessor_vars.unsupported_browser + '</p></div>' );
+				return false;
+			}
+		},
+	
+		success: function( responseText, statusText, xhr, form ) {},
+	
+		complete: function( xhr ) {
+			const self = $( this ),
+				response = jQuery.parseJSON( xhr.responseText );
+	
+			if ( response.success ) {
+				const form = $( '.intercessor-import-form .notice-wrap' ).parent();
+	
+				form.find( '.intercessor-import-file-wrap,.notice-wrap' ).remove();
+				form.find( '.intercessor-import-options' ).slideDown();
+	
+				// Show column mapping
+				let select = form.find( 'select.intercessor-import-csv-column' ),
+					row = select.parents( 'tr' ).first(),
+					options = '',
+					columns = response.data.columns.sort( function( a, b ) {
+						if ( a < b ) {
+							return -1;
+						}
+						if ( a > b ) {
+							return 1;
+						}
+						return 0;
+					} );
+	
+				$.each( columns, function( key, value ) {
+					options += '<option value="' + value + '">' + value + '</option>';
+				} );
+	
+				select.append( options );
+	
+				select.on( 'change', function() {
+					const key = $( this ).val();
+	
+					if ( ! key ) {
+						$( this ).parent().next().html( '' );
+					} else if ( false !== response.data.first_row[ key ] ) {
+						$( this ).parent().next().html( response.data.first_row[ key ] );
+					} else {
+						$( this ).parent().next().html( '' );
+					}
+				} );
+	
+				$.each( select, function() {
+					$( this ).val( $( this ).attr( 'data-field' ) ).change();
+				} );
+	
+				$( document.body ).on( 'click', '.intercessor-import-proceed', function( e ) {
+					e.preventDefault();
+	
+					form.find( '.intercessor-import-proceed.button-primary' ).addClass( 'updating-message' );
+					form.append( '<div class="notice-wrap"><div class="intercessor-progress"><div></div></div></div>' );
+	
+					response.data.mapping = form.serialize();
+	
+					IPR_Import.process_step( 1, response.data, self );
+				} );
+			} else {
+				IPR_Import.error( xhr );
+			}
+		},
+	
+		error: function( xhr ) {
+			// Something went wrong. This will display error on form
+	
+			const response = jQuery.parseJSON( xhr.responseText );
+			const import_form = $( '.intercessor-import-form' ).find( '.intercessor-progress' ).parent().parent();
+			const notice_wrap = import_form.find( '.notice-wrap' );
+	
+			import_form.find( '.button:disabled' ).attr( 'disabled', false );
+	
+			if ( response.data.error ) {
+				notice_wrap.html( '<div class="update error"><p>' + response.data.error + '</p></div>' );
+			} else {
+				notice_wrap.remove();
+			}
+		},
+	
+		process_step: function( step, import_data, self ) {
+			$.ajax( {
+				type: 'POST',
+				url: ajaxurl,
+				data: {
+					form: import_data.form,
+					nonce: import_data.nonce,
+					class: import_data.class,
+					upload: import_data.upload,
+					mapping: import_data.mapping,
+					action: 'intercessor_do_ajax_import',
+					step: step,
+				},
+				dataType: 'json',
+				success: function( response ) {
+					if ( 'done' === response.data.step || response.data.error ) {
+						// We need to get the actual in progress form, not all forms on the page
+						const import_form = $( '.intercessor-import-form' ).find( '.intercessor-progress' ).parent().parent();
+						const notice_wrap = import_form.find( '.notice-wrap' );
+	
+						import_form.find( '.button:disabled' ).attr( 'disabled', false );
+	
+						if ( response.data.error ) {
+							notice_wrap.html( '<div class="update error"><p>' + response.data.error + '</p></div>' );
+						} else {
+							import_form.find( '.intercessor-import-options' ).hide();
+							$( 'html, body' ).animate( {
+								scrollTop: import_form.parent().offset().top,
+							}, 500 );
+	
+							notice_wrap.html( '<div class="updated"><p>' + response.data.message + '</p></div>' );
+						}
+					} else {
+						$( '.intercessor-progress div' ).animate( {
+							width: response.data.percentage + '%',
+						}, 50, function() {
+							// Animation complete.
+						} );
+	
+						IPR_Import.process_step( parseInt( response.data.step ), import_data, self );
+					}
+				},
+			} ).fail( function( response ) {
+				if ( window.console && window.console.log ) {
+					console.log( response );
+				}
+			} );
+		},
+	};
+	
+	IPR_Import.init();
 } );

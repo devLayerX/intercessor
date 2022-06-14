@@ -56,26 +56,22 @@ function intercessor_admin_removable_query_args() : array {
  *@since 	0.9.5
  *
  */
-function intercessor_is_admin_page( string $page = '' ) : bool {
+function intercessor_is_admin_page() : bool {
 
 	// Bail if the wp_loaded hook has not been called or it is not an admin.
 	if ( ! is_admin() || ! did_action( 'wp_loaded' ) ) {
 		$ret = false;
 	}
 
-	if ( empty( $page ) && isset( $_GET['page'] ) ) {
-		$page = sanitize_text_field( $_GET['page'] );
-	} else {
-		$ret = false;
-	}
-
-	$admin_pages = array(
+	// Get available pages.
+	$page        = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
+	$admin_pages = [
 		'intercessor-prayers',
 		'intercessor-requesters',
 		'intercessor-tools',
 		'intercessor-settings',
         'intercessor-upgrades',
-	);
+	];
 
 	if ( ! empty( $page ) && in_array( $page, $admin_pages ) ) {
 		$ret = true;
@@ -150,7 +146,7 @@ if ( ! function_exists( 'intercessor_admin_get_notes_html' ) ) {
 	function intercessor_admin_get_notes_html( array $notes = [] ) : string {
 
 		// Whether to show or hide the "No notes" default text.
-		$no_notes_display = !empty($notes)
+		$no_notes_display = ! empty( $notes )
 			? ' style="display:none;"'
 			: '';
 
@@ -160,15 +156,15 @@ if ( ! function_exists( 'intercessor_admin_get_notes_html' ) ) {
 		<div class="intercessor-notes" id="intercessor-notes">
 			<?php
 
-			// Output notes
-			foreach ($notes as $note) {
+			// Output notes.
+			foreach ( $notes as $note ) {
 				echo intercessor_admin_get_note_html($note);
 			}
 
 			?>
 
 			<p class="intercessor-no-notes"<?php echo $no_notes_display; ?>>
-				<?php _e('No notes.', 'intercessor'); ?>
+				<?php esc_html_e('No notes.', 'intercessor'); ?>
 			</p>
 		</div>
 
@@ -203,31 +199,36 @@ if ( ! function_exists( 'intercessor_admin_get_note_html' ) ) {
 
 		// User who created the note.
 		$user_id = $note->user_id;
-		$author = !empty( $user_id )
+		$author  = ! empty( $user_id )
 			? get_userdata( $user_id )->display_name
 			: esc_html__( 'Intercessor Bot', 'intercessor');
 
 		// URL to delete note
-		$delete_note_url = wp_nonce_url(add_query_arg(array(
-			'intercessor-action' => 'delete_note',
-			'note_id' => $note->id
-		)), 'intercessor_delete_note_' . $note->id);
+		$delete_note_url = wp_nonce_url(
+			add_query_arg(
+				[
+					'intercessor-action' => 'delete_note',
+					'note_id'            => $note->id,
+				]
+			), 'intercessor_delete_note_' . $note->id
+		);
 
-		// Start a buffer
-		ob_start(); ?>
+		// Start a buffer.
+		ob_start();
+		?>
 
-		<div class="intercessor-note" id="intercessor-note-<?php echo esc_attr($note->id); ?>">
+		<div class="intercessor-note" id="intercessor-note-<?php echo esc_attr( $note->id ); ?>">
 			<div>
-				<strong class="intercessor-note-author"><?php echo esc_html($author); ?></strong>
+				<strong class="intercessor-note-author"><?php echo esc_html( $author ); ?></strong>
 				<time
-					datetime="<?php echo esc_attr($note->date_created); ?>"><?php echo date_i18n(get_option('date_format'), strtotime($note->date_created)); ?></time>
+					datetime="<?php echo esc_attr( $note->date_created ); ?>"><?php echo date_i18n( get_option( 'date_format' ), strtotime( $note->date_created ) ); ?></time>
 
-				<p><?php echo make_clickable($note->content); ?></p>
-				<a href="<?php echo esc_url($delete_note_url); ?>#intercessor-notes" class="intercessor-delete-note"
-				   data-note-id="<?php echo esc_attr($note->id); ?>"
-				   data-object-id="<?php echo esc_attr($note->object_id); ?>"
-				   data-object-type="<?php echo esc_attr($note->object_type); ?>">
-					<?php _e('Delete', 'intercessor'); ?>
+				<p><?php echo make_clickable( $note->content ); ?></p>
+				<a href="<?php echo esc_url( $delete_note_url ); ?>#intercessor-notes" class="intercessor-delete-note"
+				   data-note-id="<?php echo esc_attr( $note->id ); ?>"
+				   data-object-id="<?php echo esc_attr( $note->object_id ); ?>"
+				   data-object-type="<?php echo esc_attr( $note->object_type ); ?>">
+					<?php esc_html_e( 'Delete', 'intercessor' ); ?>
 				</a>
 			</div>
 		</div>
@@ -250,7 +251,7 @@ if ( ! function_exists( 'intercessor_admin_get_new_note_form' ) ) {
 	 * @since 0.9.5
 	 *
 	 */
-	function intercessor_admin_get_new_note_form($object_id = 0, $object_type = '') {
+	function intercessor_admin_get_new_note_form( $object_id = 0, $object_type = '' ) {
 
 		// Start a buffer
 		ob_start(); ?>
@@ -262,17 +263,17 @@ if ( ! function_exists( 'intercessor_admin_get_new_note_form' ) ) {
 			<p>
 				<button type="button" id="intercessor-add-note"
 						class="intercessor-note-submit button button-secondary left"
-						data-object-id="<?php echo esc_attr($object_id); ?>"
-						data-object-type="<?php echo esc_attr($object_type); ?>">
-					<?php _e('Add Note', 'intercessor'); ?>
+						data-object-id="<?php echo esc_attr( $object_id ); ?>"
+						data-object-type="<?php echo esc_attr( $object_type ); ?>">
+					<?php esc_html_e( 'Add Note', 'intercessor' ); ?>
 				</button>
 			</p>
-			<?php wp_nonce_field('intercessor_note', 'intercessor_note_nonce'); ?>
+			<?php wp_nonce_field( 'intercessor_note', 'intercessor_note_nonce' ); ?>
 		</div>
 
 		<?php
 
-		// Return the current buffer
+		// Return the current buffer.
 		return ob_get_clean();
 	}
 }
@@ -298,7 +299,7 @@ if ( ! function_exists( 'intercessor_get_note_delete_redirect_url' ) ) {
 		$host        = esc_url( $_SERVER[HTTP_HOST] );
 		$request_url = esc_url( $_SERVER[REQUEST_URI] );
 
-		// Return the concatenated URL
+		// Return the concatenated URL.
 		return "{$scheme}://{$host}{$request_url}";
 	}
 }
@@ -331,7 +332,7 @@ if ( ! function_exists( 'intercessor_admin_get_notes_pagination' ) ) {
 
 		// Maximum notes per page.
 		$per_page        = apply_filters( 'intercessor_notes_per_page', 20 );
-		$query['total']  = ceil( (int) $query['total'] / (int) $per_page );
+		$query['total']  = ceil( $query['total'] / $per_page );
 		$query['format'] = "?{$query['pag_arg']}=%#%";
 
 		// Don't allow pagination beyond the boundaries.
@@ -360,7 +361,7 @@ if ( ! function_exists( 'intercessor_admin_get_notes_pagination' ) ) {
  * @since 0.9.5
  */
 function intercessor_admin_ajax_add_note() {
-
+	
 	// Check AJAX referrer.
 	check_ajax_referer( 'intercessor_note', 'nonce' );
 
@@ -399,19 +400,23 @@ function intercessor_admin_ajax_add_note() {
         'object_id'   => $object_id,
         'object_type' => $object_type,
         'content'     => $note,
-        'user_id'     => get_current_user_id()
+        'user_id'     => get_current_user_id(),
     ];
 
-	$note_id = intercessor_add_note( $note_args );
+	// Add the new note.
+	$note_id = intercessor_add_item( 'note', $note_args );
 
-	$n = new WP_Ajax_Response();
-	$n->add(
-		[
-            'what' => 'intercessor_note_html',
-            'data' => intercessor_admin_get_note_html( $note_id ),
-        ]
-	);
-	$n->send();
+	// Process ajax response on successful note addition.
+	if ( $note_id ) {
+		$n = new WP_Ajax_Response();
+		$n->add(
+			[
+				'what' => 'intercessor_note_html',
+				'data' => intercessor_admin_get_note_html( $note_id ),
+			]
+		);
+		$n->send();
+	}
 }
 add_action( 'wp_ajax_intercessor_add_note', 'intercessor_admin_ajax_add_note' );
 
@@ -435,9 +440,12 @@ function intercessor_admin_delete_note( array $data = [] ) {
 	}
 
 	// Try to delete.
-	intercessor_delete_note( $data['note_id'] );
+	$deleted = intercessor_process_item( 'note', 'delete', $data['note_id'], false );
 
-	wp_safe_redirect( intercessor_get_note_delete_redirect_url() );
+	// Redirect if successfully deleted.
+	if ( $deleted ) {
+		intercessor_redirect( intercessor_get_note_delete_redirect_url() );
+	}
 }
 add_action( 'intercessor_delete_note', 'intercessor_admin_delete_note' );
 
@@ -448,31 +456,33 @@ add_action( 'intercessor_delete_note', 'intercessor_admin_delete_note' );
  */
 function intercessor_admin_ajax_delete_note() {
 
-	// Check AJAX referrer
+	// Check AJAX referrer.
 	check_ajax_referer( 'intercessor_note', 'nonce' );
 
-	// Bail if user cannot delete notes
+	// Bail if user cannot delete notes.
 	if ( ! current_user_can( 'manage_prayer_settings' ) ) {
 		wp_die( -1 );
 	}
 
-	// Get note ID
+	// Get note ID.
 	$note_id = ! empty( $_POST['note_id'] )
 		? absint( $_POST['note_id'] )
 		: 0;
 
-	// Bail if no note
+	// Bail if no note.
 	if ( empty( $note_id ) ) {
 		wp_die( -1 );
 	}
 
-	// Delete note
-	if ( intercessor_delete_note( $note_id ) ) {
+	// Delete note.
+	$deleted = intercessor_process_item( 'note', 'delete', $note_id, false );
+	if ( $deleted ) {
 		wp_die( 1 );
 	}
 
 	wp_die( 0 );
 }
+add_action( 'wp_ajax_intercessor_delete_note', 'intercessor_admin_ajax_delete_note' );
 
 if ( ! function_exists( 'intercessor_get_admin_base_url' ) ) {
 	/**

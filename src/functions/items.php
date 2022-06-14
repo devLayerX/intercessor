@@ -25,9 +25,8 @@ if ( ! function_exists( 'intercessor_object_types' ) ) {
      * Get the different object types.
      *
      * @param string $object Object type to retrieve.
-          *
-     * @since 1.0.0
      *
+     * @since 1.0.0
      *
      * @return object
      */
@@ -68,7 +67,7 @@ if ( ! function_exists( 'intercessor_get_items' ) ) {
 	 * Retrieves an array of all available object items.
 	 *
      * @param string $object Object to query items for.
-	 * @param array $args   Query arguments.
+	 * @param array  $args   Query arguments.
 	 *
 	 * @since 1.0.0
 	 * @return mixed array if items exist, false otherwise.

@@ -208,4 +208,15 @@ class Prayer extends Rows\Prayer {
 	public function get_title() {
     	return esc_attr( $this->title );
     }
+
+	/**
+	 * Convert to array.
+	 *
+	 * @access public
+	 * @since 1.0.0
+	 * @return array
+	 */
+	public function array_convert(): array {
+		return get_object_vars( $this );
+	}
 }
