@@ -25,7 +25,7 @@ class Cron {
 	/**
 	 * Get things going
 	 *
-	 * @throws \Exception
+	 * @throws \Exception Throws error message.
 	 * @see Cron::monthly_events() or Cron::weekly_events()
 	 * @since 1.0.0
 	 */
@@ -41,7 +41,7 @@ class Cron {
 	 * @param array $schedules Array of schedules.
 	 *
 	 * @return array
-	 *@since 1.0.0
+	 * @since 1.0.0
 	 *
 	 */
 	public function add_cron_schedules( array $schedules = [] ) : array {
