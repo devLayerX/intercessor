@@ -35,7 +35,7 @@ function intercessor_tools_page() {
 	ob_start();
 	?>
 	<div class="wrap">
-		<h1><?php esc_html_e( 'Tools', 'intercessor' ); ?></h1>
+		<h1><?php esc_html_e( 'Tools Page', 'intercessor' ); ?></h1>
 		<h2 class="nav-tab-wrapper">
 			<?php
 			foreach( intercessor_get_tools_tabs() as $tab_id => $tab_name ) {

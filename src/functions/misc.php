@@ -1535,7 +1535,7 @@ if ( ! function_exists( 'intercessor_set_time_limit' ) ) {
 	 */
 	function intercessor_set_time_limit( bool $ignore_user_abort = true, int $time_limit = 21600 ) {
 
-		// Default time limit is 6 hours
+		// Default time limit is 6 hours.
 		$default = HOUR_IN_SECONDS * 6;
 
 		// Only abort if true and if function is enabled
@@ -1557,17 +1557,17 @@ if ( ! function_exists( 'intercessor_set_time_limit' ) ) {
 		 */
 		$time_limit = (int) apply_filters( 'intercessor_set_time_limit', $time_limit );
 
-		// Disallow infinite values
+		// Disallow infinite values.
 		if ( empty( $time_limit ) ) {
 			$time_limit = $default;
 		}
 
-		// Set time limit to non-infinite value if function is enabled
+		// Set time limit to non-infinite value if function is enabled.
 		if ( ! intercessor_is_func_disabled( 'set_time_limit' ) ) {
 			@set_time_limit( $time_limit );
 		}
 
-		// Attempt to raise the memory limit. See: intercessor_set_batch_memory_limit()
+		// Attempt to raise the memory limit. See: intercessor_set_batch_memory_limit().
 		wp_raise_memory_limit( 'intercessor_batch' );
 	}
 }
