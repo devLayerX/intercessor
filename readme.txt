@@ -3,7 +3,7 @@ Contributors: user
 Tags: tag, tag, tag
 Donate link: http://github.com/victoraigbeghian/
 Requires at least: 5.0
-Tested up to: 5.8.2
+Tested up to: 6.7.1
 Requires PHP: 7.0
 Stable tag: 1.1.0
 License: GPLv2 or later
