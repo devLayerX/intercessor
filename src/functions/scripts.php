@@ -264,3 +264,17 @@ function intercessor_load_admin_scripts() {
 	wp_register_script( 'intercessor-reports', $js_dir . 'admin/reports/index' . $suffix . '.js', $admin_deps, $version, false );
 }
 add_action( 'admin_enqueue_scripts', 'intercessor_load_admin_scripts' );
+
+
+// Register Gutenberg blocks (no-build UMD blocks).
+if ( ! function_exists( 'intercessor_register_blocks' ) ) {
+	function intercessor_register_blocks() {
+		if ( function_exists( 'register_block_type' ) ) {
+			// scripts.php is in src/functions/; plugin root is three directories up from this file.
+			$plugin_root = dirname( dirname( dirname( __FILE__ ) ) );
+			register_block_type( $plugin_root . '/src/blocks/prayer-request' );
+			register_block_type( $plugin_root . '/src/blocks/intercessor-list' );
+		}
+	}
+	add_action( 'init', 'intercessor_register_blocks' );
+}
