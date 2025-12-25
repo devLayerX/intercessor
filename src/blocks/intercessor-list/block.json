@@ -1,0 +1,23 @@
+{
+  "apiVersion": 2,
+  "name": "intercessor/intercessor-list",
+  "title": "Intercessor List",
+  "category": "widgets",
+  "icon": "list-view",
+  "description": "A block that renders a simple list of prayer request titles.",
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "items": {
+      "type": "array",
+      "default": [
+        { "id": 1, "text": "Sample prayer #1" },
+        { "id": 2, "text": "Sample prayer #2" }
+      ]
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./editor.css",
+  "style": "file:./style.css"
+}
