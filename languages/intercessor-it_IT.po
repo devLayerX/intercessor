@@ -1,0 +1,1184 @@
+# Copyright (C) 2026 Victor Aigbeghian
+# This file is distributed under the same license as the Intercessor plugin.
+# Victor Aigbeghian <victor@devlayerx.com>, 2026.
+msgid ""
+msgstr ""
+"Project-Id-Version: Intercessor 1.0.0\n"
+"Report-Msgid-Bugs-To: https://github.com/devLayerX/intercessor/issues\n"
+"POT-Creation-Date: 2026-04-07 19:36+0000\n"
+"PO-Revision-Date: 2026-04-08 21:35+0000\n"
+"Last-Translator: \n"
+"Language-Team: Italian\n"
+"Language: it_IT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Domain: intercessor\n"
+"X-Loco-Version: 2.8.3; wp-6.9.4; php-8.4.4"
+
+#: src/Admin/AdminLoader.php:107 src/Admin/AdminLoader.php:108
+#: src/Tools/ToolsAdminPage.php:110 templates/admin/dashboard.php:30
+#: templates/admin/requesters.php:10
+msgid "Requesters"
+msgstr "Richiedenti"
+
+#: src/Admin/AdminLoader.php:116 src/Admin/AdminLoader.php:117
+msgid "Tools"
+msgstr "Utensili"
+
+#: src/Admin/AdminLoader.php:125 src/Admin/AdminLoader.php:126
+#: templates/admin/dashboard.php:40
+msgid "Settings"
+msgstr "Impostazioni"
+
+#: src/Admin/AdminLoader.php:165
+msgid "Permanently delete the selected prayer requests? This cannot be undone."
+msgstr ""
+"Eliminare definitivamente le richieste di preghiera selezionate? Questa "
+"operazione non può essere annullata."
+
+#: src/Admin/AdminLoader.php:87 src/Admin/AdminLoader.php:88
+msgid "Intercessor"
+msgstr "Intercessore"
+
+#: src/Admin/AdminLoader.php:98 src/Admin/AdminLoader.php:99
+#: src/Tools/ToolsAdminPage.php:104 templates/admin/requests.php:25
+msgid "Prayer Requests"
+msgstr "Richieste di preghiera"
+
+#: src/Admin/BulkActionHandler.php:68
+msgid "You do not have permission to perform this action."
+msgstr "Non hai l'autorizzazione per eseguire questa azione."
+
+#: src/Admin/BulkActionHandler.php:73 src/Admin/ModerationHandler.php:61
+#: src/Admin/NoteHandler.php:47 src/Admin/NoteHandler.php:96
+#: src/Public/PublicLoader.php:90 src/Public/PublicLoader.php:218
+#: src/Tools/AbstractExporter.php:171
+msgid "Security check failed."
+msgstr "Verifica di sicurezza fallita."
+
+#: src/Admin/DisplayPage.php:102
+msgid "Intercessor Settings"
+msgstr "Impostazioni dell'intercessore"
+
+#: src/Admin/DisplayPage.php:138
+msgid "Approval Rules"
+msgstr "Regole di approvazione"
+
+#: src/Admin/DisplayPage.php:142
+msgid "Auto-Approve Requests"
+msgstr "Richieste di approvazione automatica"
+
+#: src/Admin/DisplayPage.php:143
+msgid ""
+"Automatically approve all incoming prayer requests without manual review."
+msgstr ""
+"Approva automaticamente tutte le richieste di preghiera in arrivo senza "
+"revisione manuale."
+
+#: src/Admin/DisplayPage.php:149
+msgid "Require Login to Submit"
+msgstr "È necessario effettuare l'accesso per inviare la richiesta."
+
+#: src/Admin/DisplayPage.php:150
+msgid "Only logged-in users may submit prayer requests."
+msgstr "Solo gli utenti registrati possono inviare richieste di preghiera."
+
+#: src/Admin/DisplayPage.php:156
+msgid "Allow Anonymous Requests"
+msgstr "Consenti richieste anonime"
+
+#: src/Admin/DisplayPage.php:157
+msgid "Allow submitters to hide their identity on public-facing displays."
+msgstr ""
+"Consentire a chi invia i contenuti di nascondere la propria identità nelle "
+"visualizzazioni pubbliche."
+
+#: src/Admin/DisplayPage.php:163
+msgid "Max Requests Per Email / Day"
+msgstr "Numero massimo di richieste per email al giorno"
+
+#: src/Admin/DisplayPage.php:164
+msgid ""
+"Maximum prayer requests one email address may submit in a 24-hour window. "
+"Set to 0 to disable rate limiting."
+msgstr ""
+"Numero massimo di richieste di preghiera che un indirizzo email può inviare "
+"in un intervallo di 24 ore. Impostare su 0 per disabilitare la limitazione "
+"delle richieste."
+
+#: src/Admin/DisplayPage.php:176
+msgid "Moderation Options"
+msgstr "Opzioni di moderazione"
+
+#: src/Admin/DisplayPage.php:180
+msgid "Enable Profanity Filter"
+msgstr "Attiva il filtro per le parolacce"
+
+#: src/Admin/DisplayPage.php:181
+msgid "Flag requests containing prohibited words for manual review."
+msgstr ""
+"Segnala le richieste contenenti parole proibite per una revisione manuale."
+
+#: src/Admin/DisplayPage.php:187
+msgid "Prohibited Words"
+msgstr "Parole proibite"
+
+#: src/Admin/DisplayPage.php:188
+msgid "Comma-separated list of words that trigger moderation."
+msgstr "Elenco di parole separate da virgole che attivano la moderazione."
+
+#: src/Admin/DisplayPage.php:194
+msgid "Moderator Role"
+msgstr "Ruolo del moderatore"
+
+#: src/Admin/DisplayPage.php:195
+msgid "Minimum WordPress role required to approve/reject requests."
+msgstr ""
+"Ruolo minimo richiesto in WordPress per approvare/rifiutare le richieste."
+
+#: src/Admin/DisplayPage.php:199
+msgid "Editor"
+msgstr "Redattore"
+
+#: src/Admin/DisplayPage.php:200
+msgid "Administrator only"
+msgstr "Solo per amministratori"
+
+#: src/Admin/DisplayPage.php:210
+msgid "Email Notifications"
+msgstr "Notifiche via e-mail"
+
+#: src/Admin/DisplayPage.php:214
+msgid "Notify Admin on New Request"
+msgstr "Avvisa l'amministratore in caso di nuova richiesta"
+
+#: src/Admin/DisplayPage.php:215
+msgid "Send an email to the admin when a new prayer request is submitted."
+msgstr ""
+"Invia un'email all'amministratore quando viene inviata una nuova richiesta "
+"di preghiera."
+
+#: src/Admin/DisplayPage.php:221
+msgid "Notify Requester on Receipt"
+msgstr "Notificare il richiedente al ricevimento"
+
+#: src/Admin/DisplayPage.php:222
+msgid "Send a confirmation email to the requester after submission."
+msgstr "Dopo l'invio, invia un'e-mail di conferma al richiedente."
+
+#: src/Admin/DisplayPage.php:228
+msgid "Notify Requester on Status Change"
+msgstr "Notificare al richiedente la modifica dello stato"
+
+#: src/Admin/DisplayPage.php:229
+msgid "Email the requester when their request is approved or rejected."
+msgstr ""
+"Invia un'e-mail al richiedente quando la sua richiesta viene approvata o "
+"rifiutata."
+
+#: src/Admin/DisplayPage.php:235
+msgid "Admin Notification Email"
+msgstr "Email di notifica all'amministratore"
+
+#: src/Admin/DisplayPage.php:236
+msgid "Defaults to the site admin email if left blank."
+msgstr ""
+"Se lasciato vuoto, verrà utilizzato l'indirizzo email dell'amministratore "
+"del sito."
+
+#: src/Admin/DisplayPage.php:242
+msgid "From Name"
+msgstr "Da Nome"
+
+#: src/Admin/DisplayPage.php:248
+msgid "From Email Address"
+msgstr "Da indirizzo e-mail"
+
+#: src/Admin/DisplayPage.php:259
+msgid "Block & Shortcode Display"
+msgstr "Visualizzazione di blocchi e shortcode"
+
+#: src/Admin/DisplayPage.php:263
+msgid "Requests Per Page"
+msgstr "Richieste per pagina"
+
+#: src/Admin/DisplayPage.php:264
+msgid "Default number of prayer requests shown in the Prayer List block."
+msgstr ""
+"Numero predefinito di richieste di preghiera visualizzate nel blocco Elenco "
+"preghiere."
+
+#: src/Admin/DisplayPage.php:272
+msgid "Show Submission Date"
+msgstr "Mostra la data di invio"
+
+#: src/Admin/DisplayPage.php:278
+msgid "Show Requester Name"
+msgstr "Mostra il nome del richiedente"
+
+#: src/Admin/DisplayPage.php:284
+msgid "Date Format"
+msgstr "Formato data"
+
+#: src/Admin/DisplayPage.php:285
+msgid "PHP date format string. Leave blank to use the WordPress site default."
+msgstr ""
+"Stringa di formato data PHP. Lasciare vuoto per utilizzare il formato "
+"predefinito del sito WordPress."
+
+#: src/Admin/DisplayPage.php:296
+msgid "API Keys"
+msgstr "Chiavi API"
+
+#: src/Admin/DisplayPage.php:300
+msgid "Site Key (public)"
+msgstr "Chiave del sito (pubblica)"
+
+#: src/Admin/DisplayPage.php:301
+msgid ""
+"Obtain your keys from google.com/recaptcha/admin. Use the key that appears "
+"in HTML."
+msgstr ""
+"Ottieni le tue chiavi da google.com/recaptcha/admin. Utilizza la chiave che "
+"appare in formato HTML."
+
+#: src/Admin/DisplayPage.php:307
+msgid "Secret Key (private)"
+msgstr "Chiave segreta (privata)"
+
+#: src/Admin/DisplayPage.php:308
+msgid "Used for server-side verification. Never share or expose this key."
+msgstr ""
+"Utilizzata per la verifica lato server. Non condividere o divulgare mai "
+"questa chiave."
+
+#: src/Admin/DisplayPage.php:315
+msgid "Configuration"
+msgstr "Configurazione"
+
+#: src/Admin/DisplayPage.php:319
+msgid "reCAPTCHA Version"
+msgstr "Versione reCAPTCHA"
+
+#: src/Admin/DisplayPage.php:320
+msgid ""
+"v2 shows a checkbox widget. v3 is invisible and uses a score (0.0–1.0) to "
+"determine if the user is human."
+msgstr ""
+"La versione 2 mostra un widget con caselle di controllo. La versione 3 è "
+"invisibile e utilizza un punteggio (0,0–1,0) per determinare se l'utente è "
+"umano."
+
+#: src/Admin/DisplayPage.php:325
+msgid "v3 — Invisible (score-based)"
+msgstr "v3 — Invisibile (basato sul punteggio)"
+
+#: src/Admin/DisplayPage.php:330
+msgid "v3 Score Threshold"
+msgstr "v3 Soglia di punteggio"
+
+#: src/Admin/DisplayPage.php:340
+msgid "Enable on Pages"
+msgstr "Abilita nelle pagine"
+
+#: src/Admin/DisplayPage.php:344
+msgid "Prayer Request Form"
+msgstr "Modulo di richiesta di preghiera"
+
+#: src/Admin/DisplayPage.php:345
+msgid ""
+"Show reCAPTCHA on the Prayer Form block to protect against automated "
+"submissions."
+msgstr ""
+"Mostra reCAPTCHA nel blocco del modulo di preghiera per proteggere dalle "
+"richieste inviate automaticamente."
+
+#: src/Admin/DisplayPage.php:351
+msgid "Prayer History Page"
+msgstr "Pagina sulla storia della preghiera"
+
+#: src/Admin/DisplayPage.php:352
+msgid "Load the reCAPTCHA script on pages containing the Prayer History block."
+msgstr ""
+"Carica lo script reCAPTCHA sulle pagine che contengono il blocco Cronologia "
+"preghiere."
+
+#: src/Admin/DisplayPage.php:363
+msgid "Export Options"
+msgstr "Opzioni di esportazione"
+
+#: src/Admin/DisplayPage.php:367
+msgid "Include Prayer Content in Requests Export"
+msgstr "Includi il contenuto della preghiera nell'esportazione delle richieste"
+
+#: src/Admin/DisplayPage.php:368
+msgid ""
+"When checked, the full prayer request body is included in the Prayer "
+"Requests CSV."
+msgstr ""
+"Se selezionata, l'intera richiesta di preghiera viene inclusa nel file CSV "
+"delle richieste di preghiera."
+
+#: src/Admin/DisplayPage.php:374
+msgid "Filter Requests Export by Status"
+msgstr "Filtra le richieste Esporta per stato"
+
+#: src/Admin/DisplayPage.php:375
+msgid "Leave as \"All\" to export all prayer requests regardless of status."
+msgstr ""
+"Lasciare selezionato \"Tutti\" per esportare tutte le richieste di preghiera,"
+" indipendentemente dal loro stato."
+
+#: src/Admin/DisplayPage.php:379
+msgid "All Statuses"
+msgstr "Tutti gli stati"
+
+#: src/Admin/DisplayPage.php:380
+msgid "Pending only"
+msgstr "In sospeso"
+
+#: src/Admin/DisplayPage.php:381
+msgid "Approved only"
+msgstr "Solo approvato"
+
+#: src/Admin/DisplayPage.php:382
+msgid "Rejected only"
+msgstr "Solo rifiutato"
+
+#: src/Admin/DisplayPage.php:383
+msgid "Archived only"
+msgstr "Solo archiviato"
+
+#: src/Admin/DisplayPage.php:388
+msgid "Prayed Counts Export Mode"
+msgstr "Modalità di esportazione dei conteggi delle preghiere"
+
+#: src/Admin/DisplayPage.php:389
+msgid ""
+"Aggregated: one row per request with total count. Detailed: one row per "
+"actor interaction."
+msgstr ""
+"Aggregato: una riga per richiesta con il conteggio totale. Dettagliato: una "
+"riga per interazione con ciascun attore."
+
+#: src/Admin/DisplayPage.php:393
+msgid "Aggregated (totals per request)"
+msgstr "Totale aggregato (totali per richiesta)"
+
+#: src/Admin/DisplayPage.php:394
+msgid "Detailed (per actor)"
+msgstr "Dettagliato (per attore)"
+
+#: src/Admin/DisplayPage.php:404
+msgid "Data Management"
+msgstr "Gestione dei dati"
+
+#: src/Admin/DisplayPage.php:408
+msgid "Delete All Data on Uninstall"
+msgstr "Elimina tutti i dati durante la disinstallazione"
+
+#: src/Admin/DisplayPage.php:409
+msgid ""
+"WARNING: When checked, all prayer requests, requesters, prayed counts, and "
+"settings will be permanently deleted when the plugin is removed."
+msgstr ""
+"ATTENZIONE: Se selezionata, tutte le richieste di preghiera, i richiedenti, "
+"il numero di preghiere effettuate e le impostazioni verranno eliminati "
+"definitivamente alla rimozione del plugin."
+
+#: src/Admin/DisplayPage.php:95 src/Tools/ToolsAdminPage.php:73
+#: templates/admin/request-detail.php:17
+msgid "You do not have permission to access this page."
+msgstr "Non hai l'autorizzazione per accedere a questa pagina."
+
+#: src/Admin/ModerationHandler.php:56
+msgid "You do not have permission to do this."
+msgstr "Non hai il permesso di farlo."
+
+#: src/Admin/NoteHandler.php:42
+msgid "You do not have permission to add notes."
+msgstr "Non hai l'autorizzazione per aggiungere note."
+
+#: src/Admin/NoteHandler.php:91
+msgid "You do not have permission to delete notes."
+msgstr "Non hai l'autorizzazione per eliminare le note."
+
+#: src/Admin/PrayerRequestListTable.php:104
+#: src/Admin/PrayerRequestListTable.php:317
+msgid "Approve"
+msgstr "Approvare"
+
+#: src/Admin/PrayerRequestListTable.php:105
+#: src/Admin/PrayerRequestListTable.php:329
+msgid "Reject"
+msgstr "Rifiutare"
+
+#: src/Admin/PrayerRequestListTable.php:106
+msgid "Mark Private"
+msgstr "Mark Private"
+
+#: src/Admin/PrayerRequestListTable.php:107
+#: templates/admin/request-detail.php:291
+msgid "Delete"
+msgstr "Eliminare"
+
+#: src/Admin/PrayerRequestListTable.php:168
+msgid "All"
+msgstr "Tutto"
+
+#: src/Admin/PrayerRequestListTable.php:169
+#: src/Admin/PrayerRequestListTable.php:273
+#: templates/admin/request-detail.php:52
+msgid "Pending"
+msgstr "In attesa di"
+
+#: src/Admin/PrayerRequestListTable.php:170
+#: src/Admin/PrayerRequestListTable.php:274
+#: templates/admin/request-detail.php:53
+msgid "Approved"
+msgstr "Approvato"
+
+#: src/Admin/PrayerRequestListTable.php:171
+#: src/Admin/PrayerRequestListTable.php:275
+#: templates/admin/request-detail.php:54
+msgid "Rejected"
+msgstr "Respinto"
+
+#: src/Admin/PrayerRequestListTable.php:172
+#: src/Admin/PrayerRequestListTable.php:276
+#: templates/admin/request-detail.php:55
+msgid "Archived"
+msgstr "Archiviato"
+
+#: src/Admin/PrayerRequestListTable.php:173
+#: src/Admin/PrayerRequestListTable.php:277
+#: templates/admin/request-detail.php:56 templates/admin/request-detail.php:270
+msgid "Private"
+msgstr "Privato"
+
+#: src/Admin/PrayerRequestListTable.php:241
+msgid "(no subject)"
+msgstr "(nessun soggetto)"
+
+#: src/Admin/PrayerRequestListTable.php:252
+msgid "Flagged by profanity filter"
+msgstr "Segnalato dal filtro per linguaggio scurrile"
+
+#: src/Admin/PrayerRequestListTable.php:339
+msgid "View"
+msgstr "Visualizzazione"
+
+#: src/Admin/PrayerRequestListTable.php:62 templates/blocks/prayer-list.php:52
+msgid "No prayer requests found."
+msgstr "Nessuna richiesta di preghiera trovata."
+
+#: src/Admin/PrayerRequestListTable.php:74
+#: src/Tools/PrayedCountsExporter.php:59
+#: src/Tools/PrayerRequestsExporter.php:56
+#: templates/admin/request-detail.php:126 templates/blocks/prayer-form.php:47
+msgid "Subject"
+msgstr "Soggetto"
+
+#: src/Admin/PrayerRequestListTable.php:75 src/Admin/RequesterListTable.php:78
+#: src/Tools/PrayedCountsExporter.php:60
+#: src/Tools/PrayerRequestsExporter.php:57 src/Tools/RequestersExporter.php:53
+#: templates/admin/request-detail.php:130
+msgid "Status"
+msgstr "Stato"
+
+#: src/Admin/PrayerRequestListTable.php:76
+#: templates/admin/request-detail.php:156
+msgid "Requester"
+msgstr "Richiedente"
+
+#: src/Admin/PrayerRequestListTable.php:77
+#: templates/admin/request-detail.php:146
+msgid "Submitted"
+msgstr "Inviato"
+
+#: src/Admin/PrayerRequestListTable.php:78
+msgid "Actions"
+msgstr "Azioni"
+
+#: src/Admin/RequesterListTable.php:162
+msgid "(unnamed)"
+msgstr "(senza nome)"
+
+#: src/Admin/RequesterListTable.php:194
+msgid "(deleted)"
+msgstr "(eliminato)"
+
+#: src/Admin/RequesterListTable.php:64
+msgid "No requesters found."
+msgstr "Nessun richiedente trovato."
+
+#: src/Admin/RequesterListTable.php:76 src/Tools/RequestersExporter.php:51
+#: templates/admin/request-detail.php:159
+msgid "Name"
+msgstr "Nome"
+
+#: src/Admin/RequesterListTable.php:77 src/Tools/RequestersExporter.php:52
+#: templates/admin/request-detail.php:169
+msgid "Email"
+msgstr "E-mail"
+
+#: src/Admin/RequesterListTable.php:79 templates/admin/request-detail.php:174
+msgid "WP User"
+msgstr "Utente WP"
+
+#: src/Admin/RequesterListTable.php:80
+msgid "Registered"
+msgstr "Registrato"
+
+#: src/Block/PrayerFormBlock.php:57
+msgid "Submit Prayer Request"
+msgstr "Invia richiesta di preghiera"
+
+#: src/Block/PrayerFormBlock.php:64
+msgid "Please log in to submit a prayer request."
+msgstr "Effettua l'accesso per inviare una richiesta di preghiera."
+
+#: src/Block/PrayerHistoryBlock.php:60
+msgid "No prayer request specified."
+msgstr "Non è stata specificata alcuna richiesta di preghiera."
+
+#: src/Block/PrayerHistoryBlock.php:70 src/Http/RestApi.php:432
+#: src/Http/RestApi.php:473 src/Public/PublicLoader.php:231
+#: templates/admin/request-detail.php:33
+msgid "Prayer request not found."
+msgstr "Richiesta di preghiera non trovata."
+
+#: src/Database/Row/Requester.php:124 src/Tools/PrayerRequestsExporter.php:60
+#: templates/admin/request-detail.php:138 templates/blocks/prayer-list.php:81
+msgid "Anonymous"
+msgstr "Anonimo"
+
+#: src/Http/RestApi.php:296 src/Http/RestApi.php:398
+msgid "Not found."
+msgstr "Non trovato."
+
+#: src/Http/RestApi.php:300 src/Http/RestApi.php:305 src/Http/RestApi.php:402
+msgid "Forbidden."
+msgstr "Vietato."
+
+#: src/Http/RestApi.php:326
+msgid "Could not create requester."
+msgstr "Impossibile creare il richiedente."
+
+#: src/Http/RestApi.php:342
+msgid "Could not save request."
+msgstr "Impossibile salvare la richiesta."
+
+#: src/Http/RestApi.php:366
+msgid "Update failed."
+msgstr "Aggiornamento non riuscito."
+
+#: src/Http/RestApi.php:480
+msgid "Could not save note."
+msgstr "Impossibile salvare la nota."
+
+#: src/Http/RestApi.php:509
+msgid "Note not found."
+msgstr "Nota non trovata."
+
+#: src/Http/RestApi.php:514
+msgid "Note does not belong to this request."
+msgstr "La nota non è pertinente a questa richiesta."
+
+#: src/Http/RestApi.php:520
+msgid "Could not delete note."
+msgstr "Impossibile eliminare la nota."
+
+#: src/Http/RestApi.php:597 templates/admin/request-detail.php:259
+#: templates/blocks/prayer-history.php:35
+msgid "Unknown"
+msgstr "Sconosciuto"
+
+#: src/Public/PublicLoader.php:102
+msgid "reCAPTCHA verification failed. Please try again."
+msgstr "Verifica reCAPTCHA non riuscita. Riprova."
+
+#: src/Public/PublicLoader.php:116
+msgid "Name is required."
+msgstr "Il nome è obbligatorio."
+
+#: src/Public/PublicLoader.php:119
+msgid "A valid email address is required."
+msgstr "È necessario un indirizzo email valido."
+
+#: src/Public/PublicLoader.php:122
+msgid "Subject is required."
+msgstr "È richiesto il soggetto."
+
+#: src/Public/PublicLoader.php:125
+msgid "Prayer request content is required."
+msgstr "È necessario inserire il contenuto della richiesta di preghiera."
+
+#: src/Public/PublicLoader.php:139
+msgid ""
+"You may only submit %d prayer request per day. Please try again tomorrow."
+msgid_plural ""
+"You may only submit %d prayer requests per day. Please try again tomorrow."
+msgstr[0] ""
+"È possibile inviare solo %d richieste di preghiera al giorno. Si prega di "
+"riprovare domani."
+msgstr[1] ""
+"È possibile inviare solo %d richieste di preghiera al giorno. Si prega di "
+"riprovare domani."
+
+#: src/Public/PublicLoader.php:178
+msgid "Could not save requester information."
+msgstr "Impossibile salvare le informazioni del richiedente."
+
+#: src/Public/PublicLoader.php:193
+msgid "Could not save your prayer request."
+msgstr "Impossibile salvare la tua richiesta di preghiera."
+
+#: src/Public/PublicLoader.php:200
+msgid "Thank you. Your prayer request has been received."
+msgstr "Grazie. La tua richiesta di preghiera è stata ricevuta."
+
+#: src/Public/PublicLoader.php:224
+msgid "Invalid request."
+msgstr "Richiesta non valida."
+
+#: src/Public/PublicLoader.php:247
+msgid "Could not record your prayer."
+msgstr "Impossibile registrare la tua preghiera."
+
+#: src/Public/PublicLoader.php:253
+msgid "Your prayer has been recorded. Thank you!"
+msgstr "La tua preghiera è stata registrata. Grazie!"
+
+#: src/Public/PublicLoader.php:95
+msgid "You must be logged in to submit a prayer request."
+msgstr ""
+"Per inviare una richiesta di preghiera è necessario aver effettuato "
+"l'accesso."
+
+#: src/Requirements.php:106
+msgid ""
+"Intercessor: Bundled BerlinDB library could not be loaded. Please re-install "
+"the plugin."
+msgstr ""
+"Intercessore: Impossibile caricare la libreria BerlinDB inclusa. "
+"Reinstallare il plugin."
+
+#: src/Requirements.php:132
+msgid "Intercessor cannot be activated:"
+msgstr "L'intercessore non può essere attivato:"
+
+#. translators: 1: required PHP version 2: current PHP version
+#: src/Requirements.php:69
+msgid "PHP %1$s or higher is required. You are running PHP %2$s."
+msgstr "È richiesto PHP %1$s o superiore. Stai utilizzando PHP %2$s."
+
+#. translators: 1: required WP version 2: current WP version
+#: src/Requirements.php:88
+msgid "WordPress %1$s or higher is required. You are running WordPress %2$s."
+msgstr ""
+"È richiesto WordPress %1$s o superiore. Stai utilizzando WordPress %2$s."
+
+#: src/Tools/AbstractExporter.php:149
+msgid "You do not have permission to export data."
+msgstr "Non si dispone dell'autorizzazione per esportare i dati."
+
+#: src/Tools/AbstractExporter.php:207
+msgid "Could not open output stream for CSV export."
+msgstr ""
+"Impossibile aprire il flusso di output per l'esportazione in formato CSV."
+
+#: src/Tools/PrayedCountsExporter.php:178 src/Tools/RequestersExporter.php:91
+#: templates/admin/request-detail.php:178
+msgid "[deleted]"
+msgstr "[eliminato]"
+
+#: src/Tools/PrayedCountsExporter.php:58 src/Tools/PrayedCountsExporter.php:67
+msgid "Prayer Request ID"
+msgstr "ID richiesta di preghiera"
+
+#: src/Tools/PrayedCountsExporter.php:61
+msgid "Total Prayers"
+msgstr "Preghiere totali"
+
+#: src/Tools/PrayedCountsExporter.php:66
+#: src/Tools/PrayerRequestsExporter.php:55 src/Tools/RequestersExporter.php:50
+#: templates/admin/request-detail.php:122
+msgid "ID"
+msgstr "ID"
+
+#: src/Tools/PrayedCountsExporter.php:68
+msgid "Prayer Request Subject"
+msgstr "Oggetto della richiesta di preghiera"
+
+#: src/Tools/PrayedCountsExporter.php:69
+msgid "User ID"
+msgstr "ID utente"
+
+#: src/Tools/PrayedCountsExporter.php:70
+msgid "Username"
+msgstr "Nome utente"
+
+#: src/Tools/PrayedCountsExporter.php:71
+msgid "Anonymous Key"
+msgstr "Chiave anonima"
+
+#: src/Tools/PrayedCountsExporter.php:72
+msgid "Prayer Count"
+msgstr "Conteggio delle preghiere"
+
+#: src/Tools/PrayedCountsExporter.php:73
+msgid "First Prayed"
+msgstr "Prima pregarono"
+
+#: src/Tools/PrayedCountsExporter.php:74
+msgid "Last Prayed"
+msgstr "Ultima preghiera"
+
+#: src/Tools/PrayerRequestsExporter.php:112
+#: templates/admin/request-detail.php:162
+msgid "[Anonymous]"
+msgstr "[Anonimo]"
+
+#: src/Tools/PrayerRequestsExporter.php:127
+#: src/Tools/PrayerRequestsExporter.php:128 src/Tools/SettingsExporter.php:129
+#: src/Tools/SettingsExporter.php:131 templates/admin/request-detail.php:139
+#: templates/admin/request-detail.php:143
+msgid "Yes"
+msgstr "SÌ"
+
+#: src/Tools/PrayerRequestsExporter.php:127
+#: src/Tools/PrayerRequestsExporter.php:128 src/Tools/SettingsExporter.php:129
+#: src/Tools/SettingsExporter.php:133 templates/admin/request-detail.php:139
+#: templates/admin/request-detail.php:143
+msgid "No"
+msgstr "NO"
+
+#: src/Tools/PrayerRequestsExporter.php:58
+msgid "Requester Name"
+msgstr "Nome del richiedente"
+
+#: src/Tools/PrayerRequestsExporter.php:59
+msgid "Requester Email"
+msgstr "Indirizzo e-mail del richiedente"
+
+#: src/Tools/PrayerRequestsExporter.php:61
+#: templates/admin/request-detail.php:142
+msgid "Public"
+msgstr "Pubblico"
+
+#: src/Tools/PrayerRequestsExporter.php:62
+#: templates/admin/request-detail.php:192
+#: templates/admin/request-detail.php:225
+msgid "Moderator Note"
+msgstr "Nota del moderatore"
+
+#: src/Tools/PrayerRequestsExporter.php:63
+msgid "Date Submitted"
+msgstr "Data di invio"
+
+#: src/Tools/PrayerRequestsExporter.php:64 src/Tools/RequestersExporter.php:58
+msgid "Date Modified"
+msgstr "Data di modifica"
+
+#: src/Tools/PrayerRequestsExporter.php:68
+#: templates/admin/request-detail.php:186
+msgid "Prayer Content"
+msgstr "Contenuto della preghiera"
+
+#: src/Tools/RequestersExporter.php:54
+msgid "WP User ID"
+msgstr "ID utente WP"
+
+#: src/Tools/RequestersExporter.php:55
+msgid "WP Username"
+msgstr "Nome utente WP"
+
+#: src/Tools/RequestersExporter.php:56
+msgid "Total Requests"
+msgstr "Richieste totali"
+
+#: src/Tools/RequestersExporter.php:57
+msgid "Date Registered"
+msgstr "Data di registrazione"
+
+#: src/Tools/SettingsExporter.php:104 src/Tools/SettingsExporter.php:105
+msgid "reCAPTCHA / API Keys"
+msgstr "reCAPTCHA / Chiavi API"
+
+#: src/Tools/SettingsExporter.php:106 src/Tools/SettingsExporter.php:107
+msgid "reCAPTCHA / Configuration"
+msgstr "reCAPTCHA / Configurazione"
+
+#: src/Tools/SettingsExporter.php:108 src/Tools/SettingsExporter.php:109
+msgid "reCAPTCHA / Enable on Pages"
+msgstr "reCAPTCHA / Abilita sulle pagine"
+
+#: src/Tools/SettingsExporter.php:111 src/Tools/SettingsExporter.php:112
+#: src/Tools/SettingsExporter.php:113
+msgid "Export"
+msgstr "Esportare"
+
+#: src/Tools/SettingsExporter.php:115
+msgid "Advanced"
+msgstr "Avanzato"
+
+#: src/Tools/SettingsExporter.php:142
+msgid "Other"
+msgstr "Altro"
+
+#: src/Tools/SettingsExporter.php:52
+msgid "Setting Key"
+msgstr "Impostazione della chiave"
+
+#: src/Tools/SettingsExporter.php:53
+msgid "Value"
+msgstr "Valore"
+
+#: src/Tools/SettingsExporter.php:54
+msgid "Section"
+msgstr "Sezione"
+
+#: src/Tools/SettingsExporter.php:83 src/Tools/SettingsExporter.php:84
+#: src/Tools/SettingsExporter.php:85 src/Tools/SettingsExporter.php:86
+msgid "General / Approval Rules"
+msgstr "Regole generali/di approvazione"
+
+#: src/Tools/SettingsExporter.php:88 src/Tools/SettingsExporter.php:89
+#: src/Tools/SettingsExporter.php:90
+msgid "Moderation"
+msgstr "Moderazione"
+
+#: src/Tools/SettingsExporter.php:92 src/Tools/SettingsExporter.php:93
+#: src/Tools/SettingsExporter.php:94 src/Tools/SettingsExporter.php:95
+#: src/Tools/SettingsExporter.php:96 src/Tools/SettingsExporter.php:97
+msgid "Notifications"
+msgstr "Notifiche"
+
+#: src/Tools/SettingsExporter.php:99 src/Tools/SettingsExporter.php:100
+#: src/Tools/SettingsExporter.php:101 src/Tools/SettingsExporter.php:102
+msgid "Display"
+msgstr "Display"
+
+#: src/Tools/ToolsAdminPage.php:105
+msgid ""
+"Export all prayer requests, including status, requester info, and moderator "
+"notes."
+msgstr ""
+"Esporta tutte le richieste di preghiera, inclusi lo stato, le informazioni "
+"sul richiedente e le note del moderatore."
+
+#: src/Tools/ToolsAdminPage.php:111
+msgid ""
+"Export the full requester database with linked WordPress account details."
+msgstr ""
+"Esporta l'intero database dei richiedenti con i dettagli dell'account "
+"WordPress collegato."
+
+#: src/Tools/ToolsAdminPage.php:116
+msgid "Prayed Counts"
+msgstr "Le preghiere contano"
+
+#: src/Tools/ToolsAdminPage.php:117
+msgid "Export aggregated or detailed \"prayed for\" interaction data."
+msgstr ""
+"Esporta i dati aggregati o dettagliati delle interazioni per cui si è "
+"pregato."
+
+#: src/Tools/ToolsAdminPage.php:98
+msgid "Plugin Settings"
+msgstr "Impostazioni del plugin"
+
+#: src/Tools/ToolsAdminPage.php:99
+msgid "Export all Intercessor settings as a CSV audit snapshot."
+msgstr ""
+"Esporta tutte le impostazioni di Intercessor come snapshot di controllo in "
+"formato CSV."
+
+#. translators: %s: prayer request subject line
+#: src/Util/Notifier.php:126
+msgid "[Intercessor] Update on your prayer request: %s"
+msgstr "[Intercessore] Aggiornamento sulla tua richiesta di preghiera: %s"
+
+#. translators: %s: prayer request subject line
+#: src/Util/Notifier.php:56
+msgid "[Intercessor] New Prayer Request: %s"
+msgstr "[Intercessore] Nuova richiesta di preghiera: %s"
+
+#: src/Util/Notifier.php:90
+msgid "[Intercessor] We received your prayer request"
+msgstr "[Intercessore] Abbiamo ricevuto la tua richiesta di preghiera."
+
+#. translators: %s: comma-separated list of matched prohibited words
+#: src/Util/ProfanityFilter.php:120
+msgid "[Profanity filter] Flagged for review. Matched terms: %s"
+msgstr ""
+"[Filtro per parolacce] Segnalato per revisione. Termini corrispondenti: %s"
+
+#: templates/admin/dashboard.php:17
+msgid "Intercessor Dashboard"
+msgstr "Pannello di controllo dell'intercessore"
+
+#: templates/admin/dashboard.php:22
+msgid "Total Prayer Requests"
+msgstr "Richieste di preghiera totali"
+
+#: templates/admin/dashboard.php:26
+msgid "Awaiting Moderation"
+msgstr "In attesa di moderazione"
+
+#: templates/admin/dashboard.php:36
+msgid "Manage Prayer Requests"
+msgstr "Gestisci le richieste di preghiera"
+
+#: templates/admin/request-detail.php:101 templates/admin/requests.php:41
+msgid "An error occurred. Please try again."
+msgstr "Si è verificato un errore. Riprova."
+
+#: templates/admin/request-detail.php:107
+msgid "Status updated."
+msgstr "Stato aggiornato."
+
+#: templates/admin/request-detail.php:118
+msgid "Request Details"
+msgstr "Dettagli della richiesta"
+
+#: templates/admin/request-detail.php:150
+msgid "Last Updated"
+msgstr "Ultimo aggiornamento"
+
+#: templates/admin/request-detail.php:201
+msgid "Change Status"
+msgstr "Cambia stato"
+
+#: templates/admin/request-detail.php:211
+msgid "New Status"
+msgstr "Nuovo stato"
+
+#: templates/admin/request-detail.php:229
+msgid "Internal note saved with this status change. Visible only to admins."
+msgstr ""
+"Nota interna salvata con questa modifica di stato. Visibile solo agli "
+"amministratori."
+
+#: templates/admin/request-detail.php:234
+msgid "Update Status"
+msgstr "Aggiornamento dello stato"
+
+#: templates/admin/request-detail.php:246
+msgid "Internal Notes"
+msgstr "Note interne"
+
+#: templates/admin/request-detail.php:253
+msgid "No notes yet. Add the first one below."
+msgstr "Nessuna nota ancora. Aggiungi la prima qui sotto."
+
+#: templates/admin/request-detail.php:274
+msgid "Shared"
+msgstr "Condiviso"
+
+#: templates/admin/request-detail.php:285
+msgid "Delete this note? This cannot be undone."
+msgstr "Eliminare questa nota? Questa operazione non può essere annullata."
+
+#: templates/admin/request-detail.php:303
+#: templates/admin/request-detail.php:326
+msgid "Add Note"
+msgstr "Aggiungi nota"
+
+#: templates/admin/request-detail.php:312
+msgid "Note content"
+msgstr "Nota il contenuto"
+
+#: templates/admin/request-detail.php:315
+msgid "Write an internal note…"
+msgstr "Scrivi una nota interna…"
+
+#: templates/admin/request-detail.php:322
+msgid "Private (admin only)"
+msgstr "Privato (solo amministratore)"
+
+#: templates/admin/request-detail.php:35
+msgid "Back to Prayer Requests"
+msgstr "Torna alle richieste di preghiera"
+
+#: templates/admin/request-detail.php:64 templates/blocks/prayer-form.php:56
+msgid "Prayer Request"
+msgstr "Richiesta di preghiera"
+
+#: templates/admin/request-detail.php:71
+msgid "&larr; All Requests"
+msgstr "← Tutte le richieste"
+
+#: templates/admin/request-detail.php:79
+msgid "&#128274; Private Request"
+msgstr "🔒 Richiesta privata"
+
+#: templates/admin/request-detail.php:81
+msgid ""
+"This prayer request is marked private. It is hidden from all public displays,"
+" blocks, and REST API responses."
+msgstr ""
+"Questa richiesta di preghiera è contrassegnata come privata. È nascosta a "
+"tutti, senza essere visualizzata pubblicamente, bloccata o inclusa nelle "
+"risposte dell'API REST."
+
+#: templates/admin/request-detail.php:89
+msgid "Note added."
+msgstr "Nota aggiunta."
+
+#: templates/admin/request-detail.php:95
+msgid "Note deleted."
+msgstr "Nota eliminata."
+
+#: templates/admin/requests.php:106
+msgid "Please select at least one request."
+msgstr "Seleziona almeno una richiesta."
+
+#: templates/admin/requests.php:107
+msgid "An error occurred with the bulk action."
+msgstr "Si è verificato un errore durante l'operazione in blocco."
+
+#: templates/admin/requests.php:132
+msgid "Search"
+msgstr "Ricerca"
+
+#: templates/admin/requests.php:35
+msgid "Request updated."
+msgstr "Richiesta aggiornata."
+
+#: templates/admin/requests.php:51
+msgid "approved"
+msgstr "approvato"
+
+#: templates/admin/requests.php:51
+msgid "rejected"
+msgstr "respinto"
+
+#. translators: 1: count of requests, 2: status label (approved/rejected)
+#: templates/admin/requests.php:59
+msgid "%1$d request %2$s."
+msgid_plural "%1$d requests %2$s."
+msgstr[0] "%1$d richiesta %2$s."
+msgstr[1] "%1$d richiede %2$s."
+
+#. translators: %d: number of deleted requests
+#: templates/admin/requests.php:86
+msgid "%d request permanently deleted."
+msgid_plural "%d requests permanently deleted."
+msgstr[0] "%d richiesta eliminata definitivamente."
+msgstr[1] "%d richieste eliminate definitivamente."
+
+#: templates/admin/tools/exports.php:13
+msgid "Intercessor — Tools"
+msgstr "Intercessore — Strumenti"
+
+#: templates/admin/tools/exports.php:15
+msgid ""
+"Download your Intercessor data as CSV files. Export options (status filter, "
+"content inclusion, etc.) are configured on the Settings → Export tab."
+msgstr ""
+"Scarica i dati di Intercessor come file CSV. Le opzioni di esportazione "
+"(filtro di stato, inclusione dei contenuti, ecc.) sono configurate nella "
+"scheda Impostazioni → Esporta."
+
+#. translators: %s: export type label (e.g. "Prayer Requests")
+#: templates/admin/tools/exports.php:57
+msgid "Download %s CSV"
+msgstr "Scarica %s CSV"
+
+#: templates/admin/tools/exports.php:76
+msgid ""
+"Exports run synchronously. Very large datasets may take a few seconds. All "
+"exports are formatted as UTF-8 CSV with a BOM so Excel opens them correctly."
+msgstr ""
+"Le esportazioni vengono eseguite in modo sincrono. Set di dati molto grandi "
+"potrebbero richiedere alcuni secondi. Tutte le esportazioni sono formattate "
+"come CSV UTF-8 con BOM (Byte Order Mark) per garantire la corretta apertura "
+"da parte di Excel."
+
+#: templates/admin/tools/exports.php:83
+msgid "Configure export options →"
+msgstr "Configura le opzioni di esportazione →"
+
+#: templates/blocks/prayer-form.php:163
+msgid "An error occurred."
+msgstr "Si è verificato un errore."
+
+#: templates/blocks/prayer-form.php:168
+msgid "Network error. Please try again."
+msgstr "Errore di rete. Riprova."
+
+#: templates/blocks/prayer-form.php:29
+msgid "Your Name"
+msgstr "Il tuo nome"
+
+#: templates/blocks/prayer-form.php:38
+msgid "Email Address"
+msgstr "Indirizzo e-mail"
+
+#: templates/blocks/prayer-form.php:66
+msgid "Keep my name anonymous on the public list"
+msgstr "Il mio nome deve rimanere anonimo nell'elenco pubblico."
+
+#: templates/blocks/prayer-history.php:26
+msgid "No history available for this request."
+msgstr "Nessuna cronologia disponibile per questa richiesta."
+
+#: templates/blocks/prayer-history.php:52
+msgid "changed to"
+msgstr "cambiato in"
+
+#. translators: %s: moderator display name
+#: templates/blocks/prayer-history.php:74
+msgid "by %s"
+msgstr "di %s"
+
+#: templates/blocks/prayer-list.php:103
+msgid "I prayed for this request"
+msgstr "Ho pregato per questa richiesta"
+
+#: templates/blocks/prayer-list.php:109
+msgid "prayers"
+msgstr "preghiere"
+
+#: templates/blocks/prayer-list.php:121
+msgid "Prayer requests navigation"
+msgstr "Richiesta di preghiera navigatore"
+
+#: templates/blocks/prayer-list.php:126
+msgid "Previous"
+msgstr "Precedente"
+
+#. translators: 1: current page 2: total pages
+#: templates/blocks/prayer-list.php:133
+msgid "Page %1$d of %2$d"
+msgstr "Pagina %1$d di %2$d"
+
+#: templates/blocks/prayer-list.php:142
+msgid "Next"
+msgstr "Prossimo"
+
+#: templates/blocks/prayer-list.php:39
+msgid "Praying…"
+msgstr "Pregare…"
+
+#: templates/blocks/prayer-list.php:40
+msgid "I prayed for this!"
+msgstr "Ho pregato per questo!"
+
+#: templates/blocks/prayer-list.php:41 templates/blocks/prayer-list.php:107
+msgid "I prayed for this"
+msgstr "Ho pregato per questo"
+
+#: templates/blocks/prayer-list.php:42
+msgid "Could not record your prayer. Please try again."
+msgstr "Impossibile registrare la tua preghiera. Riprova."
+
+#. translators: %s: requester name
+#: templates/blocks/prayer-list.php:77
+msgid "By %s"
+msgstr "In %s"

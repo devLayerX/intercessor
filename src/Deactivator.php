@@ -1,42 +1,45 @@
 <?php
 /**
- * Intercessor Deactivator Class
+ * Plugin deactivation handler.
  *
- * @package    Intercessor
- * @subpackage classes/Deactivator
- * @copyright  Copyright (c) 2019, Victor Aigbeghian
- * @license    https://opensource.org/licenses/GPL-3.0 GNU Public License
- * @since      0.9.5
+ * @package Intercessor
+ * @since   1.0.0
  */
+declare(strict_types=1);
 
 namespace Intercessor;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
+use Intercessor\Util\Cron_Handler;
+
 /**
- * Deactivator Class
+ * Handles tasks that run on plugin deactivation.
  *
- * This class handles actions when the plugin is deactivated.
+ * Tables and data are intentionally retained on deactivation.
+ * Data removal happens only on uninstall (see uninstall.php) and only
+ * when the administrator has enabled the "Delete All Data on Uninstall"
+ * setting.
  *
- * @since 0.9.5
+ * @since   1.0.0
+ * @package Intercessor
  */
-class Deactivator {
+final class Deactivator {
 
 	/**
-	 * Runs the actions and filters during plugin deactivation.
+	 * Execute all deactivation tasks.
 	 *
-	 * @since 0.9.5
+	 * Currently flushes rewrite rules so any endpoints registered by
+	 * the plugin are removed from the rewrite table immediately.
 	 *
+	 * @since  1.0.0
 	 * @return void
 	 */
-	public static function deactivate() {
-		// Deactivate our cron job.
-		$timestamp = wp_next_scheduled( 'intercessor_notify_requester' );
-		\wp_unschedule_event( $timestamp, 'intercessor_notify_requester' );
+	public static function deactivate(): void {
+		// Remove the scheduled prayer-count notification event.
+		Cron_Handler::unschedule();
 
-		// Flush rewrite rules.
-		\flush_rewrite_rules( true );
+		flush_rewrite_rules();
 	}
-
 }

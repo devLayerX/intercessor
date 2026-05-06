@@ -1,0 +1,23 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "intercessor/prayer-history",
+    "version": "1.0.0",
+    "title": "Prayer History",
+    "category": "widgets",
+    "icon": "backup",
+    "description": "Display the status timeline for a prayer request.",
+    "keywords": ["prayer", "history", "timeline", "status", "intercessor"],
+    "textdomain": "intercessor",
+    "editorScript": "file:./index.js",
+    "attributes": {
+        "requestId":     { "type": "integer", "default": 0 },
+        "showNotes":     { "type": "boolean", "default": true },
+        "showModerator": { "type": "boolean", "default": false }
+    },
+    "supports": {
+        "html": false,
+        "align": ["wide", "full"],
+        "spacing": { "padding": true, "margin": true }
+    }
+}
