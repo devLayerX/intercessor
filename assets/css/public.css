@@ -1,0 +1,573 @@
+/* ==========================================================================
+   Intercessor — Public Stylesheet
+   ========================================================================== */
+
+/* ── Shared ── */
+.intercessor-prayer-form,
+.intercessor-prayer-list,
+.intercessor-prayer-history {
+    font-family: inherit;
+    line-height: 1.6;
+    color: inherit;
+}
+
+/* ── Status badges / tags ── */
+.intercessor-status,
+.intercessor-status-badge,
+.intercessor-status-tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.intercessor-status-pending,
+.intercessor-status.pending  { background: #fff3cd; color: #856404; }
+.intercessor-status-approved,
+.intercessor-status.approved { background: #d1e7dd; color: #0a3622; }
+.intercessor-status-rejected,
+.intercessor-status.rejected { background: #f8d7da; color: #58151c; }
+.intercessor-status-archived,
+.intercessor-status.archived { background: #e2e3e5; color: #383d41; }
+
+/* ── Prayer Form Block ── */
+.intercessor-prayer-form .intercessor-field {
+    margin-bottom: 1.25rem;
+}
+
+.intercessor-prayer-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+}
+
+.intercessor-prayer-form input[type="text"],
+.intercessor-prayer-form input[type="email"],
+.intercessor-prayer-form textarea {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.intercessor-prayer-form input:focus,
+.intercessor-prayer-form textarea:focus {
+    outline: none;
+    border-color: #2271b1;
+    box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.25);
+}
+
+.intercessor-prayer-form .intercessor-field--checkbox label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.intercessor-prayer-form .intercessor-submit {
+    cursor: pointer;
+}
+
+.intercessor-prayer-form .intercessor-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Alerts */
+.intercessor-alert {
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.intercessor-alert--success {
+    background: #d1e7dd;
+    color: #0a3622;
+    border: 1px solid #a3cfbb;
+}
+
+.intercessor-alert--error {
+    background: #f8d7da;
+    color: #58151c;
+    border: 1px solid #f1aeb5;
+}
+
+/* ── Prayer List Block ── */
+.intercessor-request-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.intercessor-request-item {
+    padding: 1.25rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    background: #fff;
+}
+
+.intercessor-request-item:last-child {
+    margin-bottom: 0;
+}
+
+.intercessor-request-subject {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+}
+
+.intercessor-request-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85em;
+    color: #6c757d;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.intercessor-request-content {
+    font-size: 0.95rem;
+}
+
+.intercessor-request-content > *:last-child {
+    margin-bottom: 0;
+}
+
+/* Pagination */
+.intercessor-pagination {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.intercessor-page-link {
+    text-decoration: none;
+}
+
+.intercessor-page-info {
+    color: #6c757d;
+}
+
+/* ── Prayer History Block ── */
+.intercessor-history-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.intercessor-history-subject {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+/* Timeline */
+.intercessor-timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.intercessor-timeline::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e2e8f0;
+}
+
+.intercessor-timeline-entry {
+    display: flex;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    position: relative;
+}
+
+.intercessor-timeline-entry:last-child {
+    padding-bottom: 0;
+}
+
+/* ── Timeline dot — solid circle by default ── */
+.intercessor-timeline-dot {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #2271b1;
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px #2271b1;
+    position: relative;
+    z-index: 1;
+    margin-top: 2px;
+    /* Reset ipr-icon font rendering so the dot stays a solid circle
+       unless overridden by the first-entry rule below. */
+    font-size: 0;
+}
+
+/* ── First entry dot — praying hands icon ── */
+.intercessor-timeline-entry:first-child .intercessor-timeline-dot {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: #2271b1;
+}
+
+.intercessor-timeline-entry:first-child .intercessor-timeline-dot::before {
+    font-family: 'intercessor' !important;
+    content: "\e901";   /* ipr-icon-praying */
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+}
+
+.intercessor-timeline-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.intercessor-timeline-status-change {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.4rem;
+}
+
+.intercessor-arrow {
+    color: #6c757d;
+    font-size: 1.1em;
+    line-height: 1;
+}
+
+.intercessor-timeline-meta {
+    font-size: 0.82em;
+    color: #6c757d;
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.intercessor-timeline-note {
+    background: #f8f9fa;
+    border-left: 3px solid #dee2e6;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0 4px 4px 0;
+    font-size: 0.9rem;
+}
+
+.intercessor-timeline-note p {
+    margin: 0;
+}
+
+.intercessor-empty,
+.intercessor-login-required,
+.intercessor-not-found {
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* ==========================================================================
+   Intercessor — "I Prayed For This" Button
+   ========================================================================== */
+
+.intercessor-pray-action {
+    margin-top: 0.875rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f0f0f1;
+}
+
+.intercessor-pray-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: #f6f7f7;
+    border: 1px solid #dcdcde;
+    border-radius: 20px;
+    padding: 0.4rem 0.9rem 0.4rem 0.75rem;
+    font-size: 0.875rem;
+    font-family: inherit;
+    color: #50575e;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    line-height: 1.4;
+}
+
+.intercessor-pray-btn:hover:not(:disabled) {
+    background: #f0f6fc;
+    border-color: #72aee6;
+    color: #135e96;
+}
+
+.intercessor-pray-btn:disabled {
+    cursor: default;
+}
+
+.intercessor-pray-btn--prayed {
+    background: #d1e7dd;
+    border-color: #a3cfbb;
+    color: #0a3622;
+}
+
+.intercessor-pray-btn--prayed:hover {
+    background: #d1e7dd !important;
+    border-color: #a3cfbb !important;
+    color: #0a3622 !important;
+}
+
+.intercessor-pray-icon {
+    font-size: 1rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.intercessor-pray-label {
+    font-weight: 500;
+}
+
+.intercessor-pray-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    min-width: 22px;
+    height: 18px;
+    padding: 0 5px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.intercessor-pray-btn--prayed .intercessor-pray-count {
+    background: rgba(10, 54, 34, 0.15);
+}
+
+/* ==========================================================================
+   Intercessor — reCAPTCHA Widget
+   ========================================================================== */
+
+.intercessor-recaptcha-widget {
+    margin: 0.75rem 0;
+}
+
+/* Ensure the reCAPTCHA badge (v3) does not overlap fixed footers */
+.intercessor-prayer-form .grecaptcha-badge {
+    bottom: 80px !important;
+}
+
+/* ==========================================================================
+   Intercessor — Icon Font Integration (public)
+   ========================================================================== */
+
+/* ── "I Prayed For This" button — praying hands icon ── */
+.intercessor-pray-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.intercessor-pray-icon::before {
+    font-family: 'intercessor' !important;
+    content: "\e901";
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+}
+
+/* Loading state: replace praying hands with spinner */
+.intercessor-pray-btn--loading .intercessor-pray-icon::before {
+    content: "\e97c"; /* spinner3 */
+    animation: ipr-spin 0.8s linear infinite;
+    display: inline-block;
+}
+
+/* ── Success alert checkmark ── */
+.intercessor-alert--success::before {
+    font-family: 'intercessor' !important;
+    content: "\ea10";
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+    margin-right: 0.45em;
+    font-size: 1em;
+    vertical-align: middle;
+    position: relative;
+    top: -0.05em;
+}
+
+/* ── Error alert cross ── */
+.intercessor-alert--error::before {
+    font-family: 'intercessor' !important;
+    content: "\ea0f";
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+    margin-right: 0.45em;
+    font-size: 1em;
+    vertical-align: middle;
+    position: relative;
+    top: -0.05em;
+}
+
+/* ── Status badges ── */
+.intercessor-status-pending::before,
+.intercessor-status.pending::before {
+    font-family: 'intercessor' !important;
+    content: "\ea07";
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+    margin-right: 4px;
+    font-size: 0.85em;
+    vertical-align: middle;
+}
+
+.intercessor-status-approved::before,
+.intercessor-status.approved::before {
+    font-family: 'intercessor' !important;
+    content: "\ea10";
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+    margin-right: 4px;
+    font-size: 0.85em;
+    vertical-align: middle;
+}
+
+/* ── Requester meta in prayer list ── */
+.intercessor-request-meta .intercessor-meta-author::before {
+    font-family: 'intercessor' !important;
+    content: "\f007";
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+    margin-right: 3px;
+    font-size: 0.9em;
+    vertical-align: middle;
+    opacity: 0.7;
+}
+
+/* ── Submit button loading state ── */
+.intercessor-submit--loading::before {
+    font-family: 'intercessor' !important;
+    content: "\e97c";
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+    margin-right: 0.4em;
+    display: inline-block;
+    animation: ipr-spin 0.8s linear infinite;
+    vertical-align: middle;
+}
+
+/* ── Spinner keyframes (shared with admin) ── */
+@keyframes ipr-spin {
+    from { transform: rotate(0deg);   }
+    to   { transform: rotate(360deg); }
+}
+
+/* ── First/Last Name side-by-side row ── */
+.intercessor-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 1rem;
+}
+
+@media ( max-width: 480px ) {
+    .intercessor-field-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── "Create an account?" registration panel ── */
+.intercessor-register-fields {
+    border: 1px solid #d1e0f5;
+    border-radius: 6px;
+    background: #f0f6ff;
+    padding: 1rem 1.125rem 0.75rem;
+    margin-top: 0.5rem;
+    overflow: hidden;
+    transition: max-height 0.25s ease, opacity 0.2s ease;
+}
+
+.intercessor-register-fields[hidden] {
+    display: none;
+}
+
+.intercessor-register-hint {
+    font-size: 0.82em;
+    color: #4a6080;
+    margin: 0.5rem 0 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.intercessor-register-hint .dashicons {
+    flex-shrink: 0;
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    margin-top: 1px;
+}
+
+.intercessor-field--register-toggle label {
+    font-weight: 600;
+    color: #1d4ed8;
+}
+
+/* ── Login prompt (prayer history block) ── */
+.intercessor-login-prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem 1.5rem;
+    border: 1px solid #d1e0f5;
+    border-radius: 6px;
+    background: #f0f6ff;
+    text-align: center;
+}
+
+.intercessor-login-prompt__message {
+    margin: 0;
+    font-size: 1rem;
+    color: #1d2327;
+}
+
+.intercessor-login-prompt__button {
+    display: inline-block;
+    padding: 0.6em 1.4em;
+    background: #2271b1;
+    color: #fff !important;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: background 0.15s;
+}
+
+.intercessor-login-prompt__button:hover {
+    background: #135e96;
+    color: #fff !important;
+}

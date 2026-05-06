@@ -1,0 +1,54 @@
+/**
+ * Intercessor — Block Editor Styles
+ * Shared across all three blocks' editor previews.
+ */
+
+.intercessor-editor-preview {
+    background: #f0f6fc;
+    border: 2px dashed #93c5fd;
+    border-radius: 6px;
+    padding: 1.25rem 1.5rem;
+    text-align: center;
+    color: #1e40af;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.intercessor-editor-label {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.intercessor-editor-hint {
+    font-size: 0.85rem;
+    color: #3b82f6;
+    margin: 0;
+}
+
+.intercessor-editor-mock-list,
+.intercessor-editor-mock-timeline {
+    text-align: left;
+    width: 100%;
+    font-size: 0.82rem;
+    padding-left: 1.25rem;
+    margin: 0.4rem 0 0;
+    color: #374151;
+}
+
+.intercessor-editor-mock-list li,
+.intercessor-editor-mock-timeline li {
+    margin-bottom: 0.2rem;
+}
+
+.intercessor-editor-mock-meta {
+    color: #6b7280;
+}
+
+.intercessor-editor-mock-title {
+    font-weight: 600;
+}

@@ -1,87 +1,148 @@
-=== Test Plugin ===
-Contributors: user
-Tags: tag, tag, tag
-Donate link: http://github.com/victoraigbeghian/
-Requires at least: 5.0
-Tested up to: 6.7.1
-Requires PHP: 7.0
-Stable tag: 1.1.0
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+=== Intercessor ===
+Contributors:      victoraigbeghian,devlayerx
+Tags:              prayer, prayer requests, church, faith, community
+Requires at least: 6.3
+Tested up to:      6.9
+Requires PHP:      8.0
+Stable tag:        1.0.0
+License:           GPL-2.0-or-later
+License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
-Intercessor is a WordPress prayer request management plugin that enables you receive, review and publish prayer requests
-effectively on WordPress.
+A complete WordPress prayer request management plugin with public submission, moderation workflows, reports, exports, and prayer activity tracking.
 
 == Description ==
-Manage prayer request submission, requesters (those who submit prayer) and prayed counts with Intercessor. Structured options panel to effectively
-configure the plugin to suit your ministry needs. When installed, the plugin creates 3 pages for prayer submission,
-history and to display the published public prayer requests. Prayers can be exported as CSV, e.g. when migrating your
-site, and can also be imported to another site. Also equipped with captcha and Google ReCaptcha for spam control on the
-submission form.
 
-For backwards compatibility, if this section is missing, the full length of the short description will be used, and
-markdown parsed.
+Intercessor gives churches, ministries, and faith-based communities a complete prayer request management system built on WordPress.
 
-More features:
+**Submission**
 
-1. Effective requester management section.
-2. Extensive reports section.
-3. Prayer history page which stores each requester's prayer requests. Users need to be logged in to your site to view
-the prayer list page.
+* **Prayer Form block** — visitors submit requests directly from any page or post, with no coding required.
+* **Anonymous submissions** — requesters can share publicly while hiding their name.
+* **Private requests** — marked private and visible only to administrators and prayer managers.
+* **Login gate** — optionally require a WordPress account before submitting.
+* **Auto-registration** — guests can be automatically registered as WordPress users with a `requester` role on submission.
+* **Google reCAPTCHA** — v2 checkbox or v3 invisible score-based spam protection.
+* **Rate limiting** — configurable per-email daily submission cap.
+* **Profanity filter** — flags rather than blocks requests, so moderators decide.
+* **Terms and privacy acceptance** — optional checkbox with configurable label and URL.
 
-Prayer requests:
+**Moderation**
 
-* Set initial submitted prayer status to "pending." This helps you review the request before approving it.
-* Send prayed for counts to users who want to be informed when they are prayed for. You can specify if they should be
-informed daily, weekly or monthly.
-* You can decide to archive prayer requests after a certain period of time, e.g. 3 months, 1 year, etc.
+* **Full workflow** — approve, reject, mark private, archive, and restore individual requests.
+* **Bulk actions** — process multiple requests at once from the list table.
+* **Moderator notes** — private internal annotations on each prayer request, never shown publicly.
+* **Status audit trail** — immutable history log for every status change, including actor and timestamp.
 
-Link to [WordPress](http://wordpress.org/ "Your favorite software") and one to [Markdown's Syntax Documentation][markdown syntax].
+**Requester Management**
 
+* **Requester database** — every submitter is tracked as a deduplicated requester record.
+* **WordPress user linking** — optional link between a requester record and a WP user account.
+* **Tabbed requester detail view** — five-tab page covering profile, prayer requests, status history, notes, and delete.
+* **Requester notes** — private admin notes attached directly to a requester record, separate from prayer notes.
+
+**Display**
+
+* **Prayer List block** — displays approved requests with pagination and a live "I prayed for this" counter.
+* **Prayer History block** — shows the full status timeline for a single request.
+
+**Notifications**
+
+* **Admin email** — notified on every new submission.
+* **Requester email** — notified when their request is received and when its status changes.
+* **Scheduled prayer reports** — configurable cron job sends periodic prayer activity digests.
+
+**Roles and capabilities**
+
+* **Three custom roles** — `prayer_manager` (full management access), `prayer_warrior` (read and export), `requester` (minimal WP access for auto-registered submitters).
+* **Six custom capabilities** — `edit_prayers`, `manage_prayer_settings`, `view_prayer_reports`, `export_prayer_reports`, `view_prayer_sensitive_data`, `read_private_prayers`.
+
+**Data and Exports**
+
+* **CSV exports** — prayer requests, requesters, prayed counts, and plugin settings.
+* **REST API** — 9 endpoints covering requests, requesters, history, and notes.
+* **Six database tables** — all data stored locally; nothing sent to external services except reCAPTCHA.
+* **No external dependencies** — BerlinDB is bundled; no Composer required on the server.
 
 == Installation ==
 
-= Minimum Requirements =
-
-* WordPress 5.0 or greater
-* PHP 7.0 or greater
-* MySQL 5.6 or greater
-
-= Automatic installation =
-
-Automatic installation is the easiest option. Log in to your WordPress dashboard, navigate to the Plugins menu, and click "Add New"
-
-In the search field type "Intercessor", then click "Search Plugins" Once you've found us, you can install it by click "Install Now" and WordPress will take it from there.
-
-= Manual installation =
-
-1. Upload "intercessor" to the "/wp-content/plugins/" directory.
-2. Activate the plugin through the "Plugins" menu in WordPress.
+1. Upload the `intercessor` folder to `/wp-content/plugins/`.
+2. Activate the plugin from the **Plugins** screen in WordPress.
+3. Six database tables are created automatically on activation.
+4. Go to **Intercessor → Settings** to configure approval rules, notifications, reCAPTCHA, and roles.
+5. Add the **Prayer Form** block to any page to start accepting prayer requests.
 
 == Frequently Asked Questions ==
-= A question that someone might have =
-An answer to that question.
 
-= What about foo bar? =
-Answer to foo bar dilemma.
+= Do I need to run a build step for the Gutenberg blocks? =
+
+No. The editor scripts are pre-compiled and included in the plugin. Simply activate and the blocks are ready to use.
+
+= Where are prayer requests stored? =
+
+All data is stored in your WordPress database in six dedicated tables prefixed with `{prefix}intercessor_`. No data is sent to external services except Google reCAPTCHA verification (when enabled).
+
+= Can visitors submit prayer requests without logging in? =
+
+Yes, by default. You can require login under **Settings → General → Require Login to Submit**. You can also enable auto-registration so guest submitters receive a WordPress account with the `requester` role.
+
+= What is the difference between anonymous and private requests? =
+
+Anonymous means the request is displayed publicly but the requester's name is hidden. Private means the request is not displayed publicly at all — it is only visible to administrators and prayer managers.
+
+= How does the profanity filter work? =
+
+Requests containing words from your prohibited word list are not blocked. They are submitted normally but forced to "Pending" status and flagged with a moderator note identifying which terms were matched. The moderator then decides whether to approve or reject.
+
+= What are requester notes? =
+
+Requester notes are private admin annotations attached directly to a requester record, separate from prayer request notes. They appear on the Notes tab of the requester detail page and are never shown publicly.
+
+= What is the difference between prayer_manager and prayer_warrior roles? =
+
+A `prayer_manager` has full access: they can moderate requests, manage settings, view reports, and export data. A `prayer_warrior` has read-only access: they can view reports and export data but cannot modify settings or moderate requests.
+
+= How does the REST API handle authentication? =
+
+Public read endpoints (listing approved requests, viewing history) are open. All write and moderation endpoints require the `edit_prayers` capability. Export and report endpoints require `export_prayer_reports`.
+
+= Can I export all data before uninstalling? =
+
+Yes. Use **Intercessor → Tools** to download CSV exports of all data before removing the plugin. Enable **Delete All Data on Uninstall** in **Settings → Advanced** if you want the tables dropped on removal.
 
 == Screenshots ==
-1. The screenshot description corresponds to screenshot-1.(png|jpg|jpeg|gif).
-2. The screenshot description corresponds to screenshot-2.(png|jpg|jpeg|gif).
-3. The screenshot description corresponds to screenshot-3.(png|jpg|jpeg|gif).
+
+1. Prayer Form block on the front end.
+2. Prayer List block with "I prayed for this" counters.
+3. Admin prayer requests list with status filters and bulk actions.
+4. Single request detail view with moderator notes panel.
+5. Requester detail page — Overview tab with profile and stats.
+6. Requester detail page — Notes tab with requester notes and prayer notes.
+7. Settings page with tabbed configuration.
+8. Tools / Export page.
 
 == Changelog ==
-= 1.0.0 =
-* First release.
 
-= 1.1.0 =
-* First upgrade
+= 1.0.2 =
+* Updated plugin description.
+
+= 1.0.1 =
+* Added tabbed requester detail view with five tabs: Overview, Prayer Requests, History, Notes, Delete.
+* Added requester notes system — private admin annotations attached to requester records.
+* Added new `intercessor_requester_notes` database table.
+* Added `Requester_Note`, `Requester_Note_Query`, `Requester_Note_Handler` classes.
+* Added three custom WordPress roles: `prayer_manager`, `prayer_warrior`, `requester`.
+* Added six custom capabilities: `edit_prayers`, `manage_prayer_settings`, `view_prayer_reports`, `export_prayer_reports`, `view_prayer_sensitive_data`, `read_private_prayers`.
+* Replaced all `manage_options` capability checks with the appropriate custom capability.
+* Added `View` row action to requester list table linking to the detail page.
+* Updated uninstall routine to remove custom caps, roles, and the new table.
+
+= 1.0.0 =
+* Initial release.
 
 == Upgrade Notice ==
-= 1.1.0 =
-Upgraded prayed counts to a new database to allow for effective management of cron Email to requesters to inform them
-of their prayed counts. Deletes prayed counts from prayer meta database. Updated Email tab on plugin settings page to
-allow for email templates.
 
-= 0.1 =
-This version fixes usability issues with the plugin, upgrade immediately.
+= 1.0.2 =
+No database changes. No upgrade steps required.
+
+= 1.0.1 =
+A new database table (`intercessor_requester_notes`) is created automatically on the next plugin activation. Deactivate and reactivate the plugin to create it. Custom roles and capabilities are also added to your WordPress installation on reactivation.
