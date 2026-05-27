@@ -18,6 +18,7 @@ use Intercessor\Database\Query\Prayed_Count_Query;
 use Intercessor\Database\Query\Prayer_Request_Query;
 use Intercessor\Database\Query\Requester_Query;
 use Intercessor\Http\Request;
+use Intercessor\Util\Submission_Pipeline;
 use Intercessor\Util\Notifier;
 use Intercessor\Util\Profanity_Filter;
 use Intercessor\Util\Rate_Limiter;
@@ -60,44 +61,98 @@ final class Public_Loader {
 
 		add_action( 'wp_ajax_intercessor_record_prayer',        array( $this, 'handle_record_prayer' ) );
 		add_action( 'wp_ajax_nopriv_intercessor_record_prayer', array( $this, 'handle_record_prayer' ) );
+
+		add_action( 'wp_ajax_intercessor_update_own_request', array( $this, 'handle_update_own_request' ) );
+		add_action( 'wp_ajax_intercessor_delete_own_request', array( $this, 'handle_delete_own_request' ) );
 	}
 
 	/**
-	 * Enqueue the front-end stylesheet on all public pages.
+	 * Enqueue the front-end stylesheet and register scripts.
+	 *
+	 * Assets are only enqueued when at least one Intercessor block is
+	 * present on the current page, avoiding unnecessary HTTP requests on
+	 * unrelated pages.
 	 *
 	 * @since  1.0.0
+	 * @since  1.0.1 Conditional enqueue — skips pages with no Intercessor blocks.
 	 * @return void
 	 */
 	public function enqueue_assets(): void {
-		wp_enqueue_style(
+		// Only load assets on pages that actually render an Intercessor block.
+		if (
+			! has_block( 'intercessor/prayer-form' ) &&
+			! has_block( 'intercessor/prayer-list' ) &&
+			! has_block( 'intercessor/prayer-history' )
+		) {
+			// Still register scripts/styles so block render callbacks can
+			// enqueue them on-demand (e.g. via wp_enqueue_script inside render()).
+			$this->register_assets();
+			return;
+		}
+
+		$this->register_assets();
+		$this->enqueue_registered_assets();
+	}
+
+	/**
+	 * Register (but do not enqueue) all front-end scripts and styles.
+	 *
+	 * @since  1.0.1
+	 * @return void
+	 */
+	private function register_assets(): void {
+		wp_register_style(
 			'intercessor-iconfont',
 			INTERCESSOR_URL . 'assets/css/iconfont.css',
 			array(),
 			INTERCESSOR_VERSION
 		);
 
-		wp_enqueue_style(
+		wp_register_style(
 			'intercessor-public',
 			INTERCESSOR_URL . 'assets/css/public.css',
 			array( 'intercessor-iconfont' ),
 			INTERCESSOR_VERSION
 		);
 
-		// Register a minimal front-end JS handle so that wp_localize_script()
-		// and wp_add_inline_script() calls targeting 'intercessor-public' have
-		// a real script to attach to. The handle is registered with an empty
-		// src — WordPress will not emit a <script src=""> tag for it, but the
-		// localised data will still be output as a separate inline <script>.
+		wp_register_script(
+			'intercessor-prayer-form',
+			INTERCESSOR_URL . 'assets/js/public/prayer-form.js',
+			array( 'intercessor-public' ),
+			INTERCESSOR_VERSION . '-20260514-form',
+			true
+		);
+
+		wp_register_script(
+			'intercessor-prayer-list',
+			INTERCESSOR_URL . 'assets/js/public/prayer-list.js',
+			array( 'intercessor-public' ),
+			INTERCESSOR_VERSION,
+			true
+		);
+
+		// Data-carrier handle for wp_add_inline_script() calls from blocks.
 		if ( ! wp_script_is( 'intercessor-public', 'registered' ) ) {
 			wp_register_script(
 				'intercessor-public',
-				'',               // no src — inline data only
+				'',
 				array(),
 				INTERCESSOR_VERSION,
 				true
 			);
-			wp_enqueue_script( 'intercessor-public' );
 		}
+	}
+
+	/**
+	 * Enqueue all registered front-end assets.
+	 *
+	 * @since  1.0.1
+	 * @return void
+	 */
+	private function enqueue_registered_assets(): void {
+		wp_enqueue_style( 'intercessor-iconfont' );
+		wp_enqueue_style( 'intercessor-public' );
+		wp_enqueue_script( 'intercessor-public' );
 	}
 
 	// -------------------------------------------------------------------------
@@ -107,7 +162,13 @@ final class Public_Loader {
 	/**
 	 * AJAX handler for prayer form block submissions.
 	 *
+	 * Handles nonce, login gate, and reCAPTCHA — concerns that are
+	 * specific to the web form. The shared submission pipeline
+	 * (rate limit, profanity filter, DB insert, notifications) is
+	 * delegated to Submission_Service::submit().
+	 *
 	 * @since  1.0.0
+	 * @since  1.0.1 Delegates persistence to Submission_Service.
 	 * @return void
 	 */
 	public function handle_form_submission(): void {
@@ -123,7 +184,7 @@ final class Public_Loader {
 			wp_send_json_error( array( 'message' => __( 'You must be logged in to submit a prayer request.', 'intercessor' ) ), 401 );
 		}
 
-		// 3. reCAPTCHA.
+		// 3. reCAPTCHA (form-specific; REST endpoint has its own auth model).
 		if ( Recaptcha::is_enabled_for_form() ) {
 			$token = $req->get_string( 'g-recaptcha-response' );
 			if ( ! Recaptcha::verify( $token, $req->get_remote_addr() ) ) {
@@ -140,96 +201,31 @@ final class Public_Loader {
 		$anonymous  = (bool) $req->input( 'is_anonymous', false );
 
 		$errors = array();
-
-		if ( $first_name === '' ) {
-			$errors[] = __( 'First name is required.', 'intercessor' );
-		}
-		if ( ! is_email( $email ) ) {
-			$errors[] = __( 'A valid email address is required.', 'intercessor' );
-		}
-		if ( $subject === '' ) {
-			$errors[] = __( 'Subject is required.', 'intercessor' );
-		}
-		if ( $content === '' ) {
-			$errors[] = __( 'Prayer request content is required.', 'intercessor' );
-		}
+		if ( $first_name === '' )    { $errors[] = __( 'First name is required.', 'intercessor' ); }
+		if ( ! is_email( $email ) )  { $errors[] = __( 'A valid email address is required.', 'intercessor' ); }
+		if ( $subject === '' )       { $errors[] = __( 'Subject is required.', 'intercessor' ); }
+		if ( $content === '' )       { $errors[] = __( 'Prayer request content is required.', 'intercessor' ); }
 
 		if ( ! empty( $errors ) ) {
 			wp_send_json_error( array( 'message' => implode( ' ', $errors ) ), 422 );
 		}
 
-		// 5. Rate limit.
-		if ( ! Rate_Limiter::is_allowed( $email ) ) {
-			$limit = Rate_Limiter::get_limit();
-			wp_send_json_error(
-				array(
-					// translators: %s: error message string
-					'message' => sprintf(
-						/* translators: %d: daily submission limit number */
-						_n(
-							'You may only submit %d prayer request per day. Please try again tomorrow.',
-							'You may only submit %d prayer requests per day. Please try again tomorrow.',
-							$limit,
-							'intercessor'
-						),
-						$limit
-					),
-				),
-				429
-			);
+		// 5–7. Rate limit, profanity filter, DB insert, notifications.
+		$result = Submission_Pipeline::run( $email, $first_name, $last_name, $subject, $content, $anonymous );
+
+		if ( is_wp_error( $result ) ) {
+			$status = (int) ( $result->get_error_data()['status'] ?? 500 );
+			wp_send_json_error( array( 'message' => $result->get_error_message() ), $status );
 		}
 
-		// 6. Profanity filter.
-		$autoApprove   = (bool) Settings::get( 'auto_approve', false );
-		$initialStatus = $autoApprove ? 'approved' : 'pending';
-		$moderatorNote = '';
+		$new_id = $result;
 
-		if ( Profanity_Filter::is_enabled() ) {
-			$matched = array_unique( array_merge(
-				Profanity_Filter::get_matched_words( $subject ),
-				Profanity_Filter::get_matched_words( $content )
-			) );
-
-			if ( ! empty( $matched ) ) {
-				$initialStatus = 'pending';
-				$moderatorNote = Profanity_Filter::build_moderator_note( $matched );
-			}
-		}
-
-		// 7. Find/create requester and insert the prayer request.
-		$requesterQuery = new Requester_Query();
-		$requesterId    = $requesterQuery->find_or_create( $email, $first_name, $last_name );
-
-		if ( ! $requesterId ) {
-			wp_send_json_error( array( 'message' => __( 'Could not save requester information.', 'intercessor' ) ), 500 );
-		}
-
-		$prayerQuery = new Prayer_Request_Query();
-		$newId       = $prayerQuery->add_item( array(
-			'requester_id'   => $requesterId,
-			'subject'        => $subject,
-			'content'        => $content,
-			'status'         => $initialStatus,
-			'is_anonymous'   => $anonymous ? 1 : 0,
-			'is_public'      => 1,
-			'moderator_note' => $moderatorNote,
-		) );
-
-		if ( ! $newId ) {
-			wp_send_json_error( array( 'message' => __( 'Could not save your prayer request.', 'intercessor' ) ), 500 );
-		}
-
-		Notifier::notify_admin_new_request( $newId );
-		Notifier::notify_requester_received( $newId );
-
-		// Optionally create a WordPress account for the submitter.
-		// The prayer request is already saved at this point — registration
-		// errors are reported as advisory notices, not as fatal failures.
+		// 8. Optional WP account registration (form-specific).
 		$reg_errors = Registration_Handler::maybe_create_account(
 			$email,
 			$first_name,
 			$last_name,
-			$_POST // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$_POST // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified at step 1.
 		);
 
 		$success_message = __( 'Thank you. Your prayer request has been received.', 'intercessor' );
@@ -242,7 +238,7 @@ final class Public_Loader {
 
 		wp_send_json_success( array(
 			'message' => $success_message,
-			'id'      => $newId,
+			'id'      => $new_id,
 		) );
 	}
 
@@ -295,6 +291,123 @@ final class Public_Loader {
 		wp_send_json_success( array(
 			'message' => __( 'Your prayer has been recorded. Thank you!', 'intercessor' ),
 			'total'   => $total,
+		) );
+	}
+
+	// -------------------------------------------------------------------------
+	// AJAX: user editing their own prayer request
+	// -------------------------------------------------------------------------
+
+	/**
+	 * AJAX handler: update the subject/content of the current user's own request.
+	 *
+	 * Resets status to 'pending' so the updated request goes through moderation.
+	 * Requires login; ownership is verified against the wp_user_id on the
+	 * requester record.
+	 *
+	 * @since 1.1.0
+	 */
+	public function handle_update_own_request(): void {
+		if ( ! is_user_logged_in() ) {
+			wp_send_json_error( array( 'message' => __( 'You must be logged in.', 'intercessor' ) ), 401 );
+		}
+
+		$req = Request::capture();
+
+		if ( ! $req->verify_nonce( 'intercessor_history', 'nonce' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'intercessor' ) ), 403 );
+		}
+
+		$request_id = $req->get_int( 'request_id' );
+		if ( $request_id <= 0 ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid request.', 'intercessor' ) ), 400 );
+		}
+
+		$prayer_query = new Prayer_Request_Query();
+		$prayer       = $prayer_query->get_item( $request_id );
+
+		if ( ! $prayer ) {
+			wp_send_json_error( array( 'message' => __( 'Prayer request not found.', 'intercessor' ) ), 404 );
+		}
+
+		// Ownership check: the logged-in user must own the requester record.
+		$requester_query = new Requester_Query();
+		$requester       = $requester_query->find_by_wp_user( get_current_user_id() );
+
+		if ( ! $requester || $requester->id !== $prayer->requester_id ) {
+			wp_send_json_error( array( 'message' => __( 'You do not have permission to edit this request.', 'intercessor' ) ), 403 );
+		}
+
+		$subject = $req->get_string( 'subject' );
+		$content = $req->get_textarea( 'content' );
+
+		if ( '' === $subject || '' === $content ) {
+			wp_send_json_error( array( 'message' => __( 'Subject and prayer request are required.', 'intercessor' ) ), 400 );
+		}
+
+		$updated = $prayer_query->update_item( $request_id, array(
+			'subject' => $subject,
+			'content' => $content,
+			'status'  => 'pending', // back to pending so admin reviews the changes.
+		) );
+
+		if ( ! $updated ) {
+			wp_send_json_error( array( 'message' => __( 'Could not update the prayer request.', 'intercessor' ) ), 500 );
+		}
+
+		wp_send_json_success( array(
+			'message' => __( 'Saved — your request will be reviewed shortly.', 'intercessor' ),
+		) );
+	}
+
+	/**
+	 * AJAX handler: permanently delete the current user's own prayer request.
+	 *
+	 * Cascades to prayer_history, prayer_notes, and prayed_counts child records
+	 * via Prayer_Request_Query::bulk_delete(). Ownership is verified against the
+	 * wp_user_id on the requester record before any deletion takes place.
+	 *
+	 * @since 1.1.0
+	 */
+	public function handle_delete_own_request(): void {
+		if ( ! is_user_logged_in() ) {
+			wp_send_json_error( array( 'message' => __( 'You must be logged in.', 'intercessor' ) ), 401 );
+		}
+
+		$req = Request::capture();
+
+		if ( ! $req->verify_nonce( 'intercessor_history', 'nonce' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'intercessor' ) ), 403 );
+		}
+
+		$request_id = $req->get_int( 'request_id' );
+		if ( $request_id <= 0 ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid request.', 'intercessor' ) ), 400 );
+		}
+
+		$prayer_query = new Prayer_Request_Query();
+		$prayer       = $prayer_query->get_item( $request_id );
+
+		if ( ! $prayer ) {
+			wp_send_json_error( array( 'message' => __( 'Prayer request not found.', 'intercessor' ) ), 404 );
+		}
+
+		// Ownership check.
+		$requester_query = new Requester_Query();
+		$requester       = $requester_query->find_by_wp_user( get_current_user_id() );
+
+		if ( ! $requester || $requester->id !== $prayer->requester_id ) {
+			wp_send_json_error( array( 'message' => __( 'You do not have permission to delete this request.', 'intercessor' ) ), 403 );
+		}
+
+		$deleted = $prayer_query->bulk_delete( array( $request_id ) );
+
+		if ( ! $deleted ) {
+			wp_send_json_error( array( 'message' => __( 'Could not delete the prayer request.', 'intercessor' ) ), 500 );
+		}
+
+		wp_send_json_success( array(
+			'message' => __( 'Prayer request deleted.', 'intercessor' ),
 		) );
 	}
 }

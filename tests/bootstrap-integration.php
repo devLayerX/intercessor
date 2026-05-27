@@ -1,4 +1,8 @@
 <?php
+
+declare(strict_types=1);
+
+defined( 'ABSPATH' ) || exit;
 /**
  * Bootstrap for integration tests (requires a real WordPress + test DB).
  *
@@ -18,18 +22,17 @@
  * @package Intercessor\Tests
  */
 
-declare(strict_types=1);
+$intercessor_tests_dir = getenv( 'WP_TESTS_DIR' ) ?: '/tmp/wordpress-tests-lib';
 
-$testsDir = getenv( 'WP_TESTS_DIR' ) ?: '/tmp/wordpress-tests-lib';
-
-if ( ! file_exists( $testsDir . '/includes/functions.php' ) ) {
-	echo "\nERROR: WordPress test library not found at: {$testsDir}\n";
+if ( ! file_exists( $intercessor_tests_dir . '/includes/functions.php' ) ) {
+	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CLI bootstrap runs before WordPress escaping helpers are loaded.
+	echo "\nERROR: WordPress test library not found at: {$intercessor_tests_dir}\n";
 	echo "Set the WP_TESTS_DIR environment variable to the wordpress-develop tests path.\n\n";
 	exit( 1 );
 }
 
 // Give tests access to WordPress functions.
-require_once $testsDir . '/includes/functions.php';
+require_once $intercessor_tests_dir . '/includes/functions.php';
 
 // Load the plugin before the WP test environment initialises.
 tests_add_filter( 'muplugins_loaded', static function (): void {
@@ -55,4 +58,4 @@ tests_add_filter( 'muplugins_loaded', static function (): void {
 	Intercessor\Database\Table_Registry::install();
 } );
 
-require $testsDir . '/includes/bootstrap.php';
+require $intercessor_tests_dir . '/includes/bootstrap.php';

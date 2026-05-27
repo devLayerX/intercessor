@@ -1,18 +1,21 @@
 === Intercessor ===
-Contributors:      victoraigbeghian,devlayerx
-Tags:              prayer, prayer requests, church, faith, community
+Contributors:      shepherd365
+Tags:              prayer, prayer request, church, ministry, community
 Requires at least: 6.3
-Tested up to:      6.9
+Tested up to:      7.0
 Requires PHP:      8.0
 Stable tag:        1.0.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
-A complete WordPress prayer request management plugin with public submission, moderation workflows, reports, exports, and prayer activity tracking.
+Manage prayer requests with public submission, moderation, privacy controls, reports, exports, and prayer activity tracking.
 
 == Description ==
 
 Intercessor gives churches, ministries, and faith-based communities a complete prayer request management system built on WordPress.
+
+**See It In Action**
+Intercessor has been actively used on our website for several years, serving as a trusted platform for prayer requests and community prayer support. You can explore the live version, submit a prayer request, or pray for others through our online prayer wall here: [Submit Prayer](https://www.waymakerministry.org/prayer-request/)
 
 **Submission**
 
@@ -122,27 +125,22 @@ Yes. Use **Intercessor → Tools** to download CSV exports of all data before re
 
 == Changelog ==
 
-= 1.0.2 =
-* Updated plugin description.
-
-= 1.0.1 =
-* Added tabbed requester detail view with five tabs: Overview, Prayer Requests, History, Notes, Delete.
-* Added requester notes system — private admin annotations attached to requester records.
-* Added new `intercessor_requester_notes` database table.
-* Added `Requester_Note`, `Requester_Note_Query`, `Requester_Note_Handler` classes.
-* Added three custom WordPress roles: `prayer_manager`, `prayer_warrior`, `requester`.
-* Added six custom capabilities: `edit_prayers`, `manage_prayer_settings`, `view_prayer_reports`, `export_prayer_reports`, `view_prayer_sensitive_data`, `read_private_prayers`.
-* Replaced all `manage_options` capability checks with the appropriate custom capability.
-* Added `View` row action to requester list table linking to the detail page.
-* Updated uninstall routine to remove custom caps, roles, and the new table.
-
 = 1.0.0 =
 * Initial release.
 
 == Upgrade Notice ==
 
-= 1.0.2 =
-No database changes. No upgrade steps required.
+== External Services ==
 
-= 1.0.1 =
-A new database table (`intercessor_requester_notes`) is created automatically on the next plugin activation. Deactivate and reactivate the plugin to create it. Custom roles and capabilities are also added to your WordPress installation on reactivation.
+This plugin optionally integrates with Google reCAPTCHA to protect the prayer request submission form from spam and automated submissions. This integration is entirely optional and disabled by default. It can be enabled and configured under Settings → reCAPTCHA.
+
+**What data is sent and when:**
+When reCAPTCHA is enabled, the visitor's browser loads the reCAPTCHA script from Google's servers when the prayer form page is viewed. On form submission, a reCAPTCHA token is sent from the visitor's browser to Google's verification API (`https://www.google.com/recaptcha/api/siteverify`) to validate the submission. No prayer request data is sent to Google — only the reCAPTCHA response token and your site's secret key.
+
+**Service provider:**
+Google reCAPTCHA is provided by Google LLC.
+- Terms of Service: https://policies.google.com/terms
+- Privacy Policy: https://policies.google.com/privacy
+- reCAPTCHA Terms: https://cloud.google.com/recaptcha/docs/faq
+
+If reCAPTCHA is not configured or disabled in the plugin settings, no connection to Google's servers is made.

@@ -193,7 +193,7 @@ abstract class Table {
 
 		if ( ! empty( $sql ) ) {
 			dbDelta( $sql );
-			update_option( $this->db_version_key, $this->version );
+			update_option( $this->db_version_key, $this->version ); // phpcs:ignore WordPress.WP.PrefixAllGlobals.NonPrefixedVariableFound -- Third-party BerlinDB library; db_version_key is already prefixed with the plugin table name
 		}
 	}
 

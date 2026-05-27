@@ -10,6 +10,7 @@
  * @package Intercessor
  * @since   1.0.2
  */
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template-scoped variables included via require, not true globals
 
 declare(strict_types=1);
 
@@ -17,16 +18,16 @@ defined( 'ABSPATH' ) || exit;
 
 use Intercessor\Reports\Reports_Page;
 
-$intercessor_period_labels = array(
-	'today'      => __( 'Today',       'intercessor' ),
-	'yesterday'  => __( 'Yesterday',   'intercessor' ),
-	'week'       => __( 'This Week',   'intercessor' ),
-	'last_week'  => __( 'Last Week',   'intercessor' ),
-	'month'      => __( 'This Month',  'intercessor' ),
-	'last_month' => __( 'Last Month',  'intercessor' ),
-	'year'       => __( 'This Year',   'intercessor' ),
-	'last_year'  => __( 'Last Year',   'intercessor' ),
-	'all_time'   => __( 'All Time',    'intercessor' ),
+$period_labels = array(
+	'today'      => esc_html__( 'Today',       'intercessor' ),
+	'yesterday'  => esc_html__( 'Yesterday',   'intercessor' ),
+	'week'       => esc_html__( 'This Week',   'intercessor' ),
+	'last_week'  => esc_html__( 'Last Week',   'intercessor' ),
+	'month'      => esc_html__( 'This Month',  'intercessor' ),
+	'last_month' => esc_html__( 'Last Month',  'intercessor' ),
+	'year'       => esc_html__( 'This Year',   'intercessor' ),
+	'last_year'  => esc_html__( 'Last Year',   'intercessor' ),
+	'all_time'   => esc_html__( 'All Time',    'intercessor' ),
 );
 ?>
 <div class="wrap intercessor-reports">
@@ -38,17 +39,17 @@ $intercessor_period_labels = array(
 
 	<?php // ── Report view tabs ─────────────────────────────────────────── ?>
 	<nav class="nav-tab-wrapper" aria-label="<?php esc_attr_e( 'Report views', 'intercessor' ); ?>">
-		<?php foreach ( $views as $intercessor_slug => $intercessor_view ) :
-			$intercessor_tab_url = add_query_arg(
-				array( 'page' => Reports_Page::PAGE_SLUG, 'view' => $intercessor_slug, 'period' => $period ),
+		<?php foreach ( $views as $slug => $view ) :
+			$tab_url = add_query_arg(
+				array( 'page' => Reports_Page::PAGE_SLUG, 'view' => $slug, 'period' => $period ),
 				admin_url( 'admin.php' )
 			);
-			$intercessor_active  = $intercessor_slug === $active_view;
+			$active  = $slug === $active_view;
 		?>
-			<a href="<?php echo esc_url( $intercessor_tab_url ); ?>"
-			   class="nav-tab <?php echo $intercessor_active ? 'nav-tab-active' : ''; ?>"
-			   <?php echo $intercessor_active ? 'aria-current="page"' : ''; ?>>
-				<?php echo esc_html( $intercessor_view['label'] ); ?>
+			<a href="<?php echo esc_url( $tab_url ); ?>"
+			   class="nav-tab <?php echo $active ? 'nav-tab-active' : ''; ?>"
+			   <?php echo $active ? 'aria-current="page"' : ''; ?>>
+				<?php echo esc_html( $view['label'] ); ?>
 			</a>
 		<?php endforeach; ?>
 	</nav>
@@ -65,10 +66,10 @@ $intercessor_period_labels = array(
 			</label>
 
 			<select name="period" id="ipr-period-select" onchange="this.form.submit()">
-				<?php foreach ( $intercessor_period_labels as $intercessor_val => $intercessor_lbl ) : ?>
-					<option value="<?php echo esc_attr( $intercessor_val ); ?>"
-					        <?php selected( $period, $intercessor_val ); ?>>
-						<?php echo esc_html( $intercessor_lbl ); ?>
+				<?php foreach ( $period_labels as $val => $lbl ) : ?>
+					<option value="<?php echo esc_attr( $val ); ?>"
+					        <?php selected( $period, $val ); ?>>
+						<?php echo esc_html( $lbl ); ?>
 					</option>
 				<?php endforeach; ?>
 			</select>
@@ -80,11 +81,10 @@ $intercessor_period_labels = array(
 			</noscript>
 
 			<span class="ipr-period-current">
-				// translators: %s: human-readable name of the active period, e.g. "This Month"
 				<?php printf(
 					/* translators: %s: period label */
 					esc_html__( 'Showing: %s', 'intercessor' ),
-					'<strong>' . esc_html( $intercessor_period_labels[ $period ] ?? $period ) . '</strong>'
+					'<strong>' . esc_html( $period_labels[ $period ] ?? $period ) . '</strong>'
 				); ?>
 			</span>
 		</form>
@@ -101,12 +101,12 @@ $intercessor_period_labels = array(
 	<?php // ── Active view content ──────────────────────────────────────── ?>
 	<div class="ipr-report-content" style="margin-top:1rem;">
 		<?php
-		$intercessor_renderer = $views[ $active_view ]['renderer'] ?? null;
+		$renderer = $views[ $active_view ]['renderer'] ?? null;
 
-		if ( $intercessor_renderer && is_object( $intercessor_renderer ) && method_exists( $intercessor_renderer, 'render' ) ) {
-			$intercessor_renderer->render( $period );
-		} elseif ( is_callable( $intercessor_renderer ) ) {
-			$intercessor_renderer( $period );
+		if ( $renderer && is_object( $renderer ) && method_exists( $renderer, 'render' ) ) {
+			$renderer->render( $period );
+		} elseif ( is_callable( $renderer ) ) {
+			$renderer( $period );
 		} else {
 			echo '<p class="ipr-report-empty">' . esc_html__( 'No report available.', 'intercessor' ) . '</p>';
 		}

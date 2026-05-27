@@ -3,7 +3,7 @@
  * WordPress dashboard widget for Intercessor prayer stats.
  *
  * @package Intercessor
- * @since   1.0.2
+ * @since   1.0.0
  */
 
 declare(strict_types=1);
@@ -28,7 +28,7 @@ use Intercessor\Database\Query\Prayer_Request_Query;
  * Counts are cached in a short-lived transient (5 minutes) so that
  * repeated dashboard loads do not hammer the database.
  *
- * @since   1.0.2
+ * @since   1.0.0
  * @package Intercessor
  */
 final class Dashboard_Widget {
@@ -36,7 +36,7 @@ final class Dashboard_Widget {
 	/**
 	 * Widget ID used by wp_add_dashboard_widget().
 	 *
-	 * @since 1.0.2
+	 * @since 1.0.0
 	 * @var   string
 	 */
 	private const WIDGET_ID = 'intercessor_prayer_stats';
@@ -44,7 +44,7 @@ final class Dashboard_Widget {
 	/**
 	 * Transient key for cached stats.
 	 *
-	 * @since 1.0.2
+	 * @since 1.0.0
 	 * @var   string
 	 */
 	private const TRANSIENT_KEY = 'intercessor_dashboard_stats';
@@ -52,7 +52,7 @@ final class Dashboard_Widget {
 	/**
 	 * Transient TTL in seconds (5 minutes).
 	 *
-	 * @since 1.0.2
+	 * @since 1.0.0
 	 * @var   int
 	 */
 	private const TRANSIENT_TTL = 300;
@@ -65,7 +65,7 @@ final class Dashboard_Widget {
 	 * Called from Admin_Loader::register(). Hooks are only added when the
 	 * current user holds the `edit_prayers` capability.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function register(): void {
@@ -84,7 +84,7 @@ final class Dashboard_Widget {
 	/**
 	 * Register the widget with the WordPress dashboard.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function add_widget(): void {
@@ -98,7 +98,7 @@ final class Dashboard_Widget {
 	/**
 	 * Enqueue the widget stylesheet on the WordPress dashboard only.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string $hook Current admin page hook suffix.
 	 * @return void
 	 */
@@ -123,7 +123,7 @@ final class Dashboard_Widget {
 	 * Hooked to `intercessor_prayer_status_updated` so the widget reflects
 	 * moderation actions immediately rather than waiting for the TTL.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function bust_cache(): void {
@@ -143,7 +143,7 @@ final class Dashboard_Widget {
 	 *   year         int   Approved prayers created this calendar year.
 	 *   total        int   All approved prayers (no date filter).
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return array{pending:int,today:int,week:int,month:int,year:int,total:int}
 	 */
 	private function get_stats(): array {
@@ -176,7 +176,7 @@ final class Dashboard_Widget {
 	 *
 	 * Called by WordPress as the widget callback. All output is escaped.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function render(): void {
@@ -196,7 +196,6 @@ final class Dashboard_Widget {
 			<div class="ipr-widget__greeting">
 				<span class="ipr-widget__day">
 					<?php
-					// translators: %s: current day of the week, e.g. "Monday"
 					printf(
 						/* translators: %s: day of the week, e.g. "Monday" */
 						esc_html__( 'Happy %s', 'intercessor' ),
@@ -219,7 +218,6 @@ final class Dashboard_Widget {
 					<a href="<?php echo esc_url( $pend_url ); ?>"
 					   class="ipr-widget__pending-count"
 					   aria-label="<?php echo esc_attr(
-					   		// translators: %d: number of pending prayers awaiting review
 					   		sprintf(
 					   			/* translators: %d: number of pending prayers */
 					   			_n( '%d prayer pending', '%d prayers pending', $stats['pending'], 'intercessor' ),
@@ -265,7 +263,6 @@ final class Dashboard_Widget {
 
 			<?php // ── Today-vs-year progress bar ───────────────────────── ?>
 			<div class="ipr-widget__progress" title="<?php echo esc_attr(
-				// translators: %d: percentage of this year's approved prayers received today
 				sprintf(
 					/* translators: 1: today count, 2: year count */
 					__( '%1$d of %2$d approved this year received today', 'intercessor' ),
@@ -284,7 +281,6 @@ final class Dashboard_Widget {
 				</div>
 				<span class="ipr-widget__progress-label">
 					<?php
-					// translators: %d: number of pending prayers
 					printf(
 						/* translators: %d: percentage of year's prayers received today */
 						esc_html__( '%d%% of this year\'s approved prayers are from today', 'intercessor' ),
@@ -304,7 +300,6 @@ final class Dashboard_Widget {
 				<?php if ( $stats['pending'] > 0 ) : ?>
 					<a href="<?php echo esc_url( $pend_url ); ?>" class="ipr-widget__link ipr-widget__link--pending">
 						<?php
-						// translators: %d: number of pending prayers
 						printf(
 							/* translators: %d: number of pending prayers */
 							esc_html( _n( 'Review %d pending', 'Review %d pending', $stats['pending'], 'intercessor' ) ),

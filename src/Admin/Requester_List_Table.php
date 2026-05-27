@@ -160,7 +160,7 @@ final class Requester_List_Table extends WP_List_Table {
 	 * otherwise) as a link, with first name and last name on separate lines
 	 * below when the structured fields are populated.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @param  object $item The current row object.
 	 * @return string       HTML for the name cell including row actions.
 	 */
@@ -188,8 +188,8 @@ final class Requester_List_Table extends WP_List_Table {
 
 		$row_actions = $this->row_actions(
 			array(
-				// translators: %s: requester display name
 				'view' => sprintf(
+					/* translators: %s: URL to the requester detail page --- IGNORE --- */
 					'<a href="%s">%s</a>',
 					esc_url( $detail_url ),
 					esc_html__( 'View', 'intercessor' )

@@ -1,4 +1,7 @@
 <?php
+
+// phpcs:disable WordPress.WP.AlternativeFunctions.strip_tags_strip_tags,WordPress.NamingConventions.PrefixAllGlobals -- Test stub file replicating WP core function signatures
+defined( 'ABSPATH' ) || exit;
 /**
  * WordPress function stubs for unit tests.
  *
@@ -11,7 +14,7 @@
 
 if ( ! function_exists( 'sanitize_text_field' ) ) {
 	function sanitize_text_field( string $str ): string {
-		return trim( wp_strip_all_tags( $str ) );
+		return trim( strip_tags( $str ) );
 	}
 }
 
@@ -73,23 +76,23 @@ if ( ! function_exists( 'apply_filters' ) ) {
 if ( ! function_exists( 'get_option' ) ) {
 	// Simple in-memory store for unit tests.
 	function get_option( string $option, $default = false ) {
-		global $__test_options;
-		return $__test_options[ $option ] ?? $default;
+		global $intercessor_test_options;
+		return $intercessor_test_options[ $option ] ?? $default;
 	}
 }
 
 if ( ! function_exists( 'update_option' ) ) {
 	function update_option( string $option, $value ): bool {
-		global $__test_options;
-		$__test_options[ $option ] = $value;
+		global $intercessor_test_options;
+		$intercessor_test_options[ $option ] = $value;
 		return true;
 	}
 }
 
 if ( ! function_exists( 'delete_option' ) ) {
 	function delete_option( string $option ): bool {
-		global $__test_options;
-		unset( $__test_options[ $option ] );
+		global $intercessor_test_options;
+		unset( $intercessor_test_options[ $option ] );
 		return true;
 	}
 }

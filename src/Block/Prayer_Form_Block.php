@@ -63,8 +63,8 @@ final class Prayer_Form_Block {
 		$requireLogin = Settings::get( 'require_login', false );
 
 		if ( $requireLogin && ! is_user_logged_in() ) {
-			// translators: %s: site name shown in reCAPTCHA disclaimer
 			return sprintf(
+				/* translators: %s: error message string --- IGNORE --- */
 				'<p class="intercessor-login-required">%s</p>',
 				esc_html__( 'Please log in to submit a prayer request.', 'intercessor' )
 			);
@@ -95,16 +95,50 @@ final class Prayer_Form_Block {
 			'enableRegistration' => $enable_registration && ! is_user_logged_in(),
 			'generateUsername'   => $generate_username,
 			'generatePassword'   => $generate_password,
+			'messages'           => array(
+				'error'        => __( 'An error occurred.', 'intercessor' ),
+				'networkError' => __( 'Network error. Please try again.', 'intercessor' ),
+			),
 		) );
 
 		// Pass template variables.
 		$recaptchaWidgetHtml = $recaptchaEnabled ? Recaptcha::widget_html()     : '';
 		$recaptchaTokenInput = $recaptchaEnabled ? Recaptcha::token_input_html() : '';
 
+		// Ensure the data-carrier script handle exists. register_assets() in
+		// Public_Loader normally handles this during wp_enqueue_scripts, but it
+		// may not run (or may run too late) when the block lives inside a
+		// reusable block, a Full Site Editing template, or a query loop —
+		// because has_block() in enqueue_assets() only inspects raw post
+		// content and returns false in those contexts.
+		if ( ! wp_script_is( 'intercessor-public', 'registered' ) ) {
+			wp_register_script(
+				'intercessor-public',
+				'', // no src — data carrier only.
+				array(),
+				INTERCESSOR_VERSION,
+				true
+			);
+		}
+
+		// Attach the nonce/config BEFORE enqueueing so wp_add_inline_script
+		// has a registered handle to attach to.
+		wp_add_inline_script(
+			'intercessor-public',
+			'window.intercessorForm = ' . $formConfig . ';',
+			'before'
+		);
+
+		// Directly enqueue the data-carrier handle rather than relying solely
+		// on the dependency chain from intercessor-prayer-form. An explicit
+		// enqueue guarantees the inline script above is printed even when
+		// WordPress decides not to walk dependencies for a late-registered
+		// handle (observed with some caching and optimisation plugins).
+		wp_enqueue_script( 'intercessor-public' );
+		wp_enqueue_script( 'intercessor-prayer-form' );
+		wp_enqueue_style( 'intercessor-public' );
+
 		ob_start();
-		// Inline the config before the template so window.intercessorForm is
-		// always defined when the form's submit listener runs.
-		echo '<script>window.intercessorForm = ' . $formConfig . ';</script>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		require INTERCESSOR_DIR . 'templates/blocks/prayer-form.php';
 		return ob_get_clean() ?: '';
 	}

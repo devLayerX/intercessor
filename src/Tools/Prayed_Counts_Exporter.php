@@ -3,7 +3,7 @@
  * Prayed counts CSV exporter.
  *
  * @package Intercessor
- * @since   1.1.0
+ * @since   1.0.0
  */
 declare(strict_types=1);
 
@@ -31,7 +31,7 @@ use Intercessor\Database\Query\Prayer_Request_Query;
  *   anonymous fingerprint key. Prayer request lookups are cached in a local
  *   array to avoid N+1 queries.
  *
- * @since   1.1.0
+ * @since   1.0.0
  * @package Intercessor
  */
 final class Prayed_Counts_Exporter extends Abstract_Exporter {
@@ -39,7 +39,7 @@ final class Prayed_Counts_Exporter extends Abstract_Exporter {
 	/**
 	 * Return the timestamped CSV download filename.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string Filename in the format 'intercessor-prayed-counts-YYYY-MM-DD.csv'.
 	 */
 	protected function get_filename(): string {
@@ -52,7 +52,7 @@ final class Prayed_Counts_Exporter extends Abstract_Exporter {
 	 * Returns a four-column set in aggregated mode and a nine-column set in
 	 * detailed mode to match the differing row structures produced by getRows().
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string[] Ordered list of translated column header labels.
 	 */
 	protected function get_headers(): array {
@@ -81,7 +81,7 @@ final class Prayed_Counts_Exporter extends Abstract_Exporter {
 	/**
 	 * Build and return all CSV data rows, delegating to the mode-specific method.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return array<int, array<int, scalar>> Indexed list of CSV row value arrays.
 	 */
 	protected function get_rows(): array {
@@ -100,7 +100,7 @@ final class Prayed_Counts_Exporter extends Abstract_Exporter {
 	 * Any value other than 'detailed' (including the default 'aggregated')
 	 * is treated as aggregated mode.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return bool True for aggregated mode, false for detailed mode.
 	 */
 	private function is_aggregated_mode(): bool {
@@ -115,7 +115,7 @@ final class Prayed_Counts_Exporter extends Abstract_Exporter {
 	 * GROUP BY query, then fetches the matching prayer request row to populate
 	 * the subject and status columns.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return array<int, array<int, scalar>> Indexed list of four-column row value arrays.
 	 */
 	private function get_aggregated_rows(): array {
@@ -147,7 +147,7 @@ final class Prayed_Counts_Exporter extends Abstract_Exporter {
 	 * PrayerRequest objects keyed by their primary key, preventing duplicate
 	 * queries when multiple actor rows share the same request.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return array<int, array<int, scalar>> Indexed list of nine-column row value arrays.
 	 */
 	private function get_detailed_rows(): array {

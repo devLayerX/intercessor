@@ -3,7 +3,7 @@
  * Prayer requests CSV exporter.
  *
  * @package Intercessor
- * @since   1.1.0
+ * @since   1.0.0
  */
 declare(strict_types=1);
 
@@ -29,7 +29,7 @@ use Intercessor\Database\Query\Requester_Query;
  * Anonymous requests display '[Anonymous]' in the name column and an
  * empty string in the email column regardless of what is stored.
  *
- * @since   1.1.0
+ * @since   1.0.0
  * @package Intercessor
  */
 final class Prayer_Requests_Exporter extends Abstract_Exporter {
@@ -37,7 +37,7 @@ final class Prayer_Requests_Exporter extends Abstract_Exporter {
 	/**
 	 * Return the timestamped CSV download filename.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string Filename in the format 'intercessor-prayer-requests-YYYY-MM-DD.csv'.
 	 */
 	protected function get_filename(): string {
@@ -50,7 +50,7 @@ final class Prayer_Requests_Exporter extends Abstract_Exporter {
 	 * When the 'export_include_content' setting is enabled, a 'Prayer Content'
 	 * column is spliced in at position 3 (after Status, before Requester Name).
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string[] Ordered list of translated column header labels.
 	 */
 	protected function get_headers(): array {
@@ -82,7 +82,7 @@ final class Prayer_Requests_Exporter extends Abstract_Exporter {
 	 * replacing both with appropriate values for anonymous submissions.
 	 * All requests are fetched without a row limit (number = 0).
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return array<int, array<int, scalar>> Indexed list of CSV row value arrays.
 	 */
 	protected function get_rows(): array {

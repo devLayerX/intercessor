@@ -3,7 +3,7 @@
  * By Date report view.
  *
  * @package Intercessor
- * @since   1.0.2
+ * @since   1.0.0
  */
 
 declare(strict_types=1);
@@ -18,7 +18,7 @@ use Intercessor\Reports\Prayer_Request_Stats;
 /**
  * Renders the time-series report with an inline SVG bar chart and data table.
  *
- * @since   1.0.2
+ * @since   1.0.0
  * @package Intercessor
  */
 final class By_Date_View {
@@ -26,7 +26,7 @@ final class By_Date_View {
 	/**
 	 * Render the by-date report content.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string $period Active period slug.
 	 * @return void
 	 */
@@ -96,7 +96,6 @@ final class By_Date_View {
 				</table>
 				<?php if ( ! $use_weekly && count( $series ) !== count( $non_zero ) ) : ?>
 					<p class="description" style="padding:.4rem 0;">
-						// translators: %d: number of days with zero submissions hidden from table
 						<?php printf(
 							/* translators: %d: number of days with zero submissions hidden */
 							esc_html__( '%d day(s) with zero submissions are hidden.', 'intercessor' ),
@@ -112,7 +111,7 @@ final class By_Date_View {
 	/**
 	 * Render an inline SVG bar chart for the given series.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  array<int, array{count: int}> $series Data series.
 	 * @return void
 	 */

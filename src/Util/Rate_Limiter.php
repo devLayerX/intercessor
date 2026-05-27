@@ -16,7 +16,6 @@ defined( 'ABSPATH' ) || exit;
 use Intercessor\Admin\Settings;
 use Intercessor\Database\Query\Prayer_Request_Query;
 use Intercessor\Database\Query\Requester_Query;
-use Intercessor\Loader;
 
 /**
  * Enforces the per-email daily prayer request submission limit.
@@ -81,28 +80,38 @@ final class Rate_Limiter {
 	/**
 	 * Return the number of prayer requests submitted by a requester in the last 24 hours.
 	 *
+	 * Uses a direct $wpdb query with a date comparison rather than BerlinDB's
+	 * get_items() because the base Query class does not yet expose date_query
+	 * args. The table name is retrieved via the global $wpdb object.
+	 *
 	 * @since  1.0.0
 	 * @param  int $requesterId Requester primary key.
 	 * @return int              Count of prayer requests in the last 24 hours.
 	 */
 	private static function count_recent_submissions( int $requesterId ): int {
-		$db = Loader::instance()->get_db();
+		global $wpdb;
 
-		$table = esc_sql( $db->prefix . 'intercessor_prayer_requests' ); // Safe identifier.
+		// WordPress-safe table identifier (WP 6.3+ supports %i)
+		$table = $wpdb->prefix . 'intercessor_prayer_requests';
 
-		// Use WP timezone instead of DB NOW().
-		$after = gmdate( 'Y-m-d H:i:s', time() - DAY_IN_SECONDS );
+		// Use WP time (respects timezone settings)
+		$after = gmdate(
+			'Y-m-d H:i:s',
+			current_time( 'timestamp', true ) - DAY_IN_SECONDS
+		);
 
-		$sql = $db->prepare(
-			"SELECT COUNT(*)
-			FROM {$table}
+		$sql = $wpdb->prepare(
+			'SELECT COUNT(*)
+			FROM %i
 			WHERE requester_id = %d
-			AND date_created >= %s",
+			AND date_created >= %s',
+			$table,
 			$requesterId,
 			$after
 		);
 
-		return (int) $db->get_var( $sql );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		return (int) $wpdb->get_var( $sql );
 	}
 
 	/**

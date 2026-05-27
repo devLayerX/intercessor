@@ -73,7 +73,7 @@ final class Admin_Loader {
 
 		add_action( 'admin_menu',            array( $this, 'add_menu_pages' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
-		add_action( 'admin_head',            array( $this, 'print_menu_icon_style' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'print_menu_icon_style' ) );
 
 		// Plugins list page: action links and row meta.
 		add_filter( 'plugin_action_links_' . INTERCESSOR_BASENAME, array( $this, 'add_action_links' ) );
@@ -119,8 +119,8 @@ final class Admin_Loader {
 	public function add_action_links( array $links ): array {
 		return array_merge(
 			array(
-				// translators: %d: number of pending prayer requests
 				'settings' => sprintf(
+					/* translators: %s: URL to the plugin's settings page --- IGNORE --- */
 					'<a href="%s">%s</a>',
 					esc_url( admin_url( 'admin.php?page=intercessor-settings' ) ),
 					esc_html__( 'Settings', 'intercessor' )
@@ -152,16 +152,16 @@ final class Admin_Loader {
 		return array_merge(
 			$plugin_meta,
 			array(
-				// translators: %s: requester display name, %d: number of prayer requests
-				sprintf(
+				 sprintf(
+					/* translators: %s: URL to the plugin's documentation --- IGNORE --- */
 					'<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
-					esc_url( 'https://github.com/devLayerX/intercessor/wiki' ),
+					esc_url( 'https://github.com/victoraigbeghian/intercessor/wiki' ),
 					esc_html__( 'Documentation', 'intercessor' )
 				),
-				// translators: %s: requester display name
 				sprintf(
+					/* translators: %s: URL to the plugin's support page --- IGNORE --- */
 					'<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
-					esc_url( 'https://github.com/devLayerX/intercessor/issues' ),
+					esc_url( 'https://github.com/victoraigbeghian/intercessor/issues' ),
 					esc_html__( 'Support', 'intercessor' )
 				),
 			)
@@ -277,31 +277,42 @@ final class Admin_Loader {
 	 * The menu is registered with icon 'none' so WordPress leaves the
 	 * wp-menu-image::before content empty — this rule takes over from there.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
+	 * @return void
+	 */
+	/**
+	 * Output the praying-hands menu icon style via wp_add_inline_style().
+	 *
+	 * Attaches a @font-face declaration and the single admin-menu rule to
+	 * the 'wp-admin' stylesheet handle (always enqueued in wp-admin) using
+	 * the proper wp_add_inline_style() API instead of a raw <style> tag.
+	 *
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function print_menu_icon_style(): void {
-		$font_url = INTERCESSOR_URL . 'assets/fonts/intercessor';
-		?>
-		<style id="intercessor-menu-icon">
+		$font_url = esc_url( INTERCESSOR_URL . 'assets/fonts/intercessor' );
+
+		$css = "
 			@font-face {
 				font-family: 'intercessor';
-				src:  url('<?php echo esc_url( $font_url ); ?>.eot?mnue68');
-				src:  url('<?php echo esc_url( $font_url ); ?>.eot?mnue68#iefix') format('embedded-opentype'),
-				      url('<?php echo esc_url( $font_url ); ?>.ttf?mnue68')        format('truetype'),
-				      url('<?php echo esc_url( $font_url ); ?>.woff?mnue68')       format('woff'),
-				      url('<?php echo esc_url( $font_url ); ?>.svg?mnue68#intercessor') format('svg');
+				src:  url('{$font_url}.eot?mnue68');
+				src:  url('{$font_url}.eot?mnue68#iefix') format('embedded-opentype'),
+				      url('{$font_url}.ttf?mnue68')       format('truetype'),
+				      url('{$font_url}.woff?mnue68')      format('woff'),
+				      url('{$font_url}.svg?mnue68#intercessor') format('svg');
 				font-weight: normal;
 				font-style:  normal;
 				font-display: block;
 			}
 			#adminmenu .toplevel_page_intercessor .wp-menu-image::before {
 				font-family: 'intercessor' !important;
-				content: '\e901';
+				content: '\\e901';
 				font-size: 16px;
 			}
-		</style>
-		<?php
+		";
+
+		wp_add_inline_style( 'wp-admin', $css );
 	}
 
 	/**
@@ -361,7 +372,7 @@ final class Admin_Loader {
 	 * Generates a fresh token (invalidating the old one) and re-sends the
 	 * confirmation email. Redirects back to the requester overview tab.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function handle_resend_confirmation(): void {
@@ -411,7 +422,7 @@ final class Admin_Loader {
 	 * Useful when a confirmation email was not received or the link expired.
 	 * Removes the pending flag from user meta directly.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function handle_manual_confirm_account(): void {

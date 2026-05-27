@@ -19,6 +19,7 @@ use Intercessor\Database\Query\Prayer_Note_Query;
 use Intercessor\Database\Query\Prayer_Request_Query;
 use Intercessor\Database\Query\Requester_Query;
 use Intercessor\Database\Row\Prayer_Note;
+use Intercessor\Util\Submission_Pipeline;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -295,10 +296,12 @@ final class Rest_Api {
 		$query = new Prayer_Request_Query();
 		$item  = $query->get_item( $request->get_param( 'id' ) );
 
+		// Check existence.
 		if ( ! $item ) {
 			return new WP_REST_Response( array( 'message' => __( 'Not found.', 'intercessor' ) ), 404 );
 		}
 
+		// Block access to non-public requests for unauthenticated / non-moderator callers.
 		if ( ! $item->is_public() && ! current_user_can( 'edit_prayers' ) ) {
 			return new WP_REST_Response( array( 'message' => __( 'Forbidden.', 'intercessor' ) ), 403 );
 		}
@@ -312,41 +315,35 @@ final class Rest_Api {
 	}
 
 	/**
-	 * Create a new prayer request.
+	 * Create a new prayer request via the REST API.
+	 *
+	 * Delegates to Submission_Service so that the same rate-limiting,
+	 * profanity filtering, and email notifications that the AJAX form
+	 * handler applies are enforced here as well.
 	 *
 	 * @since  1.0.0
-	 * @param  WP_REST_Request $request REST request with name, email, subject, content, is_anonymous.
-	 * @return WP_REST_Response         201 with new ID, or 500.
+	 * @since  1.0.1 Delegates to Submission_Service (was duplicating logic).
+	 * @param  WP_REST_Request $request REST request with email, first_name, last_name,
+	 *                                  subject, content, is_anonymous.
+	 * @return WP_REST_Response         201 with new ID, or 4xx/500 on failure.
 	 */
 	public function create_request( WP_REST_Request $request ): WP_REST_Response {
-		$requesterQuery = new Requester_Query();
-		$requesterId    = $requesterQuery->find_or_create(
-			$request->get_param( 'email' ),
-			$request->get_param( 'first_name' ) ?? '',
-			$request->get_param( 'last_name' )  ?? ''
+		$result = Submission_Pipeline::run(
+			(string) $request->get_param( 'email' ),
+			(string) ( $request->get_param( 'first_name' ) ?? '' ),
+			(string) ( $request->get_param( 'last_name' )  ?? '' ),
+			(string) $request->get_param( 'subject' ),
+			(string) $request->get_param( 'content' ),
+			(bool)   $request->get_param( 'is_anonymous' )
 		);
 
-		if ( ! $requesterId ) {
-			return new WP_REST_Response( array( 'message' => __( 'Could not create requester.', 'intercessor' ) ), 500 );
+		// The pipeline returns a WP_Error on any failure, with an appropriate message and status code.
+		if ( is_wp_error( $result ) ) {
+			$status = (int) ( $result->get_error_data()['status'] ?? 500 );
+			return new WP_REST_Response( array( 'message' => $result->get_error_message() ), $status );
 		}
 
-		$autoApprove = Settings::get( 'auto_approve', false );
-		$query       = new Prayer_Request_Query();
-
-		$newId = $query->add_item( array(
-			'requester_id' => $requesterId,
-			'subject'      => $request->get_param( 'subject' ),
-			'content'      => $request->get_param( 'content' ),
-			'status'       => $autoApprove ? 'approved' : 'pending',
-			'is_anonymous' => $request->get_param( 'is_anonymous' ) ? 1 : 0,
-			'is_public'    => 1,
-		) );
-
-		if ( ! $newId ) {
-			return new WP_REST_Response( array( 'message' => __( 'Could not save request.', 'intercessor' ) ), 500 );
-		}
-
-		return new WP_REST_Response( array( 'id' => $newId ), 201 );
+		return new WP_REST_Response( array( 'id' => $result ), 201 );
 	}
 
 	/**
@@ -366,6 +363,7 @@ final class Rest_Api {
 			$request->get_param( 'note' )
 		);
 
+		// update_status() returns false on failure, true on success.
 		if ( ! $updated ) {
 			return new WP_REST_Response( array( 'message' => __( 'Update failed.', 'intercessor' ) ), 500 );
 		}
@@ -402,6 +400,7 @@ final class Rest_Api {
 			return new WP_REST_Response( array( 'message' => __( 'Not found.', 'intercessor' ) ), 404 );
 		}
 
+		// Block access to private requests for unauthenticated / non-moderator callers.
 		if ( ! $parent->is_public() && ! current_user_can( 'edit_prayers' ) ) {
 			return new WP_REST_Response( array( 'message' => __( 'Forbidden.', 'intercessor' ) ), 403 );
 		}
@@ -409,7 +408,23 @@ final class Rest_Api {
 		$historyQuery = new Prayer_History_Query();
 		$history      = $historyQuery->get_for_request( $request->get_param( 'id' ) );
 
-		return new WP_REST_Response( $history, 200 );
+		// Strip moderator-only fields (moderator ID, internal notes) from the
+		// response for callers who are not moderators. This prevents leaking
+		// admin user IDs and private notes through the public endpoint.
+		$can_moderate = current_user_can( 'edit_prayers' );
+
+		$sanitized = array_map(
+			static function ( $row ) use ( $can_moderate ) {
+				$data = (array) $row;
+				if ( ! $can_moderate ) {
+					unset( $data['moderator_id'], $data['note'] );
+				}
+				return $data;
+			},
+			$history
+		);
+
+		return new WP_REST_Response( $sanitized, 200 );
 	}
 
 	// -------------------------------------------------------------------------
@@ -451,7 +466,7 @@ final class Rest_Api {
 		};
 
 		return new WP_REST_Response(
-			array_map( array( $this, 'prepare_note_item' ), $notes ),
+			$this->prepare_note_items( $notes ),
 			200
 		);
 	}
@@ -583,6 +598,52 @@ final class Rest_Api {
 			'date_created'   => $item->date_created,
 			'requester_id'   => $isAdmin ? (int) $item->requester_id : null,
 			'moderator_note' => $isAdmin ? $item->moderator_note     : null,
+		);
+	}
+
+	/**
+	 * Shape a collection of Prayer_Note rows into REST-safe arrays.
+	 *
+	 * Pre-fetches all unique note authors in a single WP object-cache
+	 * warm-up pass, avoiding an N+1 get_user_by() call per note.
+	 *
+	 * @since  1.0.1
+	 * @param  Prayer_Note[] $notes Array of note row objects.
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function prepare_note_items( array $notes ): array {
+		if ( empty( $notes ) ) {
+			return array();
+		}
+
+		// Collect unique author IDs and resolve them in one pass.
+		$author_ids = array_unique(
+			array_map( static fn( Prayer_Note $n ) => (int) $n->author_user_id, $notes )
+		);
+
+		$author_names = array();
+		foreach ( $author_ids as $uid ) {
+			if ( $uid > 0 ) {
+				$user                  = get_user_by( 'id', $uid );
+				$author_names[ $uid ]  = $user ? $user->display_name : __( 'Unknown', 'intercessor' );
+			}
+		}
+
+		return array_map(
+			function ( Prayer_Note $note ) use ( $author_names ): array {
+				$uid = (int) $note->author_user_id;
+				return array(
+					'id'                => $note->id,
+					'prayer_request_id' => $note->prayer_request_id,
+					'author_user_id'    => $uid,
+					'author_name'       => $author_names[ $uid ] ?? __( 'Unknown', 'intercessor' ),
+					'content'           => $note->content,
+					'is_private'        => (bool) $note->is_private,
+					'date_created'      => $note->date_created,
+					'date_modified'     => $note->date_modified,
+				);
+			},
+			$notes
 		);
 	}
 

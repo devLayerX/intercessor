@@ -127,71 +127,39 @@ final class Prayer_Request_Query extends Query {
 	public function count_approved_for_period( string $period ): int {
 		global $wpdb;
 
-		$table = esc_sql( $this->fq_table_name ); // Safe identifier.
-
 		[ $after, $before ] = $this->build_date_range( $period );
 
 		$sql = $wpdb->prepare(
-			"SELECT COUNT(*)
-			FROM {$table}
+			'SELECT COUNT(*)
+			FROM %i
 			WHERE status = %s
 			AND date_created >= %s
-			AND date_created < %s",
+			AND date_created < %s',
+			$this->fq_table_name,
 			'approved',
 			$after,
 			$before
 		);
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		return (int) $wpdb->get_var( $sql );
 	}
 
 	/**
 	 * Build the after/before datetime strings for a named calendar period.
 	 *
-	 * All boundaries are calculated in the site timezone using wp_timezone()
-	 * so that "today" means the correct local calendar day regardless of the
-	 * server's system timezone. The week start day respects the WordPress
-	 * 'start_of_week' option (0 = Sunday … 6 = Saturday).
+	 * Delegates to Date::period_boundaries() so that the single canonical
+	 * implementation is used everywhere (Date.php, Prayer_Request_Stats,
+	 * and here), including its half-open interval convention:
+	 * $after is inclusive, $before is the start of the next period (exclusive).
 	 *
 	 * @since  1.0.2
+	 * @since  1.0.1 Delegates to Date::period_boundaries() — no longer duplicates logic.
 	 * @param  string $period One of 'today', 'week', 'month', or 'year'.
 	 * @return array{0: string, 1: string} [ $after, $before ] as 'Y-m-d H:i:s' strings.
 	 */
 	private function build_date_range( string $period ): array {
-		$tz  = wp_timezone();
-		$now = new \DateTimeImmutable( 'now', $tz );
-
-		switch ( $period ) {
-			case 'today':
-				$after  = $now->setTime( 0, 0, 0 );
-				$before = $now->setTime( 23, 59, 59 );
-				break;
-
-			case 'week':
-				// Respect the WordPress "Week Starts On" setting.
-				$start_of_week    = (int) get_option( 'start_of_week', 0 ); // 0=Sun, 1=Mon …
-				$day_of_week      = (int) $now->format( 'w' );              // 0=Sun, 6=Sat
-				$days_since_start = ( $day_of_week - $start_of_week + 7 ) % 7;
-				$after            = $now->modify( "-{$days_since_start} days" )->setTime( 0, 0, 0 );
-				$before           = $now->setTime( 23, 59, 59 );
-				break;
-
-			case 'month':
-				$after  = $now->modify( 'first day of this month' )->setTime( 0, 0, 0 );
-				$before = $now->modify( 'last day of this month' )->setTime( 23, 59, 59 );
-				break;
-
-			case 'year':
-			default:
-				$after  = $now->modify( 'first day of January this year' )->setTime( 0, 0, 0 );
-				$before = $now->modify( 'last day of December this year' )->setTime( 23, 59, 59 );
-				break;
-		}
-
-		return array(
-			$after->format( 'Y-m-d H:i:s' ),
-			$before->format( 'Y-m-d H:i:s' ),
-		);
+		return \Intercessor\Database\Queries\Date::period_boundaries( $period );
 	}
 	/**
 	 * Retrieve approved, publicly visible prayer requests.

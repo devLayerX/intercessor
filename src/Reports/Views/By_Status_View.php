@@ -3,7 +3,7 @@
  * By Status report view.
  *
  * @package Intercessor
- * @since   1.0.2
+ * @since   1.0.0
  */
 
 declare(strict_types=1);
@@ -18,7 +18,7 @@ use Intercessor\Reports\Prayer_Request_Stats;
 /**
  * Renders the status breakdown report with a visual bar chart and data table.
  *
- * @since   1.0.2
+ * @since   1.0.0
  * @package Intercessor
  */
 final class By_Status_View {
@@ -26,7 +26,7 @@ final class By_Status_View {
 	/**
 	 * Render the by-status report content.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string $period Active period slug.
 	 * @return void
 	 */
@@ -70,7 +70,7 @@ final class By_Status_View {
 					<span class="ipr-legend-item">
 						<span class="ipr-legend-dot" style="background:<?php echo esc_attr( $meta['color'] ); ?>;"></span>
 						<?php echo esc_html( $meta['label'] ); ?>
-						<strong><?php echo esc_attr( number_format_i18n( $count ) ); ?></strong>
+						<strong><?php echo esc_html( number_format_i18n( $count ) ); ?></strong>
 						<span class="ipr-legend-pct"><?php echo esc_html( $pct . '%' ); ?></span>
 					</span>
 				<?php endforeach; ?>
@@ -105,7 +105,7 @@ final class By_Status_View {
 									<?php echo esc_html( $meta['label'] ); ?>
 								</span>
 							</td>
-							<td class="ipr-col-num"><strong><?php echo esc_attr( number_format_i18n( $count ) ); ?></strong></td>
+							<td class="ipr-col-num"><strong><?php echo esc_html( number_format_i18n( $count ) ); ?></strong></td>
 							<td class="ipr-col-num"><?php echo esc_html( $pct . '%' ); ?></td>
 							<td>
 								<?php if ( $count > 0 ) : ?>
@@ -120,7 +120,7 @@ final class By_Status_View {
 					<?php endforeach; ?>
 					<tr class="ipr-report-total-row">
 						<td><strong><?php esc_html_e( 'Total', 'intercessor' ); ?></strong></td>
-						<td class="ipr-col-num"><strong><?php echo esc_attr( number_format_i18n( array_sum( $breakdown ) ) ); ?></strong></td>
+						<td class="ipr-col-num"><strong><?php echo esc_html( number_format_i18n( array_sum( $breakdown ) ) ); ?></strong></td>
 						<td class="ipr-col-num">100%</td>
 						<td></td>
 					</tr>

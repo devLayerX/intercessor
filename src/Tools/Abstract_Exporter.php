@@ -3,7 +3,7 @@
  * Abstract CSV exporter base class.
  *
  * @package Intercessor
- * @since   1.1.0
+ * @since   1.0.0
  */
 declare(strict_types=1);
 
@@ -28,7 +28,7 @@ use Intercessor\Http\Request;
  * Tools_Admin_Page::register(). The dispatch() method is the single entry point
  * called from that handler.
  *
- * @since   1.1.0
+ * @since   1.0.0
  * @package Intercessor
  */
 abstract class Abstract_Exporter {
@@ -43,7 +43,7 @@ abstract class Abstract_Exporter {
 	 * Implementations should embed the current UTC date so downloads are
 	 * distinguishable when saved locally, e.g. 'intercessor-requests-2025-01-01.csv'.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string Filename used in the Content-Disposition HTTP header.
 	 */
 	abstract protected function get_filename(): string;
@@ -54,7 +54,7 @@ abstract class Abstract_Exporter {
 	 * The number of elements must match the number of values in each row
 	 * returned by getRows().
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string[] Ordered column header labels.
 	 */
 	abstract protected function get_headers(): array;
@@ -66,7 +66,7 @@ abstract class Abstract_Exporter {
 	 * order as the headers returned by getHeaders(). fputcsv handles all
 	 * quoting and escaping.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return array<int, array<int, scalar>> Indexed list of scalar value arrays.
 	 */
 	abstract protected function get_rows(): array;
@@ -81,7 +81,7 @@ abstract class Abstract_Exporter {
 	 * Derived from exportKey() by default. Subclasses may override to use
 	 * a custom action string that does not follow the default pattern.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string Nonce action string, e.g. 'intercessor_export_settings'.
 	 */
 	protected function nonce_action(): string {
@@ -95,7 +95,7 @@ abstract class Abstract_Exporter {
 	 * the 'Exporter' suffix and lower-casing the remainder. For example,
 	 * SettingsExporter produces 'settings'.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string Lower-case exporter slug.
 	 */
 	protected function export_key(): string {
@@ -109,7 +109,7 @@ abstract class Abstract_Exporter {
 	 * Defaults to 'export_prayer_reports'. Override in a subclass to restrict
 	 * a particular export to a different capability.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string WordPress capability string.
 	 */
 	protected function required_capability(): string {
@@ -128,7 +128,7 @@ abstract class Abstract_Exporter {
 	 * verification before delegating to streamCsv(). Always calls exit after
 	 * streaming to prevent WordPress from appending HTML.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function dispatch(): void {
@@ -145,7 +145,7 @@ abstract class Abstract_Exporter {
 	/**
 	 * Halt with a 403 wp_die() if the current user lacks the required capability.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return void
 	 */
 	private function check_capability(): void {
@@ -163,7 +163,7 @@ abstract class Abstract_Exporter {
 	 * Reads '_wpnonce' from $_POST, sanitizes it, and verifies it against
 	 * the action string returned by nonceAction().
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return void
 	 */
 	private function verify_nonce(): void {
@@ -183,15 +183,22 @@ abstract class Abstract_Exporter {
 	 * Writes a UTF-8 BOM (0xEF 0xBB 0xBF) before the first row so that
 	 * Microsoft Excel opens the file with correct character encoding.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return void
 	 */
 	private function stream_csv(): void {
-		if ( ob_get_level() > 0 ) {
+		// Prevent header corruption from prior output.
+		if ( headers_sent() ) {
+			wp_die( esc_html__( 'Cannot export CSV: headers already sent.', 'intercessor' ) );
+		}
+
+		while ( ob_get_level() > 0 ) {
 			ob_end_clean();
 		}
 
-		$filename = $this->get_filename();
+		$filename = sanitize_file_name( $this->get_filename() );
+
+		nocache_headers();
 
 		header( 'Content-Type: text/csv; charset=utf-8' );
 		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
@@ -200,22 +207,66 @@ abstract class Abstract_Exporter {
 
 		$output = fopen( 'php://output', 'w' );
 
-		if ( $output === false ) {
+		if ( false === $output ) {
 			wp_die( esc_html__( 'Could not open output stream for CSV export.', 'intercessor' ) );
 		}
 
-		// UTF-8 BOM — required for correct encoding detection in Excel.
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite -- WP_Filesystem does not support streaming to php://output.
-		fwrite( $output, "\xEF\xBB\xBF" );
+		// Excel UTF-8 BOM.
+		fprintf( $output, '%s', "\xEF\xBB\xBF" );
 
 		fputcsv( $output, $this->get_headers() );
 
-		foreach ( $this->get_rows() as $row ) {
+		// STREAMING: avoids loading full dataset into memory
+		foreach ( $this->get_rows_stream() as $row ) {
 			fputcsv( $output, $row );
 		}
 
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- WP_Filesystem does not support php://output handles.
-		fclose( $output );
+		exit;
+	}
+
+	/**
+	 * Return a generator that yields one CSV row at a time.
+	 *
+	 * The default implementation retrieves all rows from getRows() and yields
+	 * them one by one. Subclasses may override to implement more efficient
+	 * streaming retrieval directly from the database, e.g. using $wpdb with
+	 * LIMIT and OFFSET to paginate through results without loading them all at
+	 * once.
+	 *
+	 * @since  1.0.0
+	 * @return \Generator Yields arrays of scalar values for each CSV row.
+	 */
+	private function get_rows_stream(): \Generator {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'intercessor_prayer_requests';
+
+		$limit  = 1000;
+		$offset = 0;
+
+		do {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT * FROM %i ORDER BY id ASC LIMIT %d OFFSET %d",
+					$table,
+					$limit,
+					$offset
+				),
+				ARRAY_A
+			);
+
+			if ( empty( $rows ) ) {
+				break;
+			}
+
+			foreach ( $rows as $row ) {
+				yield $row;
+			}
+
+			$offset += $limit;
+
+		} while ( count( $rows ) === $limit );
 	}
 
 	// -------------------------------------------------------------------------
@@ -228,7 +279,7 @@ abstract class Abstract_Exporter {
 	 * Passes $echo = false to wp_nonce_field() so the HTML is returned as a
 	 * string rather than being printed. The template is responsible for echoing.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string HTML <input type="hidden"> element with a fresh nonce value.
 	 */
 	public function nonce_field(): string {
@@ -241,7 +292,7 @@ abstract class Abstract_Exporter {
 	 * Useful when embedding the nonce in JavaScript data attributes rather
 	 * than an HTML form field.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string Nonce value string.
 	 */
 	public function create_nonce(): string {

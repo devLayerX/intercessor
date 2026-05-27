@@ -3,7 +3,7 @@
  * Prayer requests CSV importer.
  *
  * @package Intercessor
- * @since   1.0.2
+ * @since   1.0.0
  */
 
 declare(strict_types=1);
@@ -39,7 +39,7 @@ use Intercessor\Database\Query\Requester_Query;
  * existing rows. Duplicate detection is limited to the requester level
  * (same email → same requester ID); duplicate prayer subjects are allowed.
  *
- * @since   1.0.2
+ * @since   1.0.0
  * @package Intercessor
  */
 final class Prayer_Requests_Importer extends Abstract_Importer {
@@ -50,7 +50,7 @@ final class Prayer_Requests_Importer extends Abstract_Importer {
 	/**
 	 * Return the import key used for nonce actions and hook names.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return string
 	 */
 	protected function import_key(): string {
@@ -63,7 +63,7 @@ final class Prayer_Requests_Importer extends Abstract_Importer {
 	 * Rows missing any of these are rejected at the column-validation stage
 	 * before any data is written.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return string[]
 	 */
 	protected function required_columns(): array {
@@ -77,7 +77,7 @@ final class Prayer_Requests_Importer extends Abstract_Importer {
 	 * row. Increments the appropriate result counter and appends to $this->errors
 	 * on failure.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  array<string, string> $row  Associative row keyed by CSV header.
 	 * @param  int                   $line 1-based line number for error messages.
 	 * @return void
@@ -177,7 +177,7 @@ final class Prayer_Requests_Importer extends Abstract_Importer {
 	 * '0') as well as raw integer booleans. Falls back to $default for any
 	 * unrecognised value.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string $value   Raw CSV cell value.
 	 * @param  bool   $default Value to return when $value is not recognised.
 	 * @return bool

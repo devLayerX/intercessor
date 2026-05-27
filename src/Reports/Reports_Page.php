@@ -3,7 +3,7 @@
  * Reports admin page controller.
  *
  * @package Intercessor
- * @since   1.0.0
+ * @since   1.0.2
  */
 
 declare(strict_types=1);
@@ -21,7 +21,7 @@ use Intercessor\Reports\Views\Activity_View;
 /**
  * Registers the Reports submenu page and dispatches rendering to report views.
  *
- * Modelled views are registered in a filterable
+ * Modelled on EDD's reporting pattern: views are registered in a filterable
  * array and dispatched by a URL 'view' parameter. Each view is a callable
  * (or an instance implementing render()) registered under a slug. Third-party
  * code can add custom views via the 'intercessor_report_views' filter.
@@ -32,7 +32,7 @@ use Intercessor\Reports\Views\Activity_View;
  *   ?page=intercessor-reports&view=by_date      → time-series table
  *   ?page=intercessor-reports&view=activity     → recent activity log
  *
- * @since   1.0.0
+ * @since   1.0.2
  * @package Intercessor
  */
 final class Reports_Page {
@@ -51,7 +51,7 @@ final class Reports_Page {
 	 * Called from Admin_Loader::register(). Returns the add_submenu_page
 	 * hook suffix so callers can conditionally enqueue assets.
 	 *
-	 * @since  1.0.0
+	 * @since  1.0.2
 	 * @return void
 	 */
 	public function register(): void {
@@ -64,7 +64,7 @@ final class Reports_Page {
 	 * Priority 15 ensures it appears after Prayer Requests (default 10) but
 	 * before Tools (default 10, registered later in the same callback).
 	 *
-	 * @since  1.0.0
+	 * @since  1.0.2
 	 * @return void
 	 */
 	public function add_submenu(): void {
@@ -87,7 +87,7 @@ final class Reports_Page {
 	 * may be any callable or an object with a render() method. Third-party
 	 * code extends this via the 'intercessor_report_views' filter.
 	 *
-	 * @since  1.0.0
+	 * @since  1.0.2
 	 * @return array<string, array{label: string, renderer: callable|object}>
 	 */
 	public static function get_views(): array {
@@ -113,7 +113,7 @@ final class Reports_Page {
 		/**
 		 * Filter the registered report views.
 		 *
-		 * @since 1.0.0
+		 * @since 1.0.2
 		 * @param array $views Map of slug → ['label', 'renderer'].
 		 */
 		return (array) apply_filters( 'intercessor_report_views', $views );
@@ -127,7 +127,7 @@ final class Reports_Page {
 	 * Validates the current view, renders the nav-tab-wrapper, period
 	 * selector, and then delegates to the active view's renderer.
 	 *
-	 * @since  1.0.0
+	 * @since  1.0.2
 	 * @return void
 	 */
 	public function render(): void {

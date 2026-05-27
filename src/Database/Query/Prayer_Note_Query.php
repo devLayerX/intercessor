@@ -162,6 +162,7 @@ final class Prayer_Note_Query extends Query {
 	public function delete_all_for_request( int $prayerRequestId ): bool {
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		$result = $wpdb->delete(
 			$this->fq_table_name,
 			array( 'prayer_request_id' => $prayerRequestId ),

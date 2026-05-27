@@ -31,5 +31,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', '/tmp/wp/' );
 }
 
-$autoloader = new Intercessor\Util\Autoloader();
-$autoloader->register();
+$intercessor_autoloader = new Intercessor\Util\Autoloader();
+$intercessor_autoloader->register();
