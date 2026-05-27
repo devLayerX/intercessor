@@ -1,14 +1,14 @@
 <?php
 /**
  * Plugin Name:       Intercessor
- * Plugin URI:        https://github.com/victoraigbeghian/intercessor
+ * Plugin URI:        https://wordpress.org/plugins/intercessor
  * Description:       Intercessor is a complete prayer request management plugin for WordPress, with public submission, anonymous and private sharing, requester management, moderation workflows, exports, reports, and prayer activity tracking.
  * Version:           1.0.0
  * Requires at least: 6.3
- * Tested up to:      6.9
+ * Tested up to:      7.0
  * Requires PHP:      8.0
  * Author:            Victor Aigbeghian
- * Author URI:        https://github.com/victoraigbeghian
+ * Author URI:        https://profiles.wordpress.org/shepherd365/
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       intercessor
@@ -21,49 +21,32 @@ declare(strict_types=1);
 
 namespace Intercessor;
 
-// Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
-
-use Intercessor\Loader;
 
 // -----------------------------------------------------------------------------
 // Plugin constants.
 // -----------------------------------------------------------------------------
 
 /** @since 1.0.0 @var string Current plugin version. */
-if ( ! defined( 'INTERCESSOR_VERSION' ) ) {
-	define( 'INTERCESSOR_VERSION',  '1.0.0' );
-}	
+define( 'INTERCESSOR_VERSION',  '1.0.0' );
 
 /** @since 1.0.0 @var string Absolute path to the main plugin file. */
-if ( ! defined( 'INTERCESSOR_FILE' ) ) {
-	define( 'INTERCESSOR_FILE',     __FILE__ );
-}
+define( 'INTERCESSOR_FILE',     __FILE__ );
 
 /** @since 1.0.0 @var string Absolute path to the plugin directory, with trailing slash. */
-if ( ! defined( 'INTERCESSOR_DIR' ) ) {
-	define( 'INTERCESSOR_DIR',      plugin_dir_path( __FILE__ ) );
-}
+define( 'INTERCESSOR_DIR',      plugin_dir_path( __FILE__ ) );
 
 /** @since 1.0.0 @var string Public URL to the plugin directory, with trailing slash. */
-if ( ! defined( 'INTERCESSOR_URL' ) ) {
-	define( 'INTERCESSOR_URL',      plugin_dir_url( __FILE__ ) );
-}
+define( 'INTERCESSOR_URL',      plugin_dir_url( __FILE__ ) );
 
 /** @since 1.0.0 @var string Plugin basename, e.g. intercessor/intercessor.php. */
-if ( ! defined( 'INTERCESSOR_BASENAME' ) ) {
-	define( 'INTERCESSOR_BASENAME', plugin_basename( __FILE__ ) );
-}
+define( 'INTERCESSOR_BASENAME', plugin_basename( __FILE__ ) );
 
 /** @since 1.0.0 @var string Minimum PHP version required to activate. */
-if ( ! defined( 'INTERCESSOR_MIN_PHP' ) ) {
-	define( 'INTERCESSOR_MIN_PHP',  '8.0' );
-}
+define( 'INTERCESSOR_MIN_PHP',  '8.0' );
 
 /** @since 1.0.0 @var string Minimum WordPress version required to activate. */
-if ( ! defined( 'INTERCESSOR_MIN_WP' ) ) {
-	define( 'INTERCESSOR_MIN_WP',   '6.3' );
-}
+define( 'INTERCESSOR_MIN_WP',   '6.3' );
 
 // -----------------------------------------------------------------------------
 // Bundled vendor libraries — loaded before the autoloader so class_exists()
@@ -106,4 +89,4 @@ register_deactivation_hook( __FILE__, array( Deactivator::class, 'deactivate' ) 
 // -----------------------------------------------------------------------------
 // Boot.
 // -----------------------------------------------------------------------------
-Loader::instance()->boot();
+Plugin::instance()->boot();

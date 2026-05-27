@@ -3,7 +3,7 @@
  * Requesters CSV exporter.
  *
  * @package Intercessor
- * @since   1.1.0
+ * @since   1.0.0
  */
 declare(strict_types=1);
 
@@ -27,7 +27,7 @@ use Intercessor\Database\Query\Prayer_Request_Query;
  * get_user_by() for accounts still present in the users table; deleted
  * accounts display '[deleted]'.
  *
- * @since   1.1.0
+ * @since   1.0.0
  * @package Intercessor
  */
 final class Requesters_Exporter extends Abstract_Exporter {
@@ -35,7 +35,7 @@ final class Requesters_Exporter extends Abstract_Exporter {
 	/**
 	 * Return the timestamped CSV download filename.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string Filename in the format 'intercessor-requesters-YYYY-MM-DD.csv'.
 	 */
 	protected function get_filename(): string {
@@ -45,7 +45,7 @@ final class Requesters_Exporter extends Abstract_Exporter {
 	/**
 	 * Return the ordered column header labels for the CSV.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string[] Ordered list of translated column header labels.
 	 */
 	protected function get_headers(): array {
@@ -72,7 +72,7 @@ final class Requesters_Exporter extends Abstract_Exporter {
 	 * lookup for linked WordPress accounts. Both secondary lookups run per
 	 * row; export time scales linearly with the number of requesters.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return array<int, array<int, scalar>> Indexed list of CSV row value arrays.
 	 */
 	protected function get_rows(): array {

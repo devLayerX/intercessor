@@ -12,6 +12,7 @@ namespace Intercessor\Util;
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
+
 use Intercessor\Admin\Settings;
 
 /**
@@ -187,7 +188,7 @@ final class Recaptcha {
 			self::SCRIPT_HANDLE,
 			$scriptUrl,
 			array(),
-			false, // No version query string — Google manages cache-busting via the URL itself.
+			INTERCESSOR_VERSION,
 			true
 		);
 

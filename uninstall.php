@@ -16,6 +16,7 @@ declare(strict_types=1);
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
+
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 global $wpdb;

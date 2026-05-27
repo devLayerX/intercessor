@@ -3,7 +3,7 @@
  * Overview report view.
  *
  * @package Intercessor
- * @since   1.0.2
+ * @since   1.0.0
  */
 
 declare(strict_types=1);
@@ -18,7 +18,7 @@ use Intercessor\Reports\Prayer_Request_Stats;
 /**
  * Renders the overview report: summary stat cards and top requesters.
  *
- * @since   1.0.2
+ * @since   1.0.0
  * @package Intercessor
  */
 final class Overview_View {
@@ -26,7 +26,7 @@ final class Overview_View {
 	/**
 	 * Render the overview report content.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string $period Active period slug.
 	 * @return void
 	 */
@@ -50,7 +50,7 @@ final class Overview_View {
 			<?php foreach ( $status_config as $key => $cfg ) : ?>
 				<div class="ipr-report-stat-card" style="--card-accent:<?php echo esc_attr( $cfg['color'] ); ?>;">
 					<span class="dashicons <?php echo esc_attr( $cfg['icon'] ); ?> ipr-report-stat-icon" aria-hidden="true"></span>
-					<span class="ipr-report-stat-number"><?php echo esc_attr( number_format_i18n( $overview[ $key ] ) ); ?></span>
+					<span class="ipr-report-stat-number"><?php echo esc_html( number_format_i18n( $overview[ $key ] ) ); ?></span>
 					<span class="ipr-report-stat-label"><?php echo esc_html( $cfg['label'] ); ?></span>
 				</div>
 			<?php endforeach; ?>

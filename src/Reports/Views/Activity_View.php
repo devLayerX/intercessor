@@ -3,7 +3,7 @@
  * Activity report view.
  *
  * @package Intercessor
- * @since   1.0.2
+ * @since   1.0.0
  */
 
 declare(strict_types=1);
@@ -16,12 +16,11 @@ defined( 'ABSPATH' ) || exit;
 use Intercessor\Database\Query\Prayer_Request_Query;
 use Intercessor\Database\Query\Requester_Query;
 use Intercessor\Database\Queries\Date;
-use Intercessor\Loader;
 
 /**
  * Renders a paginated, filterable activity log of recent prayer requests.
  *
- * @since   1.0.2
+ * @since   1.0.0
  * @package Intercessor
  */
 final class Activity_View {
@@ -29,61 +28,55 @@ final class Activity_View {
 	/** @var int Rows per page. */
 	private const PER_PAGE = 25;
 
-	/** @var \wpdb WordPress database object, for direct queries. */
-	public $db;
-
 	/**
 	 * Render the activity log.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string $period Active period slug.
 	 * @return void
 	 */
 	public function render( string $period ): void {
+		global $wpdb;
 
-		$this->db = Loader::instance()->get_db();
-		$table   = esc_sql( $this->db->prefix . 'intercessor_prayer_requests' ); // Safe identifier.
-		$req_tbl = esc_sql( $this->db->prefix . 'intercessor_requesters' ); // Safe identifier.
+		// Normalize read-only input.
+		$paged_input = filter_input( INPUT_GET, 'paged', FILTER_VALIDATE_INT );
+		$paged       = max( 1, (int) ( $paged_input ?: 1 ) );
 
-		// Normalize input — these are read-only pagination/filter params; no state is modified.
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		$paged = isset( $_GET['paged'] )
-			? max( 1, (int) $_GET['paged'] )
-			: 1;
-
-		$filter_status = isset( $_GET['filter_status'] )
-			? sanitize_key( wp_unslash( $_GET['filter_status'] ) )
+		$filter_status_input = filter_input( INPUT_GET, 'filter_status', FILTER_UNSAFE_RAW );
+		$filter_status       = is_string( $filter_status_input )
+			? sanitize_key( wp_unslash( $filter_status_input ) )
 			: '';
-		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
-		// Build date clause.
-		$date_sql = '';
-		if ( $period !== 'all_time' ) {
-			$date_obj = Date::for_period( $period === 'all_time' ? 'year' : $period );
-			$date_sql = $date_obj->get_sql_clauses()['where'] ?? '';
-		}
-
-		// Build main WHERE.
-		$where = "WHERE 1=1 {$date_sql}";
-
-		if ( $filter_status !== '' ) {
-			$where .= $this->db->prepare( ' AND pr.status = %s', $filter_status );
-		}
-
-		// Total count query (no limits).
-		$sql_total = "
-			SELECT COUNT(*)
-			FROM {$table} pr
-			{$where}
-		";
-
-		$total = (int) $this->db->get_var( $sql_total );
-
-		// PAGINATED QUERY.
 		$offset = ( $paged - 1 ) * self::PER_PAGE;
 
-		$sql_rows = "
-			SELECT
+		$sql_total = $wpdb->prepare(
+			'SELECT COUNT(*)
+			FROM %i pr
+			WHERE 1=1',
+			$wpdb->prefix . 'intercessor_prayer_requests'
+		);
+
+		if ( 'all_time' !== $period ) {
+			[ $after, $before ] = Date::period_boundaries( $period );
+			$sql_total .= $wpdb->prepare(
+				' AND pr.date_created >= %s AND pr.date_created < %s',
+				$after,
+				$before
+			);
+		}
+
+		if ( '' !== $filter_status ) {
+			$sql_total .= $wpdb->prepare(
+				' AND pr.status = %s',
+				$filter_status
+			);
+		}
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		$total = (int) $wpdb->get_var( $sql_total );
+
+		$sql_rows = $wpdb->prepare(
+			'SELECT
 				pr.id,
 				pr.subject,
 				pr.status,
@@ -93,15 +86,39 @@ final class Activity_View {
 				r.last_name,
 				r.name AS requester_name_legacy,
 				r.email AS requester_email
-			FROM {$table} pr
-			LEFT JOIN {$req_tbl} r ON r.id = pr.requester_id
-			{$where}
-			ORDER BY pr.date_created DESC
-		";
+			FROM %i pr
+			LEFT JOIN %i r
+				ON r.id = pr.requester_id
+			WHERE 1=1',
+			$wpdb->prefix . 'intercessor_prayer_requests',
+			$wpdb->prefix . 'intercessor_requesters'
+		);
 
-		$sql_rows .= $this->db->prepare( ' LIMIT %d OFFSET %d', self::PER_PAGE, $offset );
+		if ( 'all_time' !== $period ) {
+			$sql_rows .= $wpdb->prepare(
+				' AND pr.date_created >= %s AND pr.date_created < %s',
+				$after,
+				$before
+			);
+		}
 
-		$rows = $this->db->get_results( $sql_rows, ARRAY_A );
+		if ( '' !== $filter_status ) {
+			$sql_rows .= $wpdb->prepare(
+				' AND pr.status = %s',
+				$filter_status
+			);
+		}
+
+		$sql_rows .= ' ORDER BY pr.date_created DESC';
+
+		$sql_rows .= $wpdb->prepare(
+			' LIMIT %d OFFSET %d',
+			self::PER_PAGE,
+			$offset
+		);
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results( $sql_rows, ARRAY_A );
 
 		// ─────────────────────────────────────────
 		// META
@@ -109,7 +126,9 @@ final class Activity_View {
 
 		$total_pages = (int) ceil( $total / self::PER_PAGE );
 
-		$date_fmt = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+		$date_format = get_option( 'date_format' );
+		$time_format = get_option( 'time_format' );
+		$date_fmt    = $date_format . ' ' . $time_format;
 
 		$base_url = add_query_arg(
 			array(
@@ -120,21 +139,29 @@ final class Activity_View {
 			admin_url( 'admin.php' )
 		);
 
-		$statuses      = array( '', 'pending', 'approved', 'rejected', 'archived', 'private' );
+		$statuses = array(
+			'',
+			'pending',
+			'approved',
+			'rejected',
+			'archived',
+			'private',
+		);
+
 		$status_labels = array(
 			''         => esc_html__( 'All statuses', 'intercessor' ),
-			'pending'  => esc_html__( 'Pending',  'intercessor' ),
+			'pending'  => esc_html__( 'Pending', 'intercessor' ),
 			'approved' => esc_html__( 'Approved', 'intercessor' ),
 			'rejected' => esc_html__( 'Rejected', 'intercessor' ),
 			'archived' => esc_html__( 'Archived', 'intercessor' ),
-			'private'  => esc_html__( 'Private',  'intercessor' ),
+			'private'  => esc_html__( 'Private', 'intercessor' ),
 		);
+
 		?>
 
 		<div class="ipr-report-section">
 			<div class="ipr-report-toolbar">
 				<h3 class="ipr-report-section__title" style="margin:0;">
-					// translators: %d: total number of prayer requests matching current filter
 					<?php printf(
 						/* translators: %d: total count */
 						esc_html( _n( '%d Prayer Request', '%d Prayer Requests', $total, 'intercessor' ) ),

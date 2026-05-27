@@ -11,6 +11,7 @@
  * @package Intercessor
  * @since   1.0.1
  */
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template-scoped variables included via require, not true globals
 
 declare(strict_types=1);
 
@@ -20,21 +21,21 @@ if ( ! current_user_can( 'view_prayer_reports' ) ) {
 	wp_die( esc_html__( 'You do not have permission to access this page.', 'intercessor' ) );
 }
 
-$intercessor_requester  = $intercessor_view->get_requester();
-$intercessor_active_tab = $intercessor_view->get_active_tab();
-$intercessor_tabs       = $intercessor_view->get_tabs();
-$intercessor_back_url   = admin_url( 'admin.php?page=intercessor-requesters' );
+$requester  = $view->get_requester();
+$active_tab = $view->get_active_tab();
+$tabs       = $view->get_tabs();
+$back_url   = admin_url( 'admin.php?page=intercessor-requesters' );
 ?>
 <div class="wrap intercessor-detail">
 
 	<h1 class="wp-heading-inline">
-		<?php echo esc_html( $intercessor_requester->get_display_name() ); ?>
-		<span class="intercessor-status <?php echo esc_attr( $intercessor_requester->status ); ?>">
-			<?php echo esc_html( ucfirst( $intercessor_requester->status ) ); ?>
+		<?php echo esc_html( $requester->get_display_name() ); ?>
+		<span class="intercessor-status <?php echo esc_attr( $requester->status ); ?>">
+			<?php echo esc_html( ucfirst( $requester->status ) ); ?>
 		</span>
 	</h1>
 
-	<a href="<?php echo esc_url( $intercessor_back_url ); ?>" class="page-title-action">
+	<a href="<?php echo esc_url( $back_url ); ?>" class="page-title-action">
 		<?php esc_html_e( '&larr; All Requesters', 'intercessor' ); ?>
 	</a>
 
@@ -55,27 +56,27 @@ $intercessor_back_url   = admin_url( 'admin.php?page=intercessor-requesters' );
 
 	<?php // ── WordPress-style nav tabs ────────────────────────────────── ?>
 	<nav class="nav-tab-wrapper" aria-label="<?php esc_attr_e( 'Requester details tabs', 'intercessor' ); ?>">
-		<?php foreach ( $intercessor_tabs as $intercessor_slug => $intercessor_tab ) :
-			$intercessor_is_active  = $intercessor_slug === $intercessor_active_tab;
-			$intercessor_tab_url    = $intercessor_view->tab_url( $intercessor_slug );
-			$intercessor_tab_class  = 'nav-tab' . ( $intercessor_is_active ? ' nav-tab-active' : '' );
-			$intercessor_is_delete  = $intercessor_slug === 'delete';
+		<?php foreach ( $tabs as $slug => $tab ) :
+			$is_active  = $slug === $active_tab;
+			$tab_url    = $view->tab_url( $slug );
+			$tab_class  = 'nav-tab' . ( $is_active ? ' nav-tab-active' : '' );
+			$is_delete  = $slug === 'delete';
 		?>
-			<a href="<?php echo esc_url( $intercessor_tab_url ); ?>"
-			   class="<?php echo esc_attr( $intercessor_tab_class ); ?>"
-			   <?php if ( $intercessor_is_active ) : ?>aria-current="page"<?php endif; ?>
-			   style="<?php echo $intercessor_is_delete ? 'color:#d63638;' : ''; ?>">
-				<span class="dashicons <?php echo esc_attr( $intercessor_tab['dashicon'] ); ?>"
+			<a href="<?php echo esc_url( $tab_url ); ?>"
+			   class="<?php echo esc_attr( $tab_class ); ?>"
+			   <?php if ( $is_active ) : ?>aria-current="page"<?php endif; ?>
+			   style="<?php echo $is_delete ? 'color:#d63638;' : ''; ?>">
+				<span class="dashicons <?php echo esc_attr( $tab['dashicon'] ); ?>"
 				      style="vertical-align:text-bottom;margin-right:4px;font-size:1.1em;"
 				      aria-hidden="true"></span>
-				<?php echo esc_html( $intercessor_tab['label'] ); ?>
+				<?php echo esc_html( $tab['label'] ); ?>
 			</a>
 		<?php endforeach; ?>
 	</nav>
 
 	<?php // ── Tab content ──────────────────────────────────────────────── ?>
 	<div class="intercessor-tab-content" style="margin-top: 1.25rem;">
-		<?php $intercessor_view->render_tab_content(); ?>
+		<?php $view->render_tab_content(); ?>
 	</div>
 
 </div>

@@ -8,6 +8,7 @@
  * @package Intercessor
  * @since   1.0.1
  */
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template-scoped variables included via require, not true globals
 
 declare(strict_types=1);
 
@@ -16,13 +17,13 @@ defined( 'ABSPATH' ) || exit;
 use Intercessor\Admin\Requester_View;
 
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-$intercessor_requester_id = isset( $_GET['requester_id'] ) ? absint( $_GET['requester_id'] ) : 0;
+$requester_id = isset( $_GET['requester_id'] ) ? absint( $_GET['requester_id'] ) : 0;
 
-if ( $intercessor_requester_id > 0 ) {
-	$intercessor_view = Requester_View::from_request();
+if ( $requester_id > 0 ) {
+	$view = Requester_View::from_request();
 
-	if ( $intercessor_view ) {
-		require __DIR__ . '/requester-detail.php'; // $intercessor_view is in scope for requester-detail.php
+	if ( $view ) {
+		require __DIR__ . '/requester-detail.php';
 		return;
 	}
 

@@ -3,7 +3,7 @@
  * Cron handler for prayer-count notification emails.
  *
  * @package Intercessor
- * @since   1.1.0
+ * @since   1.0.0
  */
 
 declare(strict_types=1);
@@ -46,7 +46,7 @@ use Intercessor\Database\Row\Requester;
  * { prayer_request_id => last_notified_count } so an email is sent only
  * when the count has grown since the previous notification.
  *
- * @since   1.1.0
+ * @since   1.0.0
  * @package Intercessor
  */
 final class Cron_Handler {
@@ -58,7 +58,7 @@ final class Cron_Handler {
 	/**
 	 * Name of the WordPress cron event fired on each scheduled run.
 	 *
-	 * @since 1.1.0
+	 * @since 1.0.0
 	 * @var   string
 	 */
 	public const EVENT_HOOK = 'intercessor_pray_notification';
@@ -66,7 +66,7 @@ final class Cron_Handler {
 	/**
 	 * Option key that stores the UTC timestamp of the last completed run.
 	 *
-	 * @since 1.1.0
+	 * @since 1.0.0
 	 * @var   string
 	 */
 	public const LAST_RUN_OPTION = 'intercessor_cron_last_run';
@@ -74,7 +74,7 @@ final class Cron_Handler {
 	/**
 	 * Option key that stores a JSON map of { request_id => notified_count }.
 	 *
-	 * @since 1.1.0
+	 * @since 1.0.0
 	 * @var   string
 	 */
 	public const NOTIFIED_OPTION = 'intercessor_cron_notified';
@@ -82,7 +82,7 @@ final class Cron_Handler {
 	/**
 	 * Supported frequency identifiers.
 	 *
-	 * @since 1.1.0
+	 * @since 1.0.0
 	 * @var   string[]
 	 */
 	public const FREQUENCIES = array( 'daily', 'weekly', 'monthly' );
@@ -96,7 +96,7 @@ final class Cron_Handler {
 	 *
 	 * Call once from Plugin::init().
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function register(): void {
@@ -118,7 +118,7 @@ final class Cron_Handler {
 	 * appends 'weekly' (7 days) and 'monthly' (30 days) so
 	 * wp_schedule_event() can use them.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @param  array $schedules Existing cron schedule definitions.
 	 * @return array            Modified schedules with weekly and monthly added.
 	 */
@@ -151,7 +151,7 @@ final class Cron_Handler {
 	 * based on the admin-configured send time (hour + minute in UTC) and
 	 * schedules the event when it is not already registered.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public static function schedule(): void {
@@ -172,7 +172,7 @@ final class Cron_Handler {
 	 * Called from Deactivator::deactivate(). Uses wp_clear_scheduled_hook()
 	 * rather than wp_unschedule_event() so all occurrences are removed.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public static function unschedule(): void {
@@ -186,7 +186,7 @@ final class Cron_Handler {
 	 * and send-time values in the old and new option arrays; reschedules only
 	 * when at least one has changed.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @param  mixed $old_value The option value before the update.
 	 * @param  mixed $new_value The option value after the update.
 	 * @return void
@@ -221,7 +221,7 @@ final class Cron_Handler {
 	 *
 	 * Fires on the 'intercessor_pray_notification' cron event.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function run(): void {
@@ -232,7 +232,7 @@ final class Cron_Handler {
 		/**
 		 * Fires immediately before the prayer-count notification batch runs.
 		 *
-		 * @since 1.1.0
+		 * @since 1.0.0
 		 */
 		do_action( 'intercessor_before_pray_notification_run' );
 
@@ -291,7 +291,7 @@ final class Cron_Handler {
 		/**
 		 * Fires immediately after the notification batch completes.
 		 *
-		 * @since 1.1.0
+		 * @since 1.0.0
 		 * @param array $updated  Map of { request_id => notified_count } after this run.
 		 */
 		do_action( 'intercessor_after_pray_notification_run', $updated );
@@ -308,7 +308,7 @@ final class Cron_Handler {
 	 * applies the configured From name/address via the 'wp_mail_from' and
 	 * 'wp_mail_from_name' filters, and calls wp_mail().
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @param  Prayer_Request $request   The prayer request row.
 	 * @param  Requester      $requester The requester row (must have a non-empty email).
 	 * @param  int            $total     Current total number of times prayed for.
@@ -327,7 +327,7 @@ final class Cron_Handler {
 		/**
 		 * Filter the notification email recipient.
 		 *
-		 * @since 1.1.0
+		 * @since 1.0.0
 		 * @param string         $to        Sanitized email address.
 		 * @param Prayer_Request $request   Prayer request row.
 		 * @param Requester      $requester Requester row.
@@ -337,7 +337,7 @@ final class Cron_Handler {
 		/**
 		 * Filter the notification email subject.
 		 *
-		 * @since 1.1.0
+		 * @since 1.0.0
 		 * @param string         $subject Subject line.
 		 * @param Prayer_Request $request Prayer request row.
 		 * @param int            $total   Current prayed count.
@@ -347,7 +347,7 @@ final class Cron_Handler {
 		/**
 		 * Filter the notification email body.
 		 *
-		 * @since 1.1.0
+		 * @since 1.0.0
 		 * @param string         $body      Plain-text message body.
 		 * @param Prayer_Request $request   Prayer request row.
 		 * @param Requester      $requester Requester row.
@@ -365,7 +365,7 @@ final class Cron_Handler {
 	/**
 	 * Compose the subject line for a prayer-count notification email.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @param  Prayer_Request $request The prayer request row.
 	 * @return string                  Translated subject line.
 	 */
@@ -386,7 +386,7 @@ final class Cron_Handler {
 	 * every email client without additional HTML processing. Calling code
 	 * may replace this via the 'intercessor_pray_notification_body' filter.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @param  Prayer_Request $request   The prayer request row.
 	 * @param  Requester      $requester The requester row.
 	 * @param  int            $total     Total number of times the request has been prayed for.
@@ -443,7 +443,7 @@ final class Cron_Handler {
 	 * Applies the 'From' name and address from the plugin's email settings,
 	 * falling back to WordPress site defaults when the settings are empty.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string[] Array of raw header strings for wp_mail().
 	 */
 	public function email_headers(): array {
@@ -463,7 +463,7 @@ final class Cron_Handler {
 	/**
 	 * Return whether the prayer-count cron notification is enabled in settings.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return bool True when enabled.
 	 */
 	public static function is_enabled(): bool {
@@ -476,7 +476,7 @@ final class Cron_Handler {
 	 * Maps the 'cron_frequency' setting value to a WordPress cron schedule
 	 * identifier. Falls back to 'daily' for any unrecognised value.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string One of: 'daily', 'weekly', 'monthly'.
 	 */
 	public static function recurrence(): string {
@@ -492,7 +492,7 @@ final class Cron_Handler {
 	 * time-of-day. If today's scheduled time has already passed, the timestamp
 	 * is rolled forward to the same time tomorrow.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return int Unix timestamp (UTC) for the first scheduled run.
 	 */
 	public static function next_run_timestamp(): int {
@@ -512,7 +512,7 @@ final class Cron_Handler {
 	 * Returns an associative array keyed by prayer_request_id (int cast)
 	 * with the last-notified total count as the value.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return array<int, int> Map of { prayer_request_id => last_notified_count }.
 	 */
 	private static function get_notified_map(): array {

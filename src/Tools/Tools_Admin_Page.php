@@ -3,7 +3,7 @@
  * Tools admin page controller.
  *
  * @package Intercessor
- * @since   1.1.0
+ * @since   1.0.0
  */
 declare(strict_types=1);
 
@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
  * and each importer gets admin_post_intercessor_import_{slug}, all registered
  * during Admin_Loader::register() so POST requests fire before any output.
  *
- * @since   1.1.0
+ * @since   1.0.0
  * @package Intercessor
  */
 final class Tools_Admin_Page {
@@ -32,7 +32,7 @@ final class Tools_Admin_Page {
 	 * Add new exporters here to make them available on the Tools page without
 	 * touching any other class.
 	 *
-	 * @since 1.1.0
+	 * @since 1.0.0
 	 * @var   array<string, class-string<Abstract_Exporter>>
 	 */
 	private const EXPORTERS = array(
@@ -64,7 +64,7 @@ final class Tools_Admin_Page {
 	 * the pattern intercessor_export_{slug}; import actions follow
 	 * intercessor_import_{slug}.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function register(): void {
@@ -93,7 +93,7 @@ final class Tools_Admin_Page {
 	 * The active tab is driven by the 'tab' GET parameter. Defaults to 'export'.
 	 * Both tabs share the same page header and nav-tab-wrapper.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function render(): void {
@@ -118,15 +118,15 @@ final class Tools_Admin_Page {
 		return array(
 			array(
 				'slug'        => 'prayer_requests',
-				'label'       => __( 'Prayer Requests', 'intercessor' ),
-				'description' => __( 'Import prayer requests from a CSV file. Each row creates one request and finds or creates the requester by email.', 'intercessor' ),
+				'label'       => esc_html__( 'Prayer Requests', 'intercessor' ),
+				'description' => esc_html__( 'Import prayer requests from a CSV file. Each row creates one request and finds or creates the requester by email.', 'intercessor' ),
 				'columns'     => array( 'Subject', 'Status', 'Requester Email', 'Prayer Content (opt)', 'Requester Name (opt)', 'Anonymous (opt)', 'Public (opt)', 'Moderator Note (opt)' ),
 				'importer'    => new Prayer_Requests_Importer(),
 			),
 			array(
 				'slug'        => 'settings',
-				'label'       => __( 'Plugin Settings', 'intercessor' ),
-				'description' => __( 'Restore Intercessor settings from a previously exported CSV. Only known setting keys are applied; unknown keys are skipped.', 'intercessor' ),
+				'label'       => esc_html__( 'Plugin Settings', 'intercessor' ),
+				'description' => esc_html__( 'Restore Intercessor settings from a previously exported CSV. Only known setting keys are applied; unknown keys are skipped.', 'intercessor' ),
 				'columns'     => array( 'Setting Key', 'Value', 'Section (ignored)' ),
 				'importer'    => new Settings_Importer(),
 			),
@@ -140,7 +140,7 @@ final class Tools_Admin_Page {
 	 * and an instantiated exporter object whose nonceField() method is called
 	 * in the template to embed the form security token.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return array<int, array{slug: string, label: string, description: string, exporter: AbstractExporter}>
 	 *     Indexed list of export card data. Each element contains:
 	 *     - slug        (string)           Export action slug.
@@ -152,26 +152,26 @@ final class Tools_Admin_Page {
 		return array(
 			array(
 				'slug'        => 'settings',
-				'label'       => __( 'Plugin Settings', 'intercessor' ),
-				'description' => __( 'Export all Intercessor settings as a CSV audit snapshot.', 'intercessor' ),
+				'label'       => esc_html__( 'Plugin Settings', 'intercessor' ),
+				'description' => esc_html__( 'Export all Intercessor settings as a CSV audit snapshot.', 'intercessor' ),
 				'exporter'    => new Settings_Exporter(),
 			),
 			array(
 				'slug'        => 'prayer_requests',
-				'label'       => __( 'Prayer Requests', 'intercessor' ),
-				'description' => __( 'Export all prayer requests, including status, requester info, and moderator notes.', 'intercessor' ),
+				'label'       => esc_html__( 'Prayer Requests', 'intercessor' ),
+				'description' => esc_html__( 'Export all prayer requests, including status, requester info, and moderator notes.', 'intercessor' ),
 				'exporter'    => new Prayer_Requests_Exporter(),
 			),
 			array(
 				'slug'        => 'requesters',
-				'label'       => __( 'Requesters', 'intercessor' ),
-				'description' => __( 'Export the full requester database with linked WordPress account details.', 'intercessor' ),
+				'label'       => esc_html__( 'Requesters', 'intercessor' ),
+				'description' => esc_html__( 'Export the full requester database with linked WordPress account details.', 'intercessor' ),
 				'exporter'    => new Requesters_Exporter(),
 			),
 			array(
 				'slug'        => 'prayed_counts',
-				'label'       => __( 'Prayed Counts', 'intercessor' ),
-				'description' => __( 'Export aggregated or detailed "prayed for" interaction data.', 'intercessor' ),
+				'label'       => esc_html__( 'Prayed Counts', 'intercessor' ),
+				'description' => esc_html__( 'Export aggregated or detailed "prayed for" interaction data.', 'intercessor' ),
 				'exporter'    => new Prayed_Counts_Exporter(),
 			),
 		);

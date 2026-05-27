@@ -15,6 +15,7 @@
  * @package Intercessor
  * @since   1.0.0
  */
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template-scoped variables included via require, not true globals
 
 declare(strict_types=1);
 
@@ -46,25 +47,24 @@ defined( 'ABSPATH' ) || exit;
 	// Bulk status update notice.
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	if ( isset( $_GET['bulk_updated'] ) ) :
-		$intercessor_bulk_count  = absint( $_GET['bulk_updated'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$intercessor_bulk_status = isset( $_GET['bulk_status'] ) ? sanitize_key( $_GET['bulk_status'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$intercessor_label      = $intercessor_bulk_status === 'approved' ? __( 'approved', 'intercessor' ) : __( 'rejected', 'intercessor' );
+		$bulkCount  = absint( $_GET['bulk_updated'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$bulkStatus = isset( $_GET['bulk_status'] ) ? sanitize_key( $_GET['bulk_status'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$label      = $bulkStatus === 'approved' ? __( 'approved', 'intercessor' ) : __( 'rejected', 'intercessor' );
 		?>
 		<div class="notice notice-success is-dismissible">
 			<p>
 				<?php
 				echo esc_html(
-					// translators: %s: prayer request subject
 					sprintf(
 						/* translators: 1: count of requests, 2: status label (approved/rejected) */
 						_n(
 							'%1$d request %2$s.',
 							'%1$d requests %2$s.',
-							$intercessor_bulk_count,
+							$bulkCount,
 							'intercessor'
 						),
-						$intercessor_bulk_count,
-						$intercessor_label
+						$bulkCount,
+						$label
 					)
 				);
 				?>
@@ -76,22 +76,21 @@ defined( 'ABSPATH' ) || exit;
 	// Bulk delete notice.
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	if ( isset( $_GET['bulk_deleted'] ) ) :
-		$intercessor_deleted = absint( $_GET['bulk_deleted'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$deleted = absint( $_GET['bulk_deleted'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		?>
 		<div class="notice notice-success is-dismissible">
 			<p>
 				<?php
 				echo esc_html(
-					// translators: %s: prayer request subject
 					sprintf(
 						/* translators: %d: number of deleted requests */
 						_n(
 							'%d request permanently deleted.',
 							'%d requests permanently deleted.',
-							$intercessor_deleted,
+							$deleted,
 							'intercessor'
 						),
-						$intercessor_deleted
+						$deleted
 					)
 				);
 				?>
@@ -103,13 +102,13 @@ defined( 'ABSPATH' ) || exit;
 	// Bulk error notices.
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	if ( isset( $_GET['bulk_error'] ) ) :
-		$intercessor_bulk_error = sanitize_key( $_GET['bulk_error'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$intercessor_error_msg  = $intercessor_bulk_error === 'no_selection'
-			? __( 'Please select at least one request.', 'intercessor' )
-			: __( 'An error occurred with the bulk action.', 'intercessor' );
+		$bulkError = sanitize_key( $_GET['bulk_error'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$errorMsg  = $bulkError === 'no_selection'
+			? esc_html__( 'Please select at least one request.', 'intercessor' )
+			: esc_html__( 'An error occurred with the bulk action.', 'intercessor' );
 		?>
 		<div class="notice notice-warning is-dismissible">
-			<p><?php echo esc_html( $intercessor_error_msg ); ?></p>
+			<p><?php echo esc_html( $errorMsg ); ?></p>
 		</div>
 	<?php endif; ?>
 

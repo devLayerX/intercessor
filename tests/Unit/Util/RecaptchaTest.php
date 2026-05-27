@@ -23,13 +23,13 @@ use PHPUnit\Framework\TestCase;
 class RecaptchaTest extends TestCase {
 
 	protected function setUp(): void {
-		global $__test_options;
-		$__test_options = [];
+		global $intercessor_test_options;
+		$intercessor_test_options = [];
 	}
 
 	private function set_settings( array $settings ): void {
-		global $__test_options;
-		$__test_options['intercessor_settings'] = $settings;
+		global $intercessor_test_options;
+		$intercessor_test_options['intercessor_settings'] = $settings;
 	}
 
 	// -------------------------------------------------------------------------

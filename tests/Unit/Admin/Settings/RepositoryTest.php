@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
  * Tests the settings Repository class.
  *
  * Repository wraps get_option/update_option. The unit test bootstrap provides
- * an in-memory implementation of both via global $__test_options, so no
+ * an in-memory implementation of both via global $intercessor_test_options, so no
  * WordPress install is needed.
  */
 class RepositoryTest extends TestCase {
@@ -26,8 +26,8 @@ class RepositoryTest extends TestCase {
 
 	protected function setUp(): void {
 		// Reset in-memory options store between tests.
-		global $__test_options;
-		$__test_options = [];
+		global $intercessor_test_options;
+		$intercessor_test_options = [];
 
 		$this->repo = new Repository( 'intercessor_test_settings' );
 	}

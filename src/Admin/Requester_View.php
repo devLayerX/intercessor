@@ -3,7 +3,7 @@
  * Controller for the single-requester tabbed detail page.
  *
  * @package Intercessor
- * @since   1.0.1
+ * @since   1.0.0
  */
 
 declare(strict_types=1);
@@ -34,7 +34,7 @@ use Intercessor\Database\Row\Requester;
  * URL scheme:
  *   ?page=intercessor-requesters&requester_id={id}&tab={tab}
  *
- * @since   1.0.1
+ * @since   1.0.0
  * @package Intercessor
  */
 final class Requester_View {
@@ -49,7 +49,7 @@ final class Requester_View {
 	/**
 	 * The resolved requester row.
 	 *
-	 * @since 1.0.1
+	 * @since 1.0.0
 	 * @var   Requester
 	 */
 	private Requester $requester;
@@ -57,7 +57,7 @@ final class Requester_View {
 	/**
 	 * The currently active tab slug.
 	 *
-	 * @since 1.0.1
+	 * @since 1.0.0
 	 * @var   string
 	 */
 	private string $active_tab;
@@ -65,7 +65,7 @@ final class Requester_View {
 	/**
 	 * Ordered tab registry: slug → label/icon metadata.
 	 *
-	 * @since 1.0.1
+	 * @since 1.0.0
 	 * @var   array<string, array{label: string, icon: string, dashicon: string}>
 	 */
 	private array $tabs;
@@ -78,7 +78,7 @@ final class Requester_View {
 	 * Returns null (with a proper wp_die message) when the ID is missing,
 	 * non-numeric, or does not match any row.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @return self|null  Resolved view instance, or null on failure.
 	 */
 	public static function from_request(): ?self {
@@ -108,7 +108,7 @@ final class Requester_View {
 	/**
 	 * Initialise the view with a resolved requester row.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @param  Requester $requester The requester row to display.
 	 */
 	private function __construct( Requester $requester ) {
@@ -122,7 +122,7 @@ final class Requester_View {
 	/**
 	 * Return the resolved requester row.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @return Requester
 	 */
 	public function get_requester(): Requester {
@@ -132,7 +132,7 @@ final class Requester_View {
 	/**
 	 * Return the active tab slug.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @return string
 	 */
 	public function get_active_tab(): string {
@@ -142,7 +142,7 @@ final class Requester_View {
 	/**
 	 * Return the full tab registry.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @return array<string, array{label: string, icon: string, dashicon: string}>
 	 */
 	public function get_tabs(): array {
@@ -152,7 +152,7 @@ final class Requester_View {
 	/**
 	 * Build a tab URL for the given slug, preserving the requester ID.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @param  string $tab Tab slug.
 	 * @return string      Absolute admin URL.
 	 */
@@ -170,7 +170,7 @@ final class Requester_View {
 	/**
 	 * Dispatch rendering to the active tab method.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function render_tab_content(): void {
@@ -200,7 +200,7 @@ final class Requester_View {
 	 * The registry is filtered via 'intercessor_requester_tabs' so third-party
 	 * code or future add-ons can inject additional tabs.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @return array<string, array{label: string, dashicon: string}>
 	 */
 	private function build_tabs(): array {
@@ -230,7 +230,7 @@ final class Requester_View {
 		/**
 		 * Filter the requester detail page tab registry.
 		 *
-		 * @since 1.0.1
+		 * @since 1.0.0
 		 * @param array     $tabs      Ordered tab definitions.
 		 * @param Requester $requester The requester being displayed.
 		 */
@@ -242,7 +242,7 @@ final class Requester_View {
 	 *
 	 * Falls back to DEFAULT_TAB for unknown slugs.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @return string  Validated tab slug.
 	 */
 	private function resolve_active_tab(): string {
@@ -256,64 +256,71 @@ final class Requester_View {
 	/**
 	 * Render the Overview tab — profile card and account details.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @return void
 	 */
 	private function render_tab_overview(): void {
 		$r        = $this->requester;
 		$date_fmt = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
 
-		// Ensure requester integrity.
 		$requester_id = isset( $r->id ) ? (int) $r->id : 0;
 
-		// Resolve linked WP user safely.
-		$wp_user = false;
+		// Resolve WP user only if valid.
+		$wp_user = null;
+
 		if ( ! empty( $r->wp_user_id ) && $r->is_linked_to_user() ) {
 			$wp_user = get_user_by( 'id', (int) $r->wp_user_id );
 		}
 
-		// Query counts with sanitized args.
 		$prayer_q = new Prayer_Request_Query();
 
-		$total    = $prayer_q->count_items( array(
+		// Reduce repeated object calls → reuse base args
+		$base_args = array(
 			'requester_id' => $requester_id,
-		) );
+		);
 
-		$pending  = $prayer_q->count_items( array(
-			'requester_id' => $requester_id,
-			'status'       => 'pending',
-		) );
+		$total = $prayer_q->count_items( $base_args );
 
-		$approved = $prayer_q->count_items( array(
-			'requester_id' => $requester_id,
-			'status'       => 'approved',
-		) );
+		$pending = $prayer_q->count_items(
+			$base_args + array( 'status' => 'pending' )
+		);
 
-		// Registration state for the linked WP user.
-		$is_pending_reg = ( $wp_user instanceof WP_User )
+		$approved = $prayer_q->count_items(
+			$base_args + array( 'status' => 'approved' )
+		);
+
+		$is_pending_reg = ( $wp_user instanceof \WP_User )
 			&& \Intercessor\Util\Registration_Handler::is_pending( (int) $wp_user->ID );
 
-		// These GET params are display-only redirect flags appended after a verified action — no state is modified.
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		$reg_resent    = isset( $_GET['reg_resent'] )
-			? (bool) sanitize_key( wp_unslash( $_GET['reg_resent'] ) )
-			: false;
+		// Safely handle query params (consistent WP pattern)
+		$reg_resent = filter_input(
+			INPUT_GET,
+			'reg_resent',
+			FILTER_VALIDATE_BOOL
+		) ?? false;
 
-		$reg_confirmed = isset( $_GET['reg_confirmed'] )
-			? (bool) sanitize_key( wp_unslash( $_GET['reg_confirmed'] ) )
-			: false;
+		$reg_confirmed = filter_input(
+			INPUT_GET,
+			'reg_confirmed',
+			FILTER_VALIDATE_BOOL
+		) ?? false;
 
-		// Whitelist allowed error values (do NOT trust arbitrary strings).
-		$allowed_errors = array( 'expired', 'invalid_token', 'already_confirmed' );
+		$allowed_errors = array(
+			'expired',
+			'invalid_token',
+			'already_confirmed',
+		);
 
-		$reg_error = isset( $_GET['reg_error'] )
-			? sanitize_text_field( wp_unslash( $_GET['reg_error'] ) )
+		$reg_error_input = filter_input( INPUT_GET, 'reg_error', FILTER_UNSAFE_RAW );
+		$reg_error       = is_string( $reg_error_input )
+			? sanitize_key( wp_unslash( $reg_error_input ) )
 			: '';
 
-		$reg_error = in_array( $reg_error, $allowed_errors, true ) ? $reg_error : '';
-		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+		if ( ! in_array( $reg_error, $allowed_errors, true ) ) {
+			$reg_error = '';
+		}
 		?>
-
+		
 		<?php if ( $reg_resent ) : ?>
 			<div class="notice notice-success is-dismissible"><p>
 				<?php esc_html_e( 'Confirmation email resent.', 'intercessor' ); ?>
@@ -490,7 +497,7 @@ final class Requester_View {
 	/**
 	 * Render the Prayer Requests tab — paginated list of this requester's prayers.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @return void
 	 */
 	private function render_tab_prayers(): void {
@@ -526,7 +533,6 @@ final class Requester_View {
 			<h2 class="intercessor-box__title">
 				<span class="ipr-icon ipr-icon-praying ipr-icon-inline" aria-hidden="true"></span>
 				<?php
-				// translators: %d: total number of prayer requests for this requester
 				printf(
 					/* translators: %d: total number of prayer requests */
 					esc_html( _n( 'Prayer Request (%d)', 'Prayer Requests (%d)', $total_prayers, 'intercessor' ) ),
@@ -611,7 +617,7 @@ final class Requester_View {
 	 * Render the History tab — status-change timeline for all of this
 	 * requester's prayer requests.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @return void
 	 */
 	private function render_tab_history(): void {
@@ -698,7 +704,6 @@ final class Requester_View {
 											<?php endif; ?>
 											<?php if ( $actor ) : ?>
 												<span class="intercessor-timeline-actor">
-													// translators: %s: requester display name
 													<?php printf(
 														/* translators: %s: moderator name */
 														esc_html__( 'by %s', 'intercessor' ),
@@ -743,7 +748,7 @@ final class Requester_View {
 	 *   rn_deleted=1 — requester note was deleted successfully.
 	 *   rn_error=1   — an error occurred.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @return void
 	 */
 	private function render_tab_notes(): void {
@@ -935,7 +940,7 @@ final class Requester_View {
 	/**
 	 * Render the Delete tab — destructive action panel with confirmation checkbox.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @return void
 	 */
 	private function render_tab_delete(): void {
@@ -958,7 +963,6 @@ final class Requester_View {
 					<p>
 						<strong><?php esc_html_e( 'Warning:', 'intercessor' ); ?></strong>
 						<?php
-						// translators: %s: requester display name, %d: number of associated prayer requests
 						printf(
 							/* translators: 1: requester name 2: number of prayer requests */
 							esc_html( _n(
@@ -983,7 +987,6 @@ final class Requester_View {
 					<p>
 						<label>
 							<input type="checkbox" name="confirm_delete" value="1" id="intercessor-delete-confirm" required>
-							// translators: %s: requester display name
 							<?php printf(
 								/* translators: %s: requester name */
 								esc_html__( 'Yes, I want to permanently delete %s.', 'intercessor' ),

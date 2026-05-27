@@ -30,7 +30,7 @@ use Intercessor\Util\Registration_Handler;
  * @since   1.0.0
  * @package Intercessor
  */
-final class Loader {
+final class Plugin {
 
 	/**
 	 * Singleton instance.

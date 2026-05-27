@@ -3,7 +3,7 @@
  * Settings CSV importer.
  *
  * @package Intercessor
- * @since   1.0.2
+ * @since   1.0.0
  */
 
 declare(strict_types=1);
@@ -30,7 +30,7 @@ defined( 'ABSPATH' ) || exit;
  * saved values unchanged. To fully reset to defaults, use Settings → Advanced →
  * Reset to Defaults (not yet implemented; this importer does not offer that).
  *
- * @since   1.0.2
+ * @since   1.0.0
  * @package Intercessor
  */
 final class Settings_Importer extends Abstract_Importer {
@@ -41,7 +41,7 @@ final class Settings_Importer extends Abstract_Importer {
 	 * Populated lazily in known_keys() to avoid rebuilding the schema multiple
 	 * times when process_row() is called once per CSV row.
 	 *
-	 * @since 1.0.2
+	 * @since 1.0.0
 	 * @var   array<string, string>|null  Map of key → field type (e.g. 'checkbox').
 	 */
 	private ?array $known_keys = null;
@@ -49,7 +49,7 @@ final class Settings_Importer extends Abstract_Importer {
 	/**
 	 * Return the import key used for nonce actions and hook names.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return string
 	 */
 	protected function import_key(): string {
@@ -62,7 +62,7 @@ final class Settings_Importer extends Abstract_Importer {
 	 * Matches the three-column format produced by Settings_Exporter:
 	 * Setting Key, Value, Section.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return string[]
 	 */
 	protected function required_columns(): array {
@@ -77,7 +77,7 @@ final class Settings_Importer extends Abstract_Importer {
 	 * option write happens after all rows are processed, not per-row, to
 	 * avoid many individual update_option() calls.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  array<string, string> $row  Associative row keyed by CSV header.
 	 * @param  int                   $line 1-based line number for error messages.
 	 * @return void
@@ -125,7 +125,7 @@ final class Settings_Importer extends Abstract_Importer {
 	 *
 	 * Written to the database in a single update_option() call at the end.
 	 *
-	 * @since 1.0.2
+	 * @since 1.0.0
 	 * @var   array<string, mixed>
 	 */
 	private array $pending = array();
@@ -138,7 +138,7 @@ final class Settings_Importer extends Abstract_Importer {
 	 * map into the live 'intercessor_settings' option in a single write so
 	 * keys absent from the CSV keep their existing values unchanged.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  array{imported:int, skipped:int, failed:int, errors:string[]} $result
 	 * @return void
 	 */
@@ -160,7 +160,7 @@ final class Settings_Importer extends Abstract_Importer {
 	 * tabs, sections, and fields to extract every key–type pair. The result is
 	 * cached on the instance so the schema is only traversed once per import.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return array<string, string>  Map of setting key → field type string.
 	 */
 	private function known_keys(): array {
@@ -247,7 +247,7 @@ final class Settings_Importer extends Abstract_Importer {
 	 * expects checkbox fields as '1' (checked) or '' (unchecked). Text, email,
 	 * and number fields are returned as-is.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string $value Raw CSV cell value.
 	 * @param  string $type  Field type from the schema (e.g. 'checkbox').
 	 * @return string        Value suitable for passing to sanitize_value().
@@ -272,7 +272,7 @@ final class Settings_Importer extends Abstract_Importer {
 	 * Routes through the same type-switch as Sanitizer::sanitize() to guarantee
 	 * the imported value is identical in type and format to one saved via the UI.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string $key   Setting key (for context).
 	 * @param  string $value Raw (possibly reversed) value.
 	 * @param  string $type  Field type from the schema.

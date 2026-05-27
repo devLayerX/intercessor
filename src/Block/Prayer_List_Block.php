@@ -64,6 +64,26 @@ final class Prayer_List_Block {
 		$showAuthor = (bool) ( $attributes['showAuthor'] ?? Settings::get( 'show_requester_name', true ) );
 		$status = sanitize_key( $attributes['status'] ?? 'approved' );
 
+		// Ensure the data-carrier handle exists (may not be registered when the
+		// block lives in a reusable block, FSE template, or query loop).
+		if ( ! wp_script_is( 'intercessor-public', 'registered' ) ) {
+			wp_register_script(
+				'intercessor-public',
+				'', // no src — data carrier only.
+				array(),
+				INTERCESSOR_VERSION,
+				true
+			);
+		}
+
+		// Directly enqueue the data-carrier handle so the wp_add_inline_script()
+		// call in prayer-list.php (which injects window.intercessorPray) is
+		// guaranteed to be printed. Relying on the dependency chain alone is not
+		// sufficient when has_block() returned false during wp_enqueue_scripts.
+		wp_enqueue_script( 'intercessor-public' );
+		wp_enqueue_script( 'intercessor-prayer-list' );
+		wp_enqueue_style( 'intercessor-public' );
+
 		// 'private' requests are never shown publicly regardless of the
 		// block attribute — force back to 'approved' for non-admin callers.
 		if ( $status === 'private' && ! current_user_can( 'edit_prayers' ) ) {

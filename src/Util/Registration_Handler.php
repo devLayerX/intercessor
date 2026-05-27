@@ -3,7 +3,7 @@
  * User registration handler for prayer form account creation.
  *
  * @package Intercessor
- * @since   1.0.2
+ * @since   1.0.0
  */
 
 declare(strict_types=1);
@@ -42,7 +42,7 @@ use Intercessor\Roles;
  *
  * Confirmation URL query parameter: intercessor_confirm_email={token}
  *
- * @since   1.0.2
+ * @since   1.0.0
  * @package Intercessor
  */
 final class Registration_Handler {
@@ -80,7 +80,7 @@ final class Registration_Handler {
 	 * already saved at this point, so the user is informed their prayer was
 	 * received but account creation failed).
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string $email      Sanitized email from the prayer form.
 	 * @param  string $first_name First name.
 	 * @param  string $last_name  Last name.
@@ -199,7 +199,7 @@ final class Registration_Handler {
 	 * token, and if valid removes the pending flag before redirecting back to
 	 * the source page (where the prayer form lives) with a status query arg.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public static function handle_confirmation(): void {
@@ -247,7 +247,7 @@ final class Registration_Handler {
 		/**
 		 * Fires after a requester's email address has been confirmed.
 		 *
-		 * @since 1.0.2
+		 * @since 1.0.0
 		 * @param int $user_id Confirmed WordPress user ID.
 		 */
 		do_action( 'intercessor_email_confirmed', $user_id );
@@ -263,7 +263,7 @@ final class Registration_Handler {
 	 * Tries first_name.last_name, then first_name, then the local part of
 	 * the email. Appends an incrementing suffix until the username is unique.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string $email      Email address.
 	 * @param  string $first_name First name.
 	 * @param  string $last_name  Last name.
@@ -300,7 +300,7 @@ final class Registration_Handler {
 	/**
 	 * Generate a cryptographically random 64-character hexadecimal token.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return string 64-character hex string.
 	 */
 	private static function generate_token(): string {
@@ -310,7 +310,7 @@ final class Registration_Handler {
 	/**
 	 * Build the email confirmation URL for a given token.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string $token Confirmation token.
 	 * @return string        Absolute URL.
 	 */
@@ -325,7 +325,7 @@ final class Registration_Handler {
 	/**
 	 * Send the account confirmation email to the new user.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  int    $user_id    WordPress user ID.
 	 * @param  string $email      Recipient email address.
 	 * @param  string $first_name First name for greeting.
@@ -372,7 +372,7 @@ final class Registration_Handler {
 		/**
 		 * Filter the confirmation email before it is sent.
 		 *
-		 * @since 1.0.2
+		 * @since 1.0.0
 		 * @param array  $args    Array of email arguments: to, subject, message, headers.
 		 * @param int    $user_id WordPress user ID of the new account.
 		 */
@@ -389,7 +389,7 @@ final class Registration_Handler {
 	/**
 	 * Remove confirmation token meta keys from a user record.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  int $user_id WordPress user ID.
 	 * @return void
 	 */
@@ -405,7 +405,7 @@ final class Registration_Handler {
 	 * registered — stored in user meta during account creation. Falls back to
 	 * home_url('/') when the stored URL is empty.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string $status     One of 'confirmed', 'invalid', 'expired'.
 	 * @param  string $source_url Previously stored source page URL (may be empty).
 	 * @return void
@@ -431,7 +431,7 @@ final class Registration_Handler {
 	/**
 	 * Return true when a given user has a pending email confirmation.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  int $user_id WordPress user ID.
 	 * @return bool
 	 */
@@ -445,7 +445,7 @@ final class Registration_Handler {
 	 * Used by admin handlers when an admin manually triggers a resend.
 	 * Overwrites the existing token (invalidating the old confirmation link).
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  int    $user_id    WordPress user ID.
 	 * @param  string $email      Recipient email address.
 	 * @param  string $first_name First name for the greeting.

@@ -3,7 +3,7 @@
  * Abstract CSV importer base class.
  *
  * @package Intercessor
- * @since   1.0.2
+ * @since   1.0.0
  */
 
 declare(strict_types=1);
@@ -35,7 +35,7 @@ use Intercessor\Http\Request;
  * registered by Tools_Admin_Page::register(). dispatch() is the single entry
  * point called from that handler.
  *
- * @since   1.0.2
+ * @since   1.0.0
  * @package Intercessor
  */
 abstract class Abstract_Importer {
@@ -67,7 +67,7 @@ abstract class Abstract_Importer {
 	 * Used to build the nonce action and the admin_post hook name. Must match
 	 * the key used in Tools_Admin_Page::IMPORTERS.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return string  e.g. 'prayer_requests' or 'settings'.
 	 */
 	abstract protected function import_key(): string;
@@ -78,7 +78,7 @@ abstract class Abstract_Importer {
 	 * The import is aborted and an error shown when the uploaded file's first
 	 * row does not contain all of these values (extra columns are ignored).
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return string[] Expected header values, case-sensitive.
 	 */
 	abstract protected function required_columns(): array;
@@ -91,7 +91,7 @@ abstract class Abstract_Importer {
 	 * should increment $this->imported, $this->skipped, or $this->failed and
 	 * optionally push to $this->errors to explain why a row was skipped/failed.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  array<string, string> $row  Associative row from the parsed CSV.
 	 * @param  int                   $line 1-based line number (including header).
 	 * @return void
@@ -103,7 +103,7 @@ abstract class Abstract_Importer {
 	/**
 	 * Return the nonce action string for this importer.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return string
 	 */
 	protected function nonce_action(): string {
@@ -116,7 +116,7 @@ abstract class Abstract_Importer {
 	 * Defaults to 'manage_prayer_settings'. Override to restrict to a different
 	 * capability.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return string
 	 */
 	protected function required_capability(): string {
@@ -131,7 +131,7 @@ abstract class Abstract_Importer {
 	 * Called from the admin_post handler registered by Tools_Admin_Page. Never
 	 * returns — always ends with wp_safe_redirect() + exit.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function dispatch(): void {
@@ -157,7 +157,7 @@ abstract class Abstract_Importer {
 	 * is redirected back to the Tools page. The default implementation is a
 	 * no-op.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  array{imported:int, skipped:int, failed:int, errors:string[]} $result
 	 * @return void
 	 */
@@ -168,7 +168,7 @@ abstract class Abstract_Importer {
 	/**
 	 * Return an HTML nonce hidden-input field for embedding in import forms.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return string HTML <input type="hidden"> element.
 	 */
 	public function nonce_field(): string {
@@ -180,7 +180,7 @@ abstract class Abstract_Importer {
 	/**
 	 * Halt with wp_die() when the current user lacks the required capability.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return void
 	 */
 	private function check_capability(): void {
@@ -195,7 +195,7 @@ abstract class Abstract_Importer {
 	/**
 	 * Halt with wp_die() when the posted nonce is absent or invalid.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return void
 	 */
 	private function verify_nonce(): void {
@@ -212,15 +212,14 @@ abstract class Abstract_Importer {
 	 * MIME type is text-based. Calls wp_die() with a descriptive message on any
 	 * failure.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return string  Validated temporary file path.
 	 */
 	private function validate_upload(): string {
 		$key = 'import_file';
 
-		// Nonce is verified by verify_nonce() before dispatch() calls validate_upload().
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified upstream in dispatch().
-		if ( empty( $_FILES[ $key ] ) || ! is_array( $_FILES[ $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Upload handlers call verify_nonce() before validating the file.
+		if ( empty( $_FILES[ $key ] ) || ! is_array( $_FILES[ $key ] ) ) {
 			wp_die( esc_html__( 'No file was uploaded.', 'intercessor' ) );
 		}
 
@@ -262,6 +261,7 @@ abstract class Abstract_Importer {
 			);
 		}
 
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 		return (string) $file['tmp_name'];
 	}
 
@@ -274,7 +274,7 @@ abstract class Abstract_Importer {
 	 * the first row as headers, validates that all required_columns() are present,
 	 * then returns every subsequent row as an associative array keyed by header.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string                       $path  Validated temporary file path.
 	 * @return array<int, array<string, string>>    Associative data rows.
 	 */
@@ -335,7 +335,7 @@ abstract class Abstract_Importer {
 	/**
 	 * Iterate all parsed rows and dispatch each one to process_row().
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  array<int, array<string, string>> $rows Parsed associative rows.
 	 * @return array{imported:int, skipped:int, failed:int, errors:string[]}
 	 */
@@ -361,7 +361,7 @@ abstract class Abstract_Importer {
 	 * page load. Errors are passed as a JSON-encoded, URL-encoded string so
 	 * multiple messages survive the redirect without requiring a transient.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  array{imported:int, skipped:int, failed:int, errors:string[]} $result
 	 * @return void
 	 */

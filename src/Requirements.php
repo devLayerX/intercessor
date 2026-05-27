@@ -12,6 +12,7 @@ namespace Intercessor;
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
+
 /**
  * Checks server and WordPress requirements before the plugin boots.
  *

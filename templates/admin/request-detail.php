@@ -8,6 +8,7 @@
  * @package Intercessor
  * @since   1.0.0
  */
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template-scoped variables included via require, not true globals
 
 declare(strict_types=1);
 
@@ -23,12 +24,12 @@ use Intercessor\Database\Query\Requester_Query;
 
 // ── Resolve the prayer request ────────────────────────────────────────────────
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-$intercessor_request_id = isset( $_GET['view'] ) ? absint( $_GET['view'] ) : 0;
+$requestId = isset( $_GET['view'] ) ? absint( $_GET['view'] ) : 0;
 
-$intercessor_prayer_query = new Prayer_Request_Query();
-$intercessor_request = $intercessor_prayer_query->get_item( $intercessor_request_id );
+$prayerQuery = new Prayer_Request_Query();
+$request     = $prayerQuery->get_item( $requestId );
 
-if ( ! $intercessor_request ) {
+if ( ! $request ) {
 	echo '<div class="wrap"><p>';
 	echo esc_html__( 'Prayer request not found.', 'intercessor' );
 	echo '</p><p><a href="' . esc_url( admin_url( 'admin.php?page=intercessor-requests' ) ) . '">';
@@ -38,42 +39,42 @@ if ( ! $intercessor_request ) {
 }
 
 // ── Resolve the requester ─────────────────────────────────────────────────────
-$intercessor_requester_query = new Requester_Query();
-$intercessor_requester = $intercessor_request->requester_id > 0 ? $intercessor_requester_query->get_item( $intercessor_request->requester_id ) : null;
+$requesterQuery = new Requester_Query();
+$requester      = $request->requester_id > 0 ? $requesterQuery->get_item( $request->requester_id ) : null;
 
 // ── Resolve notes ─────────────────────────────────────────────────────────────
-$intercessor_note_query = new Prayer_Note_Query();
-$intercessor_notes = $intercessor_note_query->get_for_request( $intercessor_request_id );
+$noteQuery = new Prayer_Note_Query();
+$notes     = $noteQuery->get_for_request( $requestId );
 
 // ── Formatting helpers ────────────────────────────────────────────────────────
-$intercessor_date_format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+$dateFormat = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
 
-$intercessor_status_labels = array(
-	'pending'  => __( 'Pending',  'intercessor' ),
-	'approved' => __( 'Approved', 'intercessor' ),
-	'rejected' => __( 'Rejected', 'intercessor' ),
-	'archived' => __( 'Archived', 'intercessor' ),
-	'private'  => __( 'Private',  'intercessor' ),
+$statusLabels = array(
+	'pending'  => esc_html__( 'Pending',  'intercessor' ),
+	'approved' => esc_html__( 'Approved', 'intercessor' ),
+	'rejected' => esc_html__( 'Rejected', 'intercessor' ),
+	'archived' => esc_html__( 'Archived', 'intercessor' ),
+	'private'  => esc_html__( 'Private',  'intercessor' ),
 );
 
-$intercessor_back_url = admin_url( 'admin.php?page=intercessor-requests' );
+$backUrl = admin_url( 'admin.php?page=intercessor-requests' );
 ?>
 <div class="wrap intercessor-detail">
 
 	<h1 class="wp-heading-inline">
 		<?php esc_html_e( 'Prayer Request', 'intercessor' ); ?>
-		<span class="intercessor-status <?php echo esc_attr( $intercessor_request->status ); ?>">
-			<?php echo esc_html( $intercessor_status_labels[ $intercessor_request->status ] ?? ucfirst( $intercessor_request->status ) ); ?>
+		<span class="intercessor-status <?php echo esc_attr( $request->status ); ?>">
+			<?php echo esc_html( $statusLabels[ $request->status ] ?? ucfirst( $request->status ) ); ?>
 		</span>
 	</h1>
 
-	<a href="<?php echo esc_url( $intercessor_back_url ); ?>" class="page-title-action">
+	<a href="<?php echo esc_url( $backUrl ); ?>" class="page-title-action">
 		<?php esc_html_e( '&larr; All Requests', 'intercessor' ); ?>
 	</a>
 
 	<hr class="wp-header-end">
 
-	<?php if ( $intercessor_request->is_private_status() ) : ?>
+	<?php if ( $request->is_private_status() ) : ?>
 		<div class="notice notice-warning inline">
 			<p>
 				<strong>
@@ -126,62 +127,62 @@ $intercessor_back_url = admin_url( 'admin.php?page=intercessor-requests' );
 				<table class="intercessor-detail-table">
 					<tr>
 						<th><?php esc_html_e( 'ID', 'intercessor' ); ?></th>
-						<td><?php echo absint( $intercessor_request->id ); ?></td>
+						<td><?php echo absint( $request->id ); ?></td>
 					</tr>
 					<tr>
 						<th><?php esc_html_e( 'Subject', 'intercessor' ); ?></th>
-						<td><strong><?php echo esc_html( $intercessor_request->subject ); ?></strong></td>
+						<td><strong><?php echo esc_html( $request->subject ); ?></strong></td>
 					</tr>
 					<tr>
 						<th><?php esc_html_e( 'Status', 'intercessor' ); ?></th>
 						<td>
-							<span class="intercessor-status <?php echo esc_attr( $intercessor_request->status ); ?>">
-								<?php echo esc_html( $intercessor_status_labels[ $intercessor_request->status ] ?? ucfirst( $intercessor_request->status ) ); ?>
+							<span class="intercessor-status <?php echo esc_attr( $request->status ); ?>">
+								<?php echo esc_html( $statusLabels[ $request->status ] ?? ucfirst( $request->status ) ); ?>
 							</span>
 						</td>
 					</tr>
 					<tr>
 						<th><?php esc_html_e( 'Anonymous', 'intercessor' ); ?></th>
-						<td><?php echo $intercessor_request->is_anonymous() ? esc_html__( 'Yes', 'intercessor' ) : esc_html__( 'No', 'intercessor' ); ?></td>
+						<td><?php echo $request->is_anonymous() ? esc_html__( 'Yes', 'intercessor' ) : esc_html__( 'No', 'intercessor' ); ?></td>
 					</tr>
 					<tr>
 						<th><?php esc_html_e( 'Public', 'intercessor' ); ?></th>
-						<td><?php echo $intercessor_request->is_public() ? esc_html__( 'Yes', 'intercessor' ) : esc_html__( 'No', 'intercessor' ); ?></td>
+						<td><?php echo $request->is_public() ? esc_html__( 'Yes', 'intercessor' ) : esc_html__( 'No', 'intercessor' ); ?></td>
 					</tr>
 					<tr>
 						<th><?php esc_html_e( 'Submitted', 'intercessor' ); ?></th>
-						<td><?php echo esc_html( mysql2date( $intercessor_date_format, $intercessor_request->date_created ) ); ?></td>
+						<td><?php echo esc_html( mysql2date( $dateFormat, $request->date_created ) ); ?></td>
 					</tr>
 					<tr>
 						<th><?php esc_html_e( 'Last Updated', 'intercessor' ); ?></th>
-						<td><?php echo esc_html( mysql2date( $intercessor_date_format, $intercessor_request->date_modified ) ); ?></td>
+						<td><?php echo esc_html( mysql2date( $dateFormat, $request->date_modified ) ); ?></td>
 					</tr>
 				</table>
 
-				<?php if ( $intercessor_requester ) : ?>
+				<?php if ( $requester ) : ?>
 					<h3><?php esc_html_e( 'Requester', 'intercessor' ); ?></h3>
 					<table class="intercessor-detail-table">
 						<tr>
 							<th><?php esc_html_e( 'Name', 'intercessor' ); ?></th>
 							<td>
-								<?php if ( $intercessor_request->is_anonymous() ) : ?>
+								<?php if ( $request->is_anonymous() ) : ?>
 									<em><?php esc_html_e( '[Anonymous]', 'intercessor' ); ?></em>
 								<?php else : ?>
-									<?php echo esc_html( $intercessor_requester->get_display_name() ); ?>
+									<?php echo esc_html( $requester->get_display_name() ); ?>
 								<?php endif; ?>
 							</td>
 						</tr>
 						<tr>
 							<th><?php esc_html_e( 'Email', 'intercessor' ); ?></th>
-							<td><a href="mailto:<?php echo esc_attr( $intercessor_requester->email ); ?>"><?php echo esc_html( $intercessor_requester->email ); ?></a></td>
+							<td><a href="mailto:<?php echo esc_attr( $requester->email ); ?>"><?php echo esc_html( $requester->email ); ?></a></td>
 						</tr>
-						<?php if ( $intercessor_requester->wp_user_id > 0 ) : ?>
+						<?php if ( $requester->wp_user_id > 0 ) : ?>
 							<tr>
 								<th><?php esc_html_e( 'WP User', 'intercessor' ); ?></th>
 								<td>
 									<?php
-									$intercessor_wp_user = get_user_by( 'id', $intercessor_requester->wp_user_id );
-									echo $intercessor_wp_user ? esc_html( $intercessor_wp_user->user_login ) : esc_html__( '[deleted]', 'intercessor' );
+									$wpUser = get_user_by( 'id', $requester->wp_user_id );
+									echo $wpUser ? esc_html( $wpUser->user_login ) : esc_html__( '[deleted]', 'intercessor' );
 									?>
 								</td>
 							</tr>
@@ -191,13 +192,13 @@ $intercessor_back_url = admin_url( 'admin.php?page=intercessor-requests' );
 
 				<h3><?php esc_html_e( 'Prayer Content', 'intercessor' ); ?></h3>
 				<div class="intercessor-request-body">
-					<?php echo wp_kses_post( wpautop( $intercessor_request->content ) ); ?>
+					<?php echo wp_kses_post( wpautop( $request->content ) ); ?>
 				</div>
 
-				<?php if ( $intercessor_request->moderator_note !== '' ) : ?>
+				<?php if ( $request->moderator_note !== '' ) : ?>
 					<h3><?php esc_html_e( 'Moderator Note', 'intercessor' ); ?></h3>
 					<div class="intercessor-moderator-note">
-						<?php echo wp_kses_post( wpautop( $intercessor_request->moderator_note ) ); ?>
+						<?php echo wp_kses_post( wpautop( $request->moderator_note ) ); ?>
 					</div>
 				<?php endif; ?>
 			</div>
@@ -211,7 +212,7 @@ $intercessor_back_url = admin_url( 'admin.php?page=intercessor-requests' );
 
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<input type="hidden" name="action"     value="intercessor_moderate">
-					<input type="hidden" name="request_id" value="<?php echo absint( $intercessor_request->id ); ?>">
+					<input type="hidden" name="request_id" value="<?php echo absint( $request->id ); ?>">
 					<?php wp_nonce_field( 'intercessor_moderate' ); ?>
 
 					<table class="form-table" role="presentation">
@@ -221,9 +222,9 @@ $intercessor_back_url = admin_url( 'admin.php?page=intercessor-requests' );
 							</th>
 							<td>
 								<select name="new_status" id="new_status">
-									<?php foreach ( $intercessor_status_labels as $intercessor_value => $intercessor_label ) : ?>
-										<option value="<?php echo esc_attr( $intercessor_value ); ?>" <?php selected( $intercessor_request->status, $value ); ?>>
-											<?php echo esc_html( $intercessor_label ); ?>
+									<?php foreach ( $statusLabels as $value => $label ) : ?>
+										<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $request->status, $value ); ?>>
+											<?php echo esc_html( $label ); ?>
 										</option>
 									<?php endforeach; ?>
 								</select>
@@ -234,7 +235,7 @@ $intercessor_back_url = admin_url( 'admin.php?page=intercessor-requests' );
 								<label for="moderator_note"><?php esc_html_e( 'Moderator Note', 'intercessor' ); ?></label>
 							</th>
 							<td>
-								<textarea name="moderator_note" id="moderator_note" rows="3" class="large-text"><?php echo esc_textarea( $intercessor_request->moderator_note ); ?></textarea>
+								<textarea name="moderator_note" id="moderator_note" rows="3" class="large-text"><?php echo esc_textarea( $request->moderator_note ); ?></textarea>
 								<p class="description"><?php esc_html_e( 'Internal note saved with this status change. Visible only to admins.', 'intercessor' ); ?></p>
 							</td>
 						</tr>
@@ -264,18 +265,18 @@ $intercessor_back_url = admin_url( 'admin.php?page=intercessor-requests' );
 					</p>
 				<?php else : ?>
 					<ul class="intercessor-notes-list">
-						<?php foreach ( $intercessor_notes as $intercessor_note ) :
-							$intercessor_note_author = get_user_by( 'id', $intercessor_note->author_user_id );
-							$authorName = $intercessor_note_author ? $intercessor_note_author->display_name : __( 'Unknown', 'intercessor' );
+						<?php foreach ( $notes as $note ) :
+							$noteAuthor = get_user_by( 'id', $note->author_user_id );
+							$authorName = $noteAuthor ? $noteAuthor->display_name : esc_html__( 'Unknown', 'intercessor' );
 						?>
-							<li class="intercessor-note <?php echo esc_attr( $intercessor_note->is_private() ? 'intercessor-note--private' : 'intercessor-note--shared' ); ?>">
+							<li class="intercessor-note <?php echo esc_attr( $note->is_private() ? 'intercessor-note--private' : 'intercessor-note--shared' ); ?>">
 
 								<div class="intercessor-note__meta">
 									<span class="intercessor-note__author"><?php echo esc_html( $authorName ); ?></span>
 									<span class="intercessor-note__date">
-										<?php echo esc_html( mysql2date( $intercessor_date_format, $intercessor_note->date_created ) ); ?>
+										<?php echo esc_html( mysql2date( $dateFormat, $note->date_created ) ); ?>
 									</span>
-									<?php if ( $intercessor_note->is_private() ) : ?>
+									<?php if ( $note->is_private() ) : ?>
 										<span class="intercessor-note__badge intercessor-note__badge--private">
 											<?php esc_html_e( 'Private', 'intercessor' ); ?>
 										</span>
@@ -287,15 +288,15 @@ $intercessor_back_url = admin_url( 'admin.php?page=intercessor-requests' );
 								</div>
 
 								<div class="intercessor-note__body">
-									<?php echo wp_kses_post( wpautop( $intercessor_note->content ) ); ?>
+									<?php echo wp_kses_post( wpautop( $note->content ) ); ?>
 								</div>
 
 								<div class="intercessor-note__actions">
 									<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"
 										  onsubmit="return confirm('<?php echo esc_js( __( 'Delete this note? This cannot be undone.', 'intercessor' ) ); ?>')">
 										<input type="hidden" name="action"     value="intercessor_delete_note">
-										<input type="hidden" name="note_id"    value="<?php echo absint( $intercessor_note->id ); ?>">
-										<input type="hidden" name="request_id" value="<?php echo absint( $intercessor_request_id ); ?>">
+										<input type="hidden" name="note_id"    value="<?php echo absint( $note->id ); ?>">
+										<input type="hidden" name="request_id" value="<?php echo absint( $requestId ); ?>">
 										<?php wp_nonce_field( 'intercessor_delete_note' ); ?>
 										<button type="submit" class="button-link intercessor-note__delete">
 											<?php esc_html_e( 'Delete', 'intercessor' ); ?>
@@ -314,7 +315,7 @@ $intercessor_back_url = admin_url( 'admin.php?page=intercessor-requests' );
 
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 						<input type="hidden" name="action"     value="intercessor_add_note">
-						<input type="hidden" name="request_id" value="<?php echo absint( $intercessor_request_id ); ?>">
+						<input type="hidden" name="request_id" value="<?php echo absint( $requestId ); ?>">
 						<?php wp_nonce_field( 'intercessor_add_note' ); ?>
 
 						<div class="intercessor-add-note__field">

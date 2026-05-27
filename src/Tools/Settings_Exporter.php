@@ -3,7 +3,7 @@
  * Settings CSV exporter.
  *
  * @package Intercessor
- * @since   1.1.0
+ * @since   1.0.0
  */
 declare(strict_types=1);
 
@@ -29,7 +29,7 @@ defined( 'ABSPATH' ) || exit;
  * Boolean values stored as '1', 1, '0', 0, or false are normalised to the
  * localised 'Yes' / 'No' strings for readability in spreadsheet applications.
  *
- * @since   1.1.0
+ * @since   1.0.0
  * @package Intercessor
  */
 final class Settings_Exporter extends Abstract_Exporter {
@@ -37,7 +37,7 @@ final class Settings_Exporter extends Abstract_Exporter {
 	/**
 	 * Return the timestamped CSV download filename.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string Filename in the format 'intercessor-settings-YYYY-MM-DD.csv'.
 	 */
 	protected function get_filename(): string {
@@ -47,7 +47,7 @@ final class Settings_Exporter extends Abstract_Exporter {
 	/**
 	 * Return the ordered column header labels for the CSV.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string[] Three-element array: Setting Key, Value, Section.
 	 */
 	protected function get_headers(): array {
@@ -66,7 +66,7 @@ final class Settings_Exporter extends Abstract_Exporter {
 	 * Iterates the known-key map first (preserving section grouping), then
 	 * appends any extra keys present in the database under 'Other'.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return array<int, array<int, scalar>> Indexed list of three-column row value arrays.
 	 */
 	protected function get_rows(): array {

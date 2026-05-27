@@ -21,7 +21,7 @@ if ( class_exists( 'BerlinDB\\Database\\Table', false ) ) {
 	return;
 }
 
-$intercessor_berlindb_src = __DIR__ . '/core/src/';
+$intercessor_berlin_db_src = __DIR__ . '/core/src/';
 
 /**
  * Ordered list of BerlinDB core class files to load.
@@ -31,7 +31,7 @@ $intercessor_berlindb_src = __DIR__ . '/core/src/';
  *
  * @var string[]
  */
-$intercessor_berlindb_files = array(
+$intercessor_berlin_db_files = array(
 	'Column.php',
 	'Schema.php',
 	'Row.php',
@@ -39,18 +39,18 @@ $intercessor_berlindb_files = array(
 	'Query.php',
 );
 
-foreach ( $intercessor_berlindb_files as $intercessor_berlindb_file ) {
-	$path = $intercessor_berlindb_src . $intercessor_berlindb_file;
+foreach ( $intercessor_berlin_db_files as $intercessor_berlin_db_file ) {
+	$intercessor_berlin_db_path = $intercessor_berlin_db_src . $intercessor_berlin_db_file;
 
-	if ( ! file_exists( $path ) ) {
+	if ( ! file_exists( $intercessor_berlin_db_path ) ) {
 		wp_die(
 			sprintf(
 				/* translators: %s: absolute path to the missing file */
 				esc_html__( 'Intercessor: Required BerlinDB file missing: %s', 'intercessor' ),
-				esc_html( $path )
+				esc_html( $intercessor_berlin_db_path )
 			)
 		);
 	}
 
-	require_once $path;
+	require_once $intercessor_berlin_db_path;
 }

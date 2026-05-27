@@ -3,7 +3,7 @@
  * Plugin roles and capabilities manager.
  *
  * @package Intercessor
- * @since   1.0.1
+ * @since   1.0.0
  */
 
 declare(strict_types=1);
@@ -49,7 +49,7 @@ defined( 'ABSPATH' ) || exit;
  * read_private_prayers     Reserved for future use: see prayer requests with
  *                          'private' status. Currently defined but not checked.
  *
- * @since   1.0.1
+ * @since   1.0.0
  * @package Intercessor
  */
 final class Roles {
@@ -95,7 +95,7 @@ final class Roles {
 	 *
 	 * Called during plugin activation.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public static function add_roles(): void {
@@ -197,7 +197,7 @@ final class Roles {
 	 *
 	 * Called during plugin activation.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public static function add_caps(): void {
@@ -236,7 +236,7 @@ final class Roles {
 	 * Called during plugin uninstall (not deactivation — roles persist until
 	 * the plugin is actually deleted, matching the old plugin's behaviour).
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public static function remove_caps(): void {
@@ -277,7 +277,7 @@ final class Roles {
 	 * Called during plugin uninstall. remove_role() is a no-op for roles
 	 * that do not exist, so it is safe to call unconditionally.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public static function remove_roles(): void {

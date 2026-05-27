@@ -16,7 +16,6 @@ defined( 'ABSPATH' ) || exit;
 use BerlinDB\Database\Query;
 use Intercessor\Database\Row\Prayed_Count;
 use Intercessor\Database\Schema\Prayed_Counts_Schema;
-use Intercessor\Loader;
 
 /**
  * Provides CRUD and domain-specific query methods for the prayed_counts table.
@@ -94,9 +93,6 @@ final class Prayed_Count_Query extends Query {
 	 */
 	protected string $item_shape = Prayed_Count::class;
 
-	/** @var \wpdb WordPress database object, for direct queries. */
-	public $db;
-
 	// -------------------------------------------------------------------------
 	// Domain-specific methods
 	// -------------------------------------------------------------------------
@@ -147,19 +143,18 @@ final class Prayed_Count_Query extends Query {
 	 * @return int            Summed prayer interaction count.
 	 */
 	public function get_total_for_request( int $prayer_id ): int {
-		$this->db = Loader::instance()->get_db();
+		global $wpdb;
 
-		$table = esc_sql( $this->fq_table_name );
-
-		// Use COALESCE to return 0 when no rows exist for the request.
-		return (int) $this->db->get_var(
-			$this->db->prepare(
-				"SELECT COALESCE(SUM(`count`), 0)
-				FROM {$table}
-				WHERE prayer_request_id = %d",
-				$prayer_id
-			)
+		$query = $wpdb->prepare(
+			'SELECT SUM(`count`)
+			FROM %i
+			WHERE prayer_request_id = %d',
+			$this->fq_table_name,
+			$prayer_id
 		);
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		return (int) $wpdb->get_var( $query );
 	}
 
 	/**
@@ -170,41 +165,44 @@ final class Prayed_Count_Query extends Query {
 	 *
 	 * @since  1.0.0
 	 * @param  int $limit Maximum rows to return; pass 0 for no limit.
-	 * @return array|int, array{prayer_request_id: int, total: int}>
+	 * @return array<int, array{prayer_request_id: int, total: int}>
 	 *     List of associative arrays, each with:
 	 *     - prayer_request_id (int): the request primary key.
 	 *     - total (int): summed prayer count across all actors.
 	 */
 	public function get_aggregated_totals( int $limit = 0 ): array {
+		global $wpdb;
 
-		$table = esc_sql( $this->fq_table_name ); // Safe identifier.
+		$limit = max( 0, $limit );
 
-		$limit = max( 0, $limit ); // Normalize.
-
-		$sql = "
-			SELECT prayer_request_id, SUM(`count`) AS total
-			FROM {$table}
+		$sql = $wpdb->prepare(
+			'SELECT
+				prayer_request_id,
+				SUM(`count`) AS total
+			FROM %i
 			GROUP BY prayer_request_id
-			ORDER BY total DESC
-		";
+			ORDER BY total DESC',
+			$this->fq_table_name
+		);
 
 		if ( $limit > 0 ) {
-			// Append LIMIT safely.
-			$sql .= $this->db->prepare( ' LIMIT %d', $limit );
+			$sql .= $wpdb->prepare(
+				' LIMIT %d',
+				$limit
+			);
 		}
 
-		$rows = $this->db->get_results( $sql, ARRAY_A ); // Fetch as array (avoids object overhead).
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results( $sql, ARRAY_A );
 
-		if ( ! $rows ) {
-			return array(); // Early return.
+		if ( empty( $rows ) ) {
+			return array();
 		}
 
-		// Normalize types in-place (no extra array allocation).
-		foreach ( $rows as &$row ) {
-			$row['prayer_request_id'] = (int) $row['prayer_request_id'];
-			$row['total']             = (int) $row['total'];
+		foreach ( $rows as $index => $row ) {
+			$rows[ $index ]['prayer_request_id'] = (int) $row['prayer_request_id'];
+			$rows[ $index ]['total']             = (int) $row['total'];
 		}
-		unset( $row ); // Break reference.
 
 		return $rows;
 	}
@@ -217,7 +215,7 @@ final class Prayed_Count_Query extends Query {
 	 *
 	 * @since  1.0.0
 	 * @param  int           $prayer_id Primary key of the parent prayer request.
-	 * @return Prayed_Count[]           All actor rows for the request, oldest first.
+	 * @return Prayed_Count[]                  All actor rows for the request, oldest first.
 	 */
 	public function get_for_request( int $prayer_id ): array {
 		return $this->get_items(
@@ -231,23 +229,17 @@ final class Prayed_Count_Query extends Query {
 	}
 
 	/**
-	 * Find an existing record for a specific actor and prayer request.
+	 * Find the existing record for a specific actor and prayer request combination.
 	 *
-	 * Used by recordPrayer() to determine whether to insert a new row or
-	 * increment an existing one. When $user_id is greater than zero, the
-	 * lookup is performed using the user_id column; otherwise, the
-	 * anonymous_key is used.
-	 *
-	 * If $user_id is 0 and $anonymous_key is empty, no lookup is performed
-	 * and null is returned.
+	 * Used by recordPrayer() to determine whether to insert or increment. When
+	 * $user_id is greater than zero, matches on user_id; otherwise matches on
+	 * anonymous_key.
 	 *
 	 * @since  1.0.0
-	 *
-	 * @param int    $prayer_id     Prayer request ID.
-	 * @param int    $user_id       WordPress user ID (0 for guests).
-	 * @param string $anonymous_key Hashed guest identifier.
-	 *
-	 * @return  Existing record, or null if not found.
+	 * @param  int           $prayer_id Primary key of the prayer request.
+	 * @param  int           $user_id          WordPress user ID (0 for guests).
+	 * @param  string        $anonymous_key    Hashed guest fingerprint.
+	 * @return Prayed_Count|null               Existing row, or null when not found.
 	 */
 	public function find_by_actor( int $prayer_id, int $user_id, string $anonymous_key ): ?Prayed_Count {
 		$args = array(
@@ -257,19 +249,13 @@ final class Prayed_Count_Query extends Query {
 
 		if ( $user_id > 0 ) {
 			$args['user_id'] = $user_id;
-		} elseif ( $anonymous_key !== '' ) {
-			$args['anonymous_key'] = $anonymous_key;
 		} else {
-			return null; // No valid actor.
+			$args['anonymous_key'] = $anonymous_key;
 		}
 
 		$results = $this->get_items( $args );
 
-		if ( empty( $results ) ) {
-			return null;
-		}
-
-		return $results[0];
+		return $results[0] ?? null;
 	}
 
 	/**
@@ -283,9 +269,10 @@ final class Prayed_Count_Query extends Query {
 	 * @return bool                  True on success; false on DB error.
 	 */
 	public function delete_all_for_request( int $prayer_id ): bool {
-		$this->db = Loader::instance()->get_db();
+		global $wpdb;
 
-		$result = $this->db->delete(
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		$result = $wpdb->delete(
 			$this->fq_table_name,
 			array( 'prayer_request_id' => $prayer_id ),
 			array( '%d' )

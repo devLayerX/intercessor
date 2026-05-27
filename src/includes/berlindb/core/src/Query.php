@@ -228,9 +228,16 @@ abstract class Query {
 	public function get_item( int $id ): Row|false {
 		global $wpdb;
 
-		$pk  = $this->getPrimaryKey();
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- $fq_table_name is constructed from wpdb->prefix + a hardcoded string; $pk is validated against schema columns.
-		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$this->fq_table_name} WHERE {$pk} = %d LIMIT 1", $id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
+		$pk = $this->getPrimaryKey();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				'SELECT * FROM %i WHERE %i = %d LIMIT 1',
+				$this->fq_table_name,
+				$pk,
+				$id
+			)
+		);
 
 		if ( $row === null ) {
 			return false;
@@ -288,7 +295,7 @@ abstract class Query {
 			$sql = $wpdb->prepare( $sql, ...$values );
 		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter -- $sql is built from validated column names and prepared values.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		$rows = $wpdb->get_results( $sql );
 
 		if ( empty( $rows ) ) {
@@ -328,7 +335,7 @@ abstract class Query {
 			$sql = $wpdb->prepare( $sql, ...$values );
 		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter -- $sql is built from validated column names and prepared values.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		return (int) $wpdb->get_var( $sql );
 	}
 

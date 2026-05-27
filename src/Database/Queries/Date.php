@@ -3,7 +3,7 @@
  * Timezone-aware date query class for Intercessor BerlinDB tables.
  *
  * @package Intercessor
- * @since   1.0.2
+ * @since   1.0.0
  */
 
 declare(strict_types=1);
@@ -13,7 +13,6 @@ namespace Intercessor\Database\Queries;
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-use Intercessor\Loader;
 
 /**
  * Generates SQL WHERE sub-clauses that filter BerlinDB query results by date.
@@ -26,9 +25,9 @@ use Intercessor\Loader;
  *    so all boundary calculations must use the site timezone. This class
  *    replaces every UTC call:
  *
- *      time()    → current_time( 'timestamp' )   // local Unix timestamp
+ * @note  Dates are stored in the site's local timezone; all boundary
  *      gmdate()  → wp_date()                     // locale-aware formatting
- *      get_now() → local-time-aware equivalent
+ *         calculations now use time() with wp_date() for correct formatting.
  *
  *    Period helpers (today, week, month, year) use DateTimeImmutable with
  *    wp_timezone() so boundaries are always in local calendar time.
@@ -46,7 +45,7 @@ use Intercessor\Loader;
  *   $stats = new Prayer_Request_Stats();
  *   $count = $stats->get_count( [ 'period' => 'today', 'status' => 'approved' ] );
  *
- * @since   1.0.2
+ * @since   1.0.0
  * @package Intercessor
  */
 class Date {
@@ -115,15 +114,13 @@ class Date {
 	 * — is treated as a LOCAL-time timestamp (from current_time()). When
 	 * omitted, current_time('timestamp') is used.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  array $date_query Array of date clauses.
 	 */
 	public function __construct( array $date_query = array() ) {
 		if ( empty( $date_query ) ) {
 			return;
 		}
-
-		$this->db = Loader::instance()->get_db();
 
 		// Use site-local time instead of UTC.
 		$this->now           = $this->get_now( $date_query );
@@ -149,7 +146,7 @@ class Date {
 	 * (the prepared SQL fragment starting with ' AND '). Append the 'where'
 	 * value directly to a custom query's WHERE clause.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @return array{join: string, where: string}
 	 */
 	public function get_sql_clauses(): array {
@@ -168,7 +165,7 @@ class Date {
 	 * Ensures every clause array has the required defaults and recurses into
 	 * nested sub-queries so the full tree is validated before SQL generation.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  array $queries      Array of query clauses.
 	 * @param  array $parent_query Parent clause for inheritance.
 	 * @return array               Sanitized clause array.
@@ -218,31 +215,31 @@ class Date {
 	// ── Getters ───────────────────────────────────────────────────────────────
 
 	/**
-	 * Determine the current local-time Unix timestamp.
+	 * Return the current UTC Unix timestamp for date-boundary calculations.
 	 *
-	 * Overrides the original's time() call with current_time('timestamp') so
-	 * that all boundary calculations operate in the site's local timezone.
+	 * Uses time() (UTC), which is correct for use with wp_date() — that
+	 * function expects a UTC timestamp and handles the site-timezone
+	 * conversion internally. Replaces the former current_time('timestamp')
+	 * call, which was soft-deprecated in WordPress 5.3 and returned a
+	 * non-standard local-time Unix value.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
+	 * @since  1.0.1 Replaced deprecated current_time('timestamp') with time().
 	 * @param  array $query Optional query to extract an explicit 'now' value from.
-	 * @return int          Local-time Unix timestamp.
+	 * @return int          UTC Unix timestamp.
 	 */
 	public function get_now( array $query = array() ): int {
-		// Accept an explicit 'now' but treat it as a local-time timestamp.
 		if ( ! empty( $query['now'] ) && is_numeric( $query['now'] ) ) {
 			return absint( $query['now'] );
 		}
 
-		// current_time('timestamp') returns a Unix timestamp adjusted to the
-		// site timezone (equivalent to time() + UTC offset). This is what we
-		// need because date_created is stored in local time.
-		return (int) current_time( 'timestamp' );
+		return time();
 	}
 
 	/**
 	 * Determine and validate the column to query.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  array $query Optional query array.
 	 * @return string       Validated column name.
 	 */
@@ -255,7 +252,7 @@ class Date {
 	/**
 	 * Determine and validate the comparison operator.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  array $query Optional query array.
 	 * @return string       Comparison operator.
 	 */
@@ -269,7 +266,7 @@ class Date {
 	/**
 	 * Determine and validate the relation operator.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  array $query Optional query array.
 	 * @return string       'AND' or 'OR'.
 	 */
@@ -286,7 +283,7 @@ class Date {
 	 * Defaults to the WordPress 'start_of_week' option rather than hardcoding
 	 * Sunday (0), ensuring week boundaries respect the site configuration.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  array $query Optional query array.
 	 * @return int          0 (Sunday) through 6 (Saturday).
 	 */
@@ -322,7 +319,7 @@ class Date {
 	 *   'last_year'   — the full previous calendar year.
 	 *   'all_time'    — no date restriction (returns an empty Date instance).
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string $period  Named period string.
 	 * @param  string $column  Column to filter on. Default 'date_created'.
 	 * @return self            Configured Date instance.
@@ -348,7 +345,7 @@ class Date {
 	 * All calculations use wp_timezone() + DateTimeImmutable so boundaries
 	 * are always in the site's local calendar time.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string $period  Named period string (see for_period()).
 	 * @return array{0: string, 1: string}  [ $after, $before ] as Y-m-d H:i:s.
 	 */
@@ -359,13 +356,12 @@ class Date {
 		switch ( $period ) {
 			case 'today':
 				$after  = $now->setTime( 0, 0, 0 );
-				$before = $now->setTime( 23, 59, 59 );
+				$before = $now->modify( '+1 day' )->setTime( 0, 0, 0 );
 				break;
 
 			case 'yesterday':
-				$y      = $now->modify( '-1 day' );
-				$after  = $y->setTime( 0, 0, 0 );
-				$before = $y->setTime( 23, 59, 59 );
+				$after  = $now->modify( '-1 day' )->setTime( 0, 0, 0 );
+				$before = $now->setTime( 0, 0, 0 );
 				break;
 
 			case 'week':
@@ -373,7 +369,7 @@ class Date {
 				$dow              = (int) $now->format( 'w' );
 				$days_since_start = ( $dow - $sow + 7 ) % 7;
 				$after            = $now->modify( "-{$days_since_start} days" )->setTime( 0, 0, 0 );
-				$before           = $now->setTime( 23, 59, 59 );
+				$before           = $now->modify( '+1 day' )->setTime( 0, 0, 0 );
 				break;
 
 			case 'last_week':
@@ -381,35 +377,37 @@ class Date {
 				$dow              = (int) $now->format( 'w' );
 				$days_since_start = ( $dow - $sow + 7 ) % 7;
 				$this_week_start  = $now->modify( "-{$days_since_start} days" )->setTime( 0, 0, 0 );
-				$before           = $this_week_start->modify( '-1 second' );
 				$after            = $this_week_start->modify( '-7 days' );
+				$before           = $this_week_start;
 				break;
 
 			case 'month':
 				$after  = $now->modify( 'first day of this month' )->setTime( 0, 0, 0 );
-				$before = $now->modify( 'last day of this month' )->setTime( 23, 59, 59 );
+				$before = $now->modify( 'first day of next month' )->setTime( 0, 0, 0 );
 				break;
 
 			case 'last_month':
 				$after  = $now->modify( 'first day of last month' )->setTime( 0, 0, 0 );
-				$before = $now->modify( 'last day of last month' )->setTime( 23, 59, 59 );
+				$before = $now->modify( 'first day of this month' )->setTime( 0, 0, 0 );
 				break;
 
 			case 'year':
-				$after  = $now->modify( 'first day of January this year' )->setTime( 0, 0, 0 );
-				$before = $now->modify( 'last day of December this year' )->setTime( 23, 59, 59 );
+				$y      = (int) $now->format( 'Y' );
+				$after  = new \DateTimeImmutable( "{$y}-01-01 00:00:00", $tz );
+				$before = new \DateTimeImmutable( ( $y + 1 ) . '-01-01 00:00:00', $tz );
 				break;
 
 			case 'last_year':
 				$y      = (int) $now->format( 'Y' ) - 1;
 				$after  = new \DateTimeImmutable( "{$y}-01-01 00:00:00", $tz );
-				$before = new \DateTimeImmutable( "{$y}-12-31 23:59:59", $tz );
+				$before = new \DateTimeImmutable( ( $y + 1 ) . '-01-01 00:00:00', $tz );
 				break;
 
 			default:
 				// Unknown period — return full year as safe default.
-				$after  = $now->modify( 'first day of January this year' )->setTime( 0, 0, 0 );
-				$before = $now->modify( 'last day of December this year' )->setTime( 23, 59, 59 );
+				$y      = (int) $now->format( 'Y' );
+				$after  = new \DateTimeImmutable( "{$y}-01-01 00:00:00", $tz );
+				$before = new \DateTimeImmutable( ( $y + 1 ) . '-01-01 00:00:00', $tz );
 				break;
 		}
 
@@ -424,7 +422,7 @@ class Date {
 	/**
 	 * Return true when the query array contains at least one time-related key.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  array $query Query clause.
 	 * @return bool
 	 */
@@ -438,7 +436,7 @@ class Date {
 	 * Generates debug notices for out-of-range values (month > 12, etc.)
 	 * without aborting — invalid queries will simply return no results.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  array $date_query First-order clause.
 	 * @return bool              True when all values are valid.
 	 */
@@ -498,7 +496,7 @@ class Date {
 	/**
 	 * Validate a column name — allow only word chars, dots, underscores, and $.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string $column User-supplied column name.
 	 * @return string         Sanitized column name.
 	 */
@@ -511,7 +509,7 @@ class Date {
 	/**
 	 * Generate SQL clauses for a full query tree (recursive).
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  array $query Sanitized query tree.
 	 * @param  int   $depth Current recursion depth (for indentation).
 	 * @return array{join: string, where: string}
@@ -569,12 +567,14 @@ class Date {
 	 * (local time) instead of gmdate() (UTC) so string boundaries like
 	 * 'first day of this month' resolve to the local calendar date.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  array $query        First-order clause.
 	 * @param  array $parent_query Parent clause.
 	 * @return array{join: array, where: array<string>}
 	 */
 	protected function get_sql_for_clause( array $query = array(), array $parent_query = array() ): array {
+		global $wpdb;
+
 
 		$where_parts   = array();
 		$now           = $this->get_now( $query );
@@ -586,14 +586,14 @@ class Date {
 		$gt            = $inclusive ? '>=' : '>';
 
 		if ( ! empty( $query['after'] ) ) {
-			$where_parts[] = $this->db->prepare(
+			$where_parts[] = $wpdb->prepare(
 				"{$column} {$gt} %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$this->build_mysql_datetime( $query['after'], ! $inclusive, $now )
 			);
 		}
 
 		if ( ! empty( $query['before'] ) ) {
-			$where_parts[] = $this->db->prepare(
+			$where_parts[] = $wpdb->prepare(
 				"{$column} {$lt} %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$this->build_mysql_datetime( $query['before'], $inclusive, $now )
 			);
@@ -677,7 +677,7 @@ class Date {
 	/**
 	 * Build a validated numeric value string for use in SQL.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string           $compare  Comparison operator.
 	 * @param  int|float|array  $value    Numeric value(s).
 	 * @return string|int|false           SQL-safe value or false on invalid input.
@@ -715,57 +715,72 @@ class Date {
 	/**
 	 * Build a prepared SQL value string for any comparison type.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string       $compare  Comparison operator.
 	 * @param  string|array $value    Raw value(s).
 	 * @return string                 Prepared SQL fragment.
 	 */
 	public function build_value( string $compare, $value = null ): string {
+		global $wpdb;
 
-		// Normalize the comparison operator for consistent handling.
 		$compare = strtoupper( trim( $compare ) );
 
-		// For multi-value comparisons, ensure we have an array of trimmed strings.
+		// Normalize multi-value inputs.
 		if ( in_array( $compare, $this->multi_value_keys, true ) ) {
 			$values = is_array( $value )
 				? $value
 				: preg_split( '/[,\s]+/', (string) $value, -1, PREG_SPLIT_NO_EMPTY );
 
-			$values = array_values( array_map( 'trim', $values ) );
+			$values = array_map( 'trim', array_values( (array) $values ) );
 		} else {
-			$values = trim( (string) $value );
+			$values = array( trim( (string) $value ) );
 		}
 
 		// Build the appropriate SQL fragment based on the comparison type.
 		switch ( $compare ) {
+
 			case 'IN':
 			case 'NOT IN':
 				if ( empty( $values ) ) {
 					return '(NULL)';
 				}
 
-				$placeholders = implode( ',', array_fill( 0, count( $values ), '%s' ) );
-
-				return $this->db->prepare(
-					"({$placeholders})",
-					$values
+				$placeholders = implode(
+					',',
+					array_fill( 0, count( $values ), '%s' )
 				);
+
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Placeholder list is generated exclusively from fixed %s tokens.
+				$prepared = $wpdb->prepare( $placeholders, $values );
+
+				return '(' . $prepared . ')';
 
 			case 'BETWEEN':
 			case 'NOT BETWEEN':
-				$values = array_pad( array_slice( (array) $values, 0, 2 ), 2, '' );
+				$values = array_values( array_slice( $values, 0, 2 ) );
 
-				return $this->db->prepare( '%s AND %s', $values[0], $values[1] );
+				$values = array_pad( $values, 2, '' );
+
+				return $wpdb->prepare(
+					'%s AND %s',
+					$values[0],
+					$values[1]
+				);
 
 			case 'LIKE':
 			case 'NOT LIKE':
-				return $this->db->prepare( '%s', '%' . $this->db->esc_like( (string) $values ) . '%' );
+				return $wpdb->prepare(
+					'%s',
+					'%' . $wpdb->esc_like( $values[0] ) . '%'
+				);
 
 			default:
-				return $this->db->prepare( '%s', (string) $values );
+				return $wpdb->prepare(
+					'%s',
+					$values[0]
+				);
 		}
 	}
-
 
 	/**
 	 * Build a MySQL datetime string from an array or string value.
@@ -775,7 +790,7 @@ class Date {
 	 * boundaries ('first day of this month', '2025-06-01', etc.) resolve
 	 * to local calendar dates.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string|array $datetime        Array of date parts or strtotime() string.
 	 * @param  bool         $default_to_max  Round up incomplete dates to end-of-period.
 	 * @param  int          $now             Local-time Unix timestamp.
@@ -783,7 +798,7 @@ class Date {
 	 */
 	public function build_mysql_datetime( $datetime, bool $default_to_max = false, int $now = 0 ): string {
 		if ( $now === 0 ) {
-			$now = $this->now ?: (int) current_time( 'timestamp' );
+			$now = $this->now ?: time();
 		}
 
 		if ( is_string( $datetime ) ) {
@@ -836,7 +851,7 @@ class Date {
 	/**
 	 * Build a MySQL WEEK() expression that respects the start-of-week setting.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string $column        Column name (pre-validated).
 	 * @param  int    $start_of_week 0=Sunday, 1=Monday, etc.
 	 * @return string                SQL WEEK() expression.
@@ -860,7 +875,7 @@ class Date {
 	/**
 	 * Build a time comparison SQL fragment (hour/minute/second).
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string   $column  Pre-validated column name.
 	 * @param  string   $compare Comparison operator.
 	 * @param  int|null $hour    Hour (0–23).
@@ -869,6 +884,8 @@ class Date {
 	 * @return string|false      SQL fragment or false on invalid input.
 	 */
 	public function build_time_query( string $column, string $compare, ?int $hour, ?int $minute, ?int $second ) {
+		global $wpdb;
+
 
 		if ( is_null( $hour ) && is_null( $minute ) && is_null( $second ) ) {
 			return false;
@@ -924,7 +941,7 @@ class Date {
 			$time   .= sprintf( '%02d', $second );
 		}
 
-		return $this->db->prepare(
+		return $wpdb->prepare(
 			"DATE_FORMAT( {$column}, %s ) {$compare} %f", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$format,
 			(float) $time
@@ -934,7 +951,7 @@ class Date {
 	/**
 	 * Sanitize a table name — strip anything not safe for a table alias.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @param  string $name Raw table name.
 	 * @return string       Sanitized table name.
 	 */

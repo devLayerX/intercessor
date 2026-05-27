@@ -3,7 +3,7 @@
  * Requester note admin POST handler.
  *
  * @package Intercessor
- * @since   1.0.1
+ * @since   1.0.0
  */
 
 declare(strict_types=1);
@@ -28,7 +28,7 @@ use Intercessor\Http\Request;
  *   admin_post_intercessor_add_requester_note
  *   admin_post_intercessor_delete_requester_note
  *
- * @since   1.0.1
+ * @since   1.0.0
  * @package Intercessor
  */
 final class Requester_Note_Handler {
@@ -38,7 +38,7 @@ final class Requester_Note_Handler {
 	/**
 	 * Build the redirect base URL for the requester notes tab.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @param  int $requester_id Requester primary key.
 	 * @return string            Absolute admin URL for the notes tab.
 	 */
@@ -104,7 +104,7 @@ final class Requester_Note_Handler {
 	 * to the stated requester before deleting. Redirects back to the notes
 	 * tab with a 'rn_deleted=1' flag on success or 'rn_error=1' on failure.
 	 *
-	 * @since  1.0.1
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public static function handle_delete(): void {

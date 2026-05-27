@@ -364,8 +364,8 @@ final class Prayer_Request_List_Table extends WP_List_Table {
 			esc_html__( 'Approve', 'intercessor' )
 		);
 
-		/* translators: %d: total number of prayer requests */
 		$reject = sprintf(
+			/* translators: %d: total number of prayer requests */
 			'<form method="post" action="%s" style="display:inline">
 				<input type="hidden" name="action"     value="intercessor_moderate">
 				<input type="hidden" name="request_id" value="%d">
