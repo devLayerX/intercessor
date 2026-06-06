@@ -9,16 +9,32 @@
     "description": "Allow visitors to submit prayer requests.",
     "keywords": ["prayer", "form", "request", "intercessor"],
     "textdomain": "intercessor",
-    "editorScript": "file:./index.js",
     "attributes": {
-        "showAnonymousOption": { "type": "boolean", "default": true },
-        "submitLabel":         { "type": "string",  "default": "" },
-        "successMessage":      { "type": "string",  "default": "" }
+        "showAnonymousOption": {
+            "type": "boolean",
+            "default": true
+        },
+        "submitLabel": {
+            "type": "string",
+            "default": ""
+        },
+        "successMessage": {
+            "type": "string",
+            "default": ""
+        }
     },
     "supports": {
         "html": false,
         "align": ["wide", "full"],
-        "color": { "background": true, "text": true },
-        "spacing": { "padding": true, "margin": true }
-    }
+        "color": {
+            "background": true,
+            "text": true
+        },
+        "spacing": {
+            "padding": true,
+            "margin": true
+        }
+    },
+    "editorScript": "file:./index.js",
+    "editorStyle": "file:./index.css"
 }

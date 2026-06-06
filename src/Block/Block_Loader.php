@@ -50,7 +50,7 @@ final class Block_Loader {
 	public function register_blocks(): void {
 		$blocks = array(
 			'prayer-form'    => Prayer_Form_Block::class,
-			'prayer-list'    => Prayer_List_Block::class,
+			'prayer-wall'    => Prayer_Wall_Block::class,
 			'prayer-history' => Prayer_History_Block::class,
 		);
 

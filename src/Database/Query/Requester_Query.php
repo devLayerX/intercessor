@@ -13,7 +13,7 @@ namespace Intercessor\Database\Query;
 defined( 'ABSPATH' ) || exit;
 
 
-use BerlinDB\Database\Query;
+use Intercessor\BerlinDB\Query;
 use Intercessor\Database\Row\Requester;
 use Intercessor\Database\Schema\Requesters_Schema;
 

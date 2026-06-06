@@ -311,7 +311,7 @@ final class Requester_View {
 			'already_confirmed',
 		);
 
-		$reg_error_input = filter_input( INPUT_GET, 'reg_error', FILTER_UNSAFE_RAW );
+		$reg_error_input = filter_input( INPUT_GET, 'reg_error', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		$reg_error       = is_string( $reg_error_input )
 			? sanitize_key( wp_unslash( $reg_error_input ) )
 			: '';

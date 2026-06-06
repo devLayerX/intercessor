@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Generates SQL WHERE sub-clauses that filter BerlinDB query results by date.
  *
- * This class is adapted from BerlinDB\Database\Queries\Date (uploaded) and
+ * This class is adapted from Intercessor\BerlinDB\Queries\Date (uploaded) and
  * WordPress's WP_Date_Query. Two significant changes are made:
  *
  * 1. Timezone fix — the original class uses time() (UTC) and gmdate() (UTC)

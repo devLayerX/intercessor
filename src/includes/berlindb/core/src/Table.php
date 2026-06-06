@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace BerlinDB\Database;
+namespace Intercessor\BerlinDB;
 
 /**
  * Manages a single WordPress database table via dbDelta.
@@ -90,7 +90,9 @@ abstract class Table {
 	/**
 	 * WordPress option key used to persist the currently-installed schema version.
 	 *
-	 * Derived from the table name as 'db_version_{name}'.
+	 * Derived from the table name as '{name}_db_version'. Because every table
+	 * $name already begins with the plugin prefix (e.g. 'intercessor_prayer_requests'),
+	 * the resulting option name is prefixed and collision-safe in wp_options.
 	 *
 	 * @since 1.0.0
 	 * @var   string
@@ -114,7 +116,7 @@ abstract class Table {
 		global $wpdb;
 
 		$this->table_name     = $wpdb->prefix . $this->name;
-		$this->db_version_key = 'db_version_' . $this->name;
+		$this->db_version_key = $this->name . '_db_version';
 
 		// Register as a named property on $wpdb so that
 		// $wpdb->intercessor_prayer_requests etc. resolve correctly.
@@ -193,7 +195,7 @@ abstract class Table {
 
 		if ( ! empty( $sql ) ) {
 			dbDelta( $sql );
-			update_option( $this->db_version_key, $this->version ); // phpcs:ignore WordPress.WP.PrefixAllGlobals.NonPrefixedVariableFound -- Third-party BerlinDB library; db_version_key is already prefixed with the plugin table name
+			update_option( $this->db_version_key, $this->version );
 		}
 	}
 

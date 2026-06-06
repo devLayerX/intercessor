@@ -1,31 +1,40 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
-    "name": "intercessor/prayer-history",
+    "name": "intercessor/prayer-wall",
     "version": "1.0.0",
-    "title": "Prayer History",
+    "title": "Prayer Wall",
     "category": "widgets",
-    "icon": "backup",
-    "description": "Display the status timeline for a prayer request.",
-    "keywords": ["prayer", "history", "timeline", "status", "intercessor"],
+    "icon": "list-view",
+    "description": "Display a paginated wall of approved prayer requests.",
+    "keywords": ["prayer", "wall", "requests", "intercessor"],
     "textdomain": "intercessor",
     "attributes": {
-        "requestId": {
+        "limit": {
             "type": "integer",
-            "default": 0
+            "default": 10
         },
-        "showNotes": {
+        "showDate": {
             "type": "boolean",
             "default": true
         },
-        "showModerator": {
+        "showAuthor": {
             "type": "boolean",
-            "default": false
+            "default": true
+        },
+        "status": {
+            "type": "string",
+            "default": "approved",
+            "enum": ["approved", "pending", "all"]
         }
     },
     "supports": {
         "html": false,
         "align": ["wide", "full"],
+        "color": {
+            "background": true,
+            "text": true
+        },
         "spacing": {
             "padding": true,
             "margin": true

@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace BerlinDB\Database;
+namespace Intercessor\BerlinDB;
 
 /**
  * ORM-like CRUD and query interface for a single BerlinDB-managed table.

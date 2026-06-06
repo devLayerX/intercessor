@@ -2,7 +2,7 @@
 
 > A complete WordPress plugin for managing prayer requests — with public submission, anonymous and private sharing, requester management, moderation workflows, exports, reports, and prayer activity tracking.
 
-[![WordPress Plugin Version](https://img.shields.io/badge/version-1.0.2-blue)](https://github.com/devLayerX/intercessor/releases)
+[![WordPress Plugin Version](https://img.shields.io/badge/version-1.0.2-blue)](https://github.com/victoraigbeghian/intercessor/releases)
 [![License: GPL v2+](https://img.shields.io/badge/License-GPL%20v2%2B-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![Requires PHP](https://img.shields.io/badge/PHP-8.0%2B-purple)](https://php.net)
 [![Requires WordPress](https://img.shields.io/badge/WordPress-6.3%2B-blue)](https://wordpress.org)
@@ -22,7 +22,7 @@ Intercessor gives churches, ministries, and faith communities a complete workflo
 | **Submission** | Prayer Form block, anonymous option, private requests, login gate, auto-registration, reCAPTCHA v2/v3, rate limiting, profanity filter, terms/privacy acceptance |
 | **Moderation** | Approve / Reject / Archive individually or in bulk, status audit trail, internal moderator notes |
 | **Requester management** | Deduplicated requester records, WP user linking, five-tab detail page, requester notes |
-| **Display** | Prayer List block with live prayer counters, Prayer History timeline block |
+| **Display** | Prayer Wall block with live prayer counters, Prayer History timeline block |
 | **Notifications** | Admin and requester emails on submission and status change, scheduled prayer report cron |
 | **Roles** | `prayer_manager`, `prayer_warrior`, `requester` — six custom capabilities |
 | **REST API** | 9 endpoints under `/wp-json/intercessor/v1/` |
@@ -53,7 +53,7 @@ Intercessor gives churches, ministries, and faith communities a complete workflo
 
 ```bash
 cd wp-content/plugins
-git clone https://github.com/devLayerX/intercessor.git
+git clone https://github.com/victoraigbeghian/intercessor.git
 
 # Build JS blocks (required for the Gutenberg editor UI)
 cd intercessor
@@ -65,7 +65,7 @@ Then activate the plugin from **Plugins → Installed Plugins**.
 
 ### From a release zip
 
-Download the latest `.zip` from [Releases](https://github.com/devLayerX/intercessor/releases), then upload via **Plugins → Add New → Upload Plugin**.
+Download the latest `.zip` from [Releases](https://github.com/victoraigbeghian/intercessor/releases), then upload via **Plugins → Add New → Upload Plugin**.
 
 ---
 
@@ -109,7 +109,7 @@ intercessor/
 │   │   ├── Block_Loader.php
 │   │   ├── Prayer_Form_Block.php
 │   │   ├── Prayer_History_Block.php
-│   │   └── Prayer_List_Block.php
+│   │   └── Prayer_Wall_Block.php
 │   │
 │   ├── Database/
 │   │   ├── Table_Registry.php         Registers & installs all 6 tables
@@ -177,14 +177,14 @@ intercessor/
 │   └── blocks/
 │       ├── prayer-form.php
 │       ├── prayer-history.php
-│       └── prayer-list.php
+│       └── prayer-wall.php
 │
 ├── assets/
 │   ├── css/{admin,iconfont,public}.css
 │   ├── fonts/intercessor.{eot,svg,ttf,woff}
 │   └── js/
 │       ├── admin/admin.js
-│       └── blocks/{prayer-form,prayer-list,prayer-history}/
+│       └── blocks/{prayer-form,prayer-wall,prayer-history}/
 │
 ├── languages/
 └── tests/

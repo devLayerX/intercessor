@@ -1,12 +1,12 @@
 {
-    "name": "devlayerx/intercessor",
+    "name": "victoraigbeghian/intercessor",
     "description": "Manage prayer requests submitted by site visitors — WordPress plugin.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "authors": [
         {
             "name": "Victor Aigbeghian",
-            "homepage": "https://github.com/devLayerX"
+            "homepage": "https://github.com/victoraigbeghian"
         }
     ],
     "require": {

@@ -1,11 +1,11 @@
 # Spanish (Spain) translation for Intercessor.
 # Copyright (C) 2026 Victor Aigbeghian
 # This file is distributed under the same license as the Intercessor plugin.
-# Translator: Victor Aigbeghian <victor@devlayerx.com>, 2026.
+# Translator: Victor Aigbeghian <victor@victoraigbeghian.com>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: Intercessor 1.0.0\n"
-"Report-Msgid-Bugs-To: https://github.com/devLayerX/intercessor/issues\n"
+"Report-Msgid-Bugs-To: https://github.com/victoraigbeghian/intercessor/issues\n"
 "POT-Creation-Date: 2026-04-07 19:38+0000\n"
 "PO-Revision-Date: 2026-04-08 21:09+0000\n"
 "Last-Translator: \n"
@@ -202,7 +202,7 @@ msgid "Requests Per Page"
 msgstr "Solicitudes por página"
 
 #: src/Admin/DisplayPage.php:264
-msgid "Default number of prayer requests shown in the Prayer List block."
+msgid "Default number of prayer requests shown in the Prayer Wall block."
 msgstr ""
 "Número predeterminado de solicitudes de oración mostradas en el bloque Lista "
 "de oración."
@@ -466,7 +466,7 @@ msgstr "Marcada por filtro de palabras prohibidas"
 msgid "View"
 msgstr "Ver"
 
-#: src/Admin/PrayerRequestListTable.php:62 templates/blocks/prayer-list.php:52
+#: src/Admin/PrayerRequestListTable.php:62 templates/blocks/prayer-wall.php:52
 msgid "No prayer requests found."
 msgstr "No se encontraron solicitudes de oración."
 
@@ -547,7 +547,7 @@ msgid "Prayer request not found."
 msgstr "Solicitud de oración no encontrada."
 
 #: src/Database/Row/Requester.php:124 src/Tools/PrayerRequestsExporter.php:60
-#: templates/admin/request-detail.php:138 templates/blocks/prayer-list.php:81
+#: templates/admin/request-detail.php:138 templates/blocks/prayer-wall.php:81
 msgid "Anonymous"
 msgstr "Anónimo"
 
@@ -1120,48 +1120,48 @@ msgstr "cambiado a"
 msgid "by %s"
 msgstr "por %s"
 
-#: templates/blocks/prayer-list.php:103
+#: templates/blocks/prayer-wall.php:103
 msgid "I prayed for this request"
 msgstr "Oré por esta solicitud"
 
-#: templates/blocks/prayer-list.php:109
+#: templates/blocks/prayer-wall.php:109
 msgid "prayers"
 msgstr "oraciones"
 
-#: templates/blocks/prayer-list.php:121
+#: templates/blocks/prayer-wall.php:121
 msgid "Prayer requests navigation"
 msgstr "Navegación de solicitudes de oración"
 
-#: templates/blocks/prayer-list.php:126
+#: templates/blocks/prayer-wall.php:126
 msgid "Previous"
 msgstr "Anterior"
 
 #. translators: 1: current page 2: total pages
-#: templates/blocks/prayer-list.php:133
+#: templates/blocks/prayer-wall.php:133
 msgid "Page %1$d of %2$d"
 msgstr "Página %1$d de %2$d"
 
-#: templates/blocks/prayer-list.php:142
+#: templates/blocks/prayer-wall.php:142
 msgid "Next"
 msgstr "Siguiente"
 
-#: templates/blocks/prayer-list.php:39
+#: templates/blocks/prayer-wall.php:39
 msgid "Praying…"
 msgstr "Orando…"
 
-#: templates/blocks/prayer-list.php:40
+#: templates/blocks/prayer-wall.php:40
 msgid "I prayed for this!"
 msgstr "¡Oré por esto!"
 
-#: templates/blocks/prayer-list.php:41 templates/blocks/prayer-list.php:107
+#: templates/blocks/prayer-wall.php:41 templates/blocks/prayer-wall.php:107
 msgid "I prayed for this"
 msgstr "Oré por esto"
 
-#: templates/blocks/prayer-list.php:42
+#: templates/blocks/prayer-wall.php:42
 msgid "Could not record your prayer. Please try again."
 msgstr "No se pudo registrar tu oración. Por favor, inténtalo de nuevo."
 
 #. translators: %s: requester name
-#: templates/blocks/prayer-list.php:77
+#: templates/blocks/prayer-wall.php:77
 msgid "By %s"
 msgstr "Por %s"

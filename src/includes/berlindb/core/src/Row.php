@@ -18,7 +18,7 @@
 // behaviour needed. Subclasses may still declare strict_types=1 in their own
 // files — that declaration only applies to the file it appears in.
 
-namespace BerlinDB\Database;
+namespace Intercessor\BerlinDB;
 
 /**
  * Base value object for a single row returned from a BerlinDB-managed table.

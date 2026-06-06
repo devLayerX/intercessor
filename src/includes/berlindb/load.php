@@ -2,8 +2,8 @@
 /**
  * BerlinDB loader — bundled with Intercessor.
  *
- * Loads all BerlinDB core class files in dependency order and guards against
- * double-loading when a site already has BerlinDB available from another plugin.
+ * Loads all plugin-scoped BerlinDB core class files in dependency order and
+ * guards against double-loading them within Intercessor.
  *
  * Load order matches class inheritance:
  * Column → Schema → Row → Table → Query
@@ -14,10 +14,11 @@
 
 declare(strict_types=1);
 
+// Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-// Guard: do not load bundled classes if BerlinDB is already available site-wide.
-if ( class_exists( 'BerlinDB\\Database\\Table', false ) ) {
+// Guard: do not load bundled classes twice.
+if ( class_exists( 'Intercessor\\BerlinDB\\Table', false ) ) {
 	return;
 }
 

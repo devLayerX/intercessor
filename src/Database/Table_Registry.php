@@ -43,7 +43,7 @@ final class Table_Registry {
 	 * then child tables (prayer_history, prayer_notes, prayed_counts).
 	 *
 	 * @since 1.0.0
-	 * @var   list<class-string<\BerlinDB\Database\Table>>
+	 * @var   list<class-string<\Intercessor\BerlinDB\Table>>
 	 */
 	private static array $tables = array(
 		Requesters_Table::class,
