@@ -13,7 +13,7 @@ namespace Intercessor\Database\Row;
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-use BerlinDB\Database\Row;
+use Intercessor\BerlinDB\Row;
 
 /**
  * Represents a single row from the intercessor_requester_notes table.

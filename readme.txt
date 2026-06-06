@@ -45,7 +45,7 @@ Intercessor has been actively used on our website for several years, serving as 
 
 **Display**
 
-* **Prayer List block** — displays approved requests with pagination and a live "I prayed for this" counter.
+* **Prayer Wall block** — displays approved requests with pagination and a live "I prayed for this" counter.
 * **Prayer History block** — shows the full status timeline for a single request.
 
 **Notifications**
@@ -115,13 +115,26 @@ Yes. Use **Intercessor → Tools** to download CSV exports of all data before re
 == Screenshots ==
 
 1. Prayer Form block on the front end.
-2. Prayer List block with "I prayed for this" counters.
+2. Prayer Wall block with "I prayed for this" counters.
 3. Admin prayer requests list with status filters and bulk actions.
 4. Single request detail view with moderator notes panel.
 5. Requester detail page — Overview tab with profile and stats.
 6. Requester detail page — Notes tab with requester notes and prayer notes.
 7. Settings page with tabbed configuration.
 8. Tools / Export page.
+
+== Source Code & Development ==
+
+The full source code for Intercessor is publicly available on GitHub:
+[https://github.com/victoraigbeghian/intercessor](https://github.com/victoraigbeghian/intercessor)
+
+The Gutenberg block editor scripts in `assets/js/blocks/` are built from their unminified source files in `src/blocks/` (also included in this plugin) using webpack. To rebuild the blocks from source:
+
+1. Clone the repository or extract the plugin.
+2. Run `npm install` to install build dependencies.
+3. Run `npm run build` to compile the block scripts.
+
+Other JavaScript files in `assets/js/public/` and `assets/js/admin/` are hand-written and shipped unminified.
 
 == Changelog ==
 

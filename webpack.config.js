@@ -29,7 +29,7 @@ const path                              = require( 'path' );
 const CopyWebpackPlugin                 = require( 'copy-webpack-plugin' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 
-const BLOCKS = [ 'prayer-form', 'prayer-list', 'prayer-history' ];
+const BLOCKS = [ 'prayer-form', 'prayer-wall', 'prayer-history' ];
 
 const isProduction = process.env.NODE_ENV === 'production';
 

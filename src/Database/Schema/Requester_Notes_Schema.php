@@ -13,7 +13,7 @@ namespace Intercessor\Database\Schema;
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-use BerlinDB\Database\Schema;
+use Intercessor\BerlinDB\Schema;
 
 /**
  * Defines the column set for the `{prefix}intercessor_requester_notes` table.

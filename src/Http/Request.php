@@ -42,20 +42,21 @@ final class Request {
 
 	/**
 	 * Constructor.
-     *
-     * Accepts pre-sanitized request data, allowing for testability and flexibility in sourcing input.
-     *
-     * @param array $get    GET parameters.
-     * @param array $post   POST parameters.
-     * @param array $server SERVER parameters.
-     * 
-     * @since 1.0.0
-     * @return void
+	 *
+	 * Accepts raw request arrays, recursively unslashes and sanitizes them, and
+	 * stores only sanitized values so generic accessors never expose raw input.
+	 *
+	 * @param array $get    GET parameters.
+	 * @param array $post   POST parameters.
+	 * @param array $server SERVER parameters.
+	 *
+	 * @since 1.0.0
+	 * @return void
 	 */
 	public function __construct( array $get, array $post, array $server ) {
-		$this->get    = $this->unslash( $get );
-		$this->post   = $this->unslash( $post );
-		$this->server = $this->unslash( $server );
+		$this->get    = $this->sanitize_data( $this->unslash( $get ) );
+		$this->post   = $this->sanitize_data( $this->unslash( $post ) );
+		$this->server = $this->sanitize_data( $this->unslash( $server ) );
 	}
 
 	/**
@@ -66,12 +67,18 @@ final class Request {
      * @noinspection PhpDocMissingThrowsInspection
 	 */
 	public static function capture(): self {
+		// Raw superglobals are intentionally passed unprocessed: the constructor
+		// recursively unslashes them via unslash() and sanitizes them via
+		// sanitize_data() before storage, and nonces are verified by callers
+		// where required. The sniffs below cannot follow values into the
+		// constructor, so they are suppressed here with that justification.
 		return new self(
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Central request capture; callers verify nonces where required.
-			wp_unslash( $_GET ),
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Central request capture; callers verify nonces where required.
-			wp_unslash( $_POST ),
-			wp_unslash( $_SERVER )
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Unslashed and sanitized in constructor; nonces verified by callers.
+			$_GET,
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Unslashed and sanitized in constructor; nonces verified by callers.
+			$_POST,
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Unslashed and sanitized in constructor.
+			$_SERVER
 		);
 	}
 
@@ -418,6 +425,37 @@ final class Request {
 			$data[$key] = is_array( $value )
 				? $this->unslash( $value )
 				: wp_unslash( $value );
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Recursively sanitize request data before storage.
+	 *
+	 * Textarea sanitization is used as the broad default because it strips
+	 * unsafe markup while preserving line breaks for fields such as prayer
+	 * request content. Typed accessors still apply narrower validation and
+	 * sanitization for emails, URLs, integers, booleans, and keys.
+	 *
+	 * @param array $data Unslashed request data.
+	 *
+	 * @since  1.0.0
+	 * @return array Sanitized request data.
+	 */
+	private function sanitize_data( array $data ): array {
+		foreach ( $data as $key => $value ) {
+			if ( is_array( $value ) ) {
+				$data[ $key ] = $this->sanitize_data( $value );
+				continue;
+			}
+
+			if ( is_scalar( $value ) || null === $value ) {
+				$data[ $key ] = sanitize_textarea_field( (string) $value );
+				continue;
+			}
+
+			$data[ $key ] = '';
 		}
 
 		return $data;

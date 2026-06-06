@@ -42,7 +42,7 @@ final class Activity_View {
 		$paged_input = filter_input( INPUT_GET, 'paged', FILTER_VALIDATE_INT );
 		$paged       = max( 1, (int) ( $paged_input ?: 1 ) );
 
-		$filter_status_input = filter_input( INPUT_GET, 'filter_status', FILTER_UNSAFE_RAW );
+		$filter_status_input = filter_input( INPUT_GET, 'filter_status', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		$filter_status       = is_string( $filter_status_input )
 			? sanitize_key( wp_unslash( $filter_status_input ) )
 			: '';

@@ -1,11 +1,11 @@
 # Copyright (C) 2026 Victor Aigbeghian
 # This file is distributed under the same license as the Intercessor plugin.
-# Victor Aigbeghian <victor@devlayerx.com>, 2026.
+# Victor Aigbeghian <victor@victoraigbeghian.com>, 2026.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Intercessor 1.0.0\n"
-"Report-Msgid-Bugs-To: https://github.com/devLayerX/intercessor/issues\n"
+"Report-Msgid-Bugs-To: https://github.com/victoraigbeghian/intercessor/issues\n"
 "POT-Creation-Date: 2026-04-07 19:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
@@ -196,7 +196,7 @@ msgid "Requests Per Page"
 msgstr ""
 
 #: src/Admin/DisplayPage.php:264
-msgid "Default number of prayer requests shown in the Prayer List block."
+msgid "Default number of prayer requests shown in the Prayer Wall block."
 msgstr ""
 
 #: src/Admin/DisplayPage.php:272
@@ -428,7 +428,7 @@ msgid "View"
 msgstr ""
 
 #: src/Admin/PrayerRequestListTable.php:62
-#: templates/blocks/prayer-list.php:52
+#: templates/blocks/prayer-wall.php:52
 msgid "No prayer requests found."
 msgstr ""
 
@@ -519,7 +519,7 @@ msgstr ""
 #: src/Database/Row/Requester.php:124
 #: src/Tools/PrayerRequestsExporter.php:60
 #: templates/admin/request-detail.php:138
-#: templates/blocks/prayer-list.php:81
+#: templates/blocks/prayer-wall.php:81
 msgid "Anonymous"
 msgstr ""
 
@@ -1086,49 +1086,49 @@ msgstr ""
 msgid "by %s"
 msgstr ""
 
-#: templates/blocks/prayer-list.php:103
+#: templates/blocks/prayer-wall.php:103
 msgid "I prayed for this request"
 msgstr ""
 
-#: templates/blocks/prayer-list.php:109
+#: templates/blocks/prayer-wall.php:109
 msgid "prayers"
 msgstr ""
 
-#: templates/blocks/prayer-list.php:121
+#: templates/blocks/prayer-wall.php:121
 msgid "Prayer requests navigation"
 msgstr ""
 
-#: templates/blocks/prayer-list.php:126
+#: templates/blocks/prayer-wall.php:126
 msgid "Previous"
 msgstr ""
 
-#: templates/blocks/prayer-list.php:133
+#: templates/blocks/prayer-wall.php:133
 #. translators: 1: current page 2: total pages
 msgid "Page %1$d of %2$d"
 msgstr ""
 
-#: templates/blocks/prayer-list.php:142
+#: templates/blocks/prayer-wall.php:142
 msgid "Next"
 msgstr ""
 
-#: templates/blocks/prayer-list.php:39
+#: templates/blocks/prayer-wall.php:39
 msgid "Praying…"
 msgstr ""
 
-#: templates/blocks/prayer-list.php:40
+#: templates/blocks/prayer-wall.php:40
 msgid "I prayed for this!"
 msgstr ""
 
-#: templates/blocks/prayer-list.php:41
-#: templates/blocks/prayer-list.php:107
+#: templates/blocks/prayer-wall.php:41
+#: templates/blocks/prayer-wall.php:107
 msgid "I prayed for this"
 msgstr ""
 
-#: templates/blocks/prayer-list.php:42
+#: templates/blocks/prayer-wall.php:42
 msgid "Could not record your prayer. Please try again."
 msgstr ""
 
-#: templates/blocks/prayer-list.php:77
+#: templates/blocks/prayer-wall.php:77
 #. translators: %s: requester name
 msgid "By %s"
 msgstr ""

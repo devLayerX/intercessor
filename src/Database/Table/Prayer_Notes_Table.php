@@ -13,7 +13,7 @@ namespace Intercessor\Database\Table;
 defined( 'ABSPATH' ) || exit;
 
 
-use BerlinDB\Database\Table;
+use Intercessor\BerlinDB\Table;
 use Intercessor\Database\Schema\Prayer_Notes_Schema;
 
 /**

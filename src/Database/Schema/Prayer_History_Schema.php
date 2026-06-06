@@ -13,7 +13,7 @@ namespace Intercessor\Database\Schema;
 defined( 'ABSPATH' ) || exit;
 
 
-use BerlinDB\Database\Schema;
+use Intercessor\BerlinDB\Schema;
 
 /**
  * Defines the column set for the `{prefix}intercessor_prayer_history` table.

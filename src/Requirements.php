@@ -107,7 +107,7 @@ final class Requirements {
 	 * @return void
 	 */
 	private function check_berlin_db(): void {
-		if ( ! class_exists( 'BerlinDB\\Database\\Table', false ) ) {
+		if ( ! class_exists( 'Intercessor\\BerlinDB\\Table', false ) ) {
 			$this->failures['berlindb'] = __(
 				'Intercessor: Bundled BerlinDB library could not be loaded. Please re-install the plugin.',
 				'intercessor'

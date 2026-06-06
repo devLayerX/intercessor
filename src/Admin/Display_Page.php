@@ -383,7 +383,7 @@ final class Display_Page {
 						[
 							'id'      => 'requests_per_page',
 							'label'   => esc_html__( 'Requests Per Page', 'intercessor' ),
-							'desc'    => esc_html__( 'Default number of prayer requests shown in the Prayer List block.', 'intercessor' ),
+							'desc'    => esc_html__( 'Default number of prayer requests shown in the Prayer Wall block.', 'intercessor' ),
 							'type'    => 'number',
 							'default' => 10,
 							'min'     => 1,

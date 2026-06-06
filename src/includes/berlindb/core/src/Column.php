@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace BerlinDB\Database;
+namespace Intercessor\BerlinDB;
 
 /**
  * Represents a single column definition within a BerlinDB Schema.

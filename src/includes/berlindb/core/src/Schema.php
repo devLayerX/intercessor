@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace BerlinDB\Database;
+namespace Intercessor\BerlinDB;
 
 /**
  * Defines the column set for a BerlinDB-managed database table.

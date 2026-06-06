@@ -81,7 +81,7 @@ final class Public_Loader {
 		// Only load assets on pages that actually render an Intercessor block.
 		if (
 			! has_block( 'intercessor/prayer-form' ) &&
-			! has_block( 'intercessor/prayer-list' ) &&
+			! has_block( 'intercessor/prayer-wall' ) &&
 			! has_block( 'intercessor/prayer-history' )
 		) {
 			// Still register scripts/styles so block render callbacks can
@@ -124,8 +124,8 @@ final class Public_Loader {
 		);
 
 		wp_register_script(
-			'intercessor-prayer-list',
-			INTERCESSOR_URL . 'assets/js/public/prayer-list.js',
+			'intercessor-prayer-wall',
+			INTERCESSOR_URL . 'assets/js/public/prayer-wall.js',
 			array( 'intercessor-public' ),
 			INTERCESSOR_VERSION,
 			true

@@ -4,7 +4,7 @@
 
 /* ── Shared ── */
 .intercessor-prayer-form,
-.intercessor-prayer-list,
+.intercessor-prayer-wall,
 .intercessor-prayer-history {
     font-family: inherit;
     line-height: 1.6;
@@ -100,7 +100,7 @@
     border: 1px solid #f1aeb5;
 }
 
-/* ── Prayer List Block ── */
+/* ── Prayer Wall Block ── */
 .intercessor-request-list {
     list-style: none;
     margin: 0;
