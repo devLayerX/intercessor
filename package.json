@@ -1,6 +1,6 @@
 {
     "name": "intercessor",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Intercessor WordPress Plugin — Gutenberg block build tooling",
     "private": true,
     "license": "GPL-2.0-or-later",
@@ -8,6 +8,8 @@
         "build": "cross-env NODE_ENV=production webpack --config webpack.config.js",
         "start": "cross-env NODE_ENV=development webpack --config webpack.config.js --watch",
         "lint:js": "eslint src/blocks",
+        "zip": "node scripts/package-plugin.js",
+        "package": "npm run build && node scripts/package-plugin.js",
         "packages-update": "npm update"
     },
     "devDependencies": {
@@ -15,6 +17,7 @@
         "@babel/preset-env": "^7.24.0",
         "@babel/preset-react": "^7.24.0",
         "@wordpress/dependency-extraction-webpack-plugin": "^6.0.0",
+        "adm-zip": "^0.6.0",
         "babel-loader": "^9.1.3",
         "copy-webpack-plugin": "^14.0.0",
         "cross-env": "^7.0.3",
