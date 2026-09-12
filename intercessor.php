@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Intercessor
  * Plugin URI:        https://wordpress.org/plugins/intercessor
- * Description:       Intercessor is a complete prayer request management plugin for WordPress, with public submission, anonymous and private sharing, requester management, moderation workflows, exports, reports, and prayer activity tracking.
+ * Description:       The best free prayer request plugin for WordPress. Collect, manage, and organize prayer requests with moderation, privacy controls, reports, exports, imports, a prayer wall, and a prayer history page.
  * Version:           1.1.0
  * Requires at least: 6.3
  * Tested up to:      7.1

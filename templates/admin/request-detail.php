@@ -172,8 +172,14 @@ $backUrl = admin_url( 'admin.php?page=intercessor-requests' );
 						<tr>
 							<th><?php esc_html_e( 'Name', 'intercessor' ); ?></th>
 							<td>
-								<?php if ( $request->is_anonymous() ) : ?>
+								<?php if ( $request->is_anonymous() ) :
+									// Show display name if user can 'manage_prayer_settings'.
+									// Otherwise, show "[Anonymous]" for privacy.
+									if ( current_user_can( 'manage_prayer_settings' ) ) { ?>
+										<em><?php echo esc_html( $requester->get_display_name() ); ?></em>
+									<?php }	else {	?>
 									<em><?php esc_html_e( '[Anonymous]', 'intercessor' ); ?></em>
+								<?php } ?>
 								<?php else : ?>
 									<?php echo esc_html( $requester->get_display_name() ); ?>
 								<?php endif; ?>

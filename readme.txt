@@ -2,17 +2,15 @@
 Contributors:      shepherd365
 Tags:              prayer, prayer request, church, ministry, community
 Requires at least: 6.3
-Tested up to:      7.0
+Tested up to:      7.1
 Requires PHP:      8.0
 Stable tag:        1.1.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
-Manage prayer requests with public submission, moderation, privacy controls, reports, exports, and prayer activity tracking.
-
 == Description ==
 
-Intercessor gives churches, ministries, and faith-based communities a complete prayer request management system built on WordPress.
+The best free prayer request plugin for WordPress. Collect, manage, and organize prayer requests with moderation, privacy controls, reports, exports, a prayer wall, and prayer history.
 
 **See It In Action**
 Intercessor has been actively used on our website for several years, serving as a trusted platform for prayer requests and community prayer support. You can explore the live version, submit a prayer request, or pray for others through our online prayer wall here: [Submit Prayer](https://www.waymakerministry.org/prayer-request/)
@@ -146,6 +144,7 @@ Other JavaScript files in `assets/js/public/` and `assets/js/admin/` are hand-wr
 * Notification cron job now reschedules automatically when the frequency or send time is changed in Settings, without requiring plugin reactivation.
 * Internal: centralised settings schema into a dedicated Registry class for consistency across Renderer, Sanitizer, and Settings Exporter.
 * Fixed missing class imports in Admin_Loader that would have caused fatal errors when moderating, performing bulk actions, or managing prayer notes.
+* Admins can now add prayer request from the prayer list page for themselves or for others.
 
 = 1.0.1 =
 * Added "Keep my prayer request private" option on the submission form. Private requests are visible only to administrators and never appear on the Prayer Wall.
