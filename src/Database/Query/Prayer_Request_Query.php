@@ -37,14 +37,6 @@ final class Prayer_Request_Query extends Query {
 	/**
 	 * The complete set of valid prayer_requests.status values.
 	 *
-	 * Single source of truth for status validation. Previously
-	 * Admin\Moderation_Handler duplicated this list privately and
-	 * Http\Rest_Api::update_status() had no allow-list at all — the REST
-	 * endpoint accepted any sanitize_key()-safe string and wrote it straight
-	 * to the status column, which could desync a request from every UI that
-	 * filters on these five known values (the requests list table's status
-	 * filter bar, the Prayer Wall's status=approved query, etc.).
-	 *
 	 * @since 1.0.2
 	 * @var   string[]
 	 */
